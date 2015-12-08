@@ -1,5 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
+ * Copyright Â© 2014 - 2015 Alexander01998 and contributors
  * All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -36,6 +36,7 @@ public class CmdManager implements ChatOutputListener
 	public final BindsCmd bindsCmd = new BindsCmd();
 	public final BlinkCmd blinkCmd = new BlinkCmd();
 	public final ClearCmd clearCmd = new ClearCmd();
+	public final CopyItemCmd copyitemcmd = new CopyItemCmd();
 	public final DamageCmd damageCmd = new DamageCmd();
 	public final DropCmd dropCmd = new DropCmd();
 	public final EnchantCmd enchantCmd = new EnchantCmd();
@@ -113,10 +114,10 @@ public class CmdManager implements ChatOutputListener
 				}catch(SyntaxError e)
 				{
 					if(e.getMessage() != null)
-						WurstClient.INSTANCE.chat.message("§4Syntax error:§r "
+						WurstClient.INSTANCE.chat.message("Â§4Syntax error:Â§r "
 							+ e.getMessage());
 					else
-						WurstClient.INSTANCE.chat.message("§4Syntax error!§r");
+						WurstClient.INSTANCE.chat.message("Â§4Syntax error!Â§r");
 					cmd.printSyntax();
 				}catch(Cmd.Error e)
 				{
