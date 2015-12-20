@@ -111,9 +111,9 @@ public class NavigatorScreen extends GuiScreen
 		int x = width / 2 - 50;
 		RenderUtil.scissorBox(0, 59, width, height - 42);
 		glEnable(GL_SCISSOR_TEST);
-		for(int i = 0; i < navigatorDisplayList.size(); i++)
+		for(int i = Math.max(-scroll * 3 / 20 - 3, 0); i < navigatorDisplayList.size(); i++)
 		{
-			int y = 60 + (i / 3) * 20 + scroll;
+			int y = 60 + i / 3 * 20 + scroll;
 			if(y < 40)
 				continue;
 			if(y > height - 40)
