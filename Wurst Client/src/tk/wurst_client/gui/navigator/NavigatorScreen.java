@@ -68,16 +68,18 @@ public class NavigatorScreen extends GuiScreen
 				clickTimer = -1;
 		}
 		
-		String oldText = searchBar.getText();
-		searchBar.textboxKeyTyped(typedChar, keyCode);
-		String newText = searchBar.getText();
-		
-		if(newText.isEmpty())
-			WurstClient.INSTANCE.navigator
-				.copyNavigatorList(navigatorDisplayList);
-		else if(!newText.equals(oldText))
-			WurstClient.INSTANCE.navigator.getSearchResults(
-				navigatorDisplayList, newText.toLowerCase());
+		if(clickTimer == -1)
+		{
+			String oldText = searchBar.getText();
+			searchBar.textboxKeyTyped(typedChar, keyCode);
+			String newText = searchBar.getText();
+			if(newText.isEmpty())
+				WurstClient.INSTANCE.navigator
+					.copyNavigatorList(navigatorDisplayList);
+			else if(!newText.equals(oldText))
+				WurstClient.INSTANCE.navigator.getSearchResults(
+					navigatorDisplayList, newText.toLowerCase());
+		}
 	}
 	
 	@Override
