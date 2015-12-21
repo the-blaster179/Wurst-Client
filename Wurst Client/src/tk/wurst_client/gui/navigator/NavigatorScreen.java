@@ -108,9 +108,15 @@ public class NavigatorScreen extends GuiScreen
 	{
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
-		// search bar
-		Fonts.segoe22.drawString("Search: ", width / 2 - 150, 32, 0xffffff);
-		searchBar.drawTextBox();
+		// title bar
+		String title;
+		if(clickTimer == -1)
+		{
+			title = "Search: ";
+			searchBar.drawTextBox();
+		}else
+			title = activeItem.getName();
+		Fonts.segoe22.drawString(title, width / 2 - 150, 32, 0xffffff);
 		
 		// GL settings
 		glEnable(GL_BLEND);
