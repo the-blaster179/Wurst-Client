@@ -22,6 +22,8 @@ public class NavigatorScreen extends GuiScreen
 	private static ArrayList<NavigatorItem> navigatorDisplayList =
 		new ArrayList<>();
 	private GuiTextField searchBar;
+	private NavigatorItem activeItem;
+	private int clickTimer = -1;
 	
 	@Override
 	public void initGui()
@@ -45,6 +47,8 @@ public class NavigatorScreen extends GuiScreen
 	protected void mouseClicked(int x, int y, int button) throws IOException
 	{
 		super.mouseClicked(x, y, button);
+		if(button == 0 && activeItem != null && clickTimer == -1)
+			clickTimer = 0;
 	}
 	
 	@Override
@@ -109,15 +113,21 @@ public class NavigatorScreen extends GuiScreen
 		
 		// feature list
 		int x = width / 2 - 50;
+		if(clickTimer == -1)
+			activeItem = null;
 		RenderUtil.scissorBox(0, 59, width, height - 42);
 		glEnable(GL_SCISSOR_TEST);
-		for(int i = Math.max(-scroll * 3 / 20 - 3, 0); i < navigatorDisplayList.size(); i++)
+		for(int i = Math.max(-scroll * 3 / 20 - 3, 0); i < navigatorDisplayList
+			.size(); i++)
 		{
+			// y position
 			int y = 60 + i / 3 * 20 + scroll;
 			if(y < 40)
 				continue;
 			if(y > height - 40)
 				break;
+			
+			// x position
 			int xi = 0;
 			switch(i % 3)
 			{
@@ -131,11 +141,40 @@ public class NavigatorScreen extends GuiScreen
 					xi = x + 104;
 					break;
 			}
+			
+			// item & area
+			NavigatorItem item = navigatorDisplayList.get(i);
 			Rectangle area = new Rectangle(xi, y, 100, 16);
-			if(area.contains(mouseX, mouseY))
+			
+			// hovering
+			if(area.contains(mouseX, mouseY) && clickTimer == -1)
+			{
+				activeItem = item;
 				glColor4f(0.375F, 0.375F, 0.375F, 0.5F);
-			else
+			}else
 				glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+			
+			// click animation
+			if(clickTimer != -1)
+			{
+				if(item != activeItem)
+					continue;
+				
+				float factor = clickTimer / 16F;
+				float antiFactor = 1 - factor;
+				
+				area.x =
+					(int)(area.x * antiFactor + (width / 2 - 154) * factor);
+				area.y = (int)(area.y * antiFactor + 60 * factor);
+				area.width = (int)(area.width * antiFactor + 308 * factor);
+				area.height =
+					(int)(area.height * antiFactor + (height - 103) * factor);
+				
+				if(clickTimer < 16)
+					clickTimer++;
+			}
+			
+			// box & shadow
 			glBegin(GL_QUADS);
 			{
 				glVertex2d(area.x, area.y);
@@ -146,18 +185,26 @@ public class NavigatorScreen extends GuiScreen
 			glEnd();
 			RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
 				+ area.height);
-			glEnable(GL_TEXTURE_2D);
-			try
+			
+			// text
+			if(clickTimer == -1)
 			{
-				String modName = navigatorDisplayList.get(i).getName();
-				Fonts.segoe15.drawString(modName, area.x
-					+ (area.width - Fonts.segoe15.getStringWidth(modName)) / 2,
-					area.y + 2, 0xffffff);
-			}catch(Exception e)
-			{
-				e.printStackTrace();
+				glEnable(GL_TEXTURE_2D);
+				try
+				{
+					String buttonText = item.getName();
+					Fonts.segoe15.drawString(
+						buttonText,
+						area.x
+							+ (area.width - Fonts.segoe15
+								.getStringWidth(buttonText)) / 2, area.y + 2,
+						0xffffff);
+				}catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				glDisable(GL_TEXTURE_2D);
 			}
-			glDisable(GL_TEXTURE_2D);
 		}
 		glDisable(GL_SCISSOR_TEST);
 		
