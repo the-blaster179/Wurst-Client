@@ -80,17 +80,20 @@ public class NavigatorScreen extends GuiScreen
 	@Override
 	public void updateScreen()
 	{
-		scroll += Mouse.getDWheel() / 10;
-		if(scroll > 0)
-			scroll = 0;
-		else
+		if(clickTimer == -1)
 		{
-			int maxScroll =
-				-navigatorDisplayList.size() / 3 * 20 + height - 120;
-			if(maxScroll > 0)
-				maxScroll = 0;
-			if(scroll < maxScroll)
-				scroll = maxScroll;
+			scroll += Mouse.getDWheel() / 10;
+			if(scroll > 0)
+				scroll = 0;
+			else
+			{
+				int maxScroll =
+					-navigatorDisplayList.size() / 3 * 20 + height - 120;
+				if(maxScroll > 0)
+					maxScroll = 0;
+				if(scroll < maxScroll)
+					scroll = maxScroll;
+			}
 		}
 		searchBar.updateCursorCounter();
 	}
