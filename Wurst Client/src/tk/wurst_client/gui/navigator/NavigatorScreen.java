@@ -24,6 +24,7 @@ public class NavigatorScreen extends GuiScreen
 	private GuiTextField searchBar;
 	private NavigatorItem activeItem;
 	private int clickTimer = -1;
+	private boolean expanding = false;
 	
 	@Override
 	public void initGui()
@@ -48,7 +49,7 @@ public class NavigatorScreen extends GuiScreen
 	{
 		super.mouseClicked(x, y, button);
 		if(button == 0 && activeItem != null && clickTimer == -1)
-			clickTimer = 0;
+			expanding = true;
 	}
 	
 	@Override
@@ -65,7 +66,7 @@ public class NavigatorScreen extends GuiScreen
 			if(clickTimer == -1)
 				mc.displayGuiScreen((GuiScreen)null);
 			else
-				clickTimer = -1;
+				expanding = false;
 		}
 		
 		if(clickTimer == -1)
@@ -100,7 +101,13 @@ public class NavigatorScreen extends GuiScreen
 					scroll = maxScroll;
 			}
 		}
+		
 		searchBar.updateCursorCounter();
+		
+		if(expanding && clickTimer < 4)
+			clickTimer++;
+		else if(!expanding && clickTimer > -1)
+			clickTimer--;
 	}
 	
 	@Override
@@ -174,7 +181,7 @@ public class NavigatorScreen extends GuiScreen
 				if(item != activeItem)
 					continue;
 				
-				float factor = clickTimer / 16F;
+				float factor = clickTimer / 4F;
 				float antiFactor = 1 - factor;
 				
 				area.x =
@@ -183,9 +190,6 @@ public class NavigatorScreen extends GuiScreen
 				area.width = (int)(area.width * antiFactor + 308 * factor);
 				area.height =
 					(int)(area.height * antiFactor + (height - 103) * factor);
-				
-				if(clickTimer < 16)
-					clickTimer++;
 			}
 			
 			// box & shadow
