@@ -60,21 +60,24 @@ public class NavigatorScreen extends GuiScreen
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
 	{
-		super.keyTyped(typedChar, keyCode);
+		if(keyCode == 1)
+		{
+			if(clickTimer == -1)
+				mc.displayGuiScreen((GuiScreen)null);
+			else
+				clickTimer = -1;
+		}
 		
 		String oldText = searchBar.getText();
 		searchBar.textboxKeyTyped(typedChar, keyCode);
 		String newText = searchBar.getText();
 		
 		if(newText.isEmpty())
-		{
 			WurstClient.INSTANCE.navigator
 				.copyNavigatorList(navigatorDisplayList);
-		}else if(!newText.equals(oldText))
-		{
+		else if(!newText.equals(oldText))
 			WurstClient.INSTANCE.navigator.getSearchResults(
 				navigatorDisplayList, newText.toLowerCase());
-		}
 	}
 	
 	@Override
