@@ -81,7 +81,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
 		// title bar
-		Fonts.segoe22.drawString(item.getName(), width / 2 - 150, 32, 0xffffff);
+		drawCenteredString(Fonts.segoe22, item.getName(), width / 2, 32,
+			0xffffff);
 		
 		// GL settings
 		glEnable(GL_BLEND);
