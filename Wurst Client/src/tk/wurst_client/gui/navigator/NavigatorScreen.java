@@ -117,8 +117,11 @@ public class NavigatorScreen extends GuiScreen
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
 		// search bar
-		Fonts.segoe22.drawString("Search: ", width / 2 - 150, 32, 0xffffff);
-		searchBar.drawTextBox();
+		if(clickTimer == -1)
+		{
+			Fonts.segoe22.drawString("Search: ", width / 2 - 150, 32, 0xffffff);
+			searchBar.drawTextBox();
+		}
 		
 		// GL settings
 		glEnable(GL_BLEND);
@@ -226,7 +229,7 @@ public class NavigatorScreen extends GuiScreen
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 	}
-
+	
 	public void setExpanding(boolean expanding)
 	{
 		this.expanding = expanding;
