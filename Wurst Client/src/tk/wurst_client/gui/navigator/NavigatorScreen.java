@@ -26,16 +26,20 @@ public class NavigatorScreen extends GuiScreen
 	private int clickTimer = -1;
 	private boolean expanding = false;
 	
-	@Override
-	public void initGui()
+	public NavigatorScreen()
 	{
-		searchBar =
-			new GuiTextField(0, Fonts.segoe22, width / 2 - 100, 32, 200, 20);
+		searchBar = new GuiTextField(0, Fonts.segoe22, 0, 32, 200, 20);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setMaxStringLength(128);
 		searchBar.setFocused(true);
 		
 		WurstClient.INSTANCE.navigator.copyNavigatorList(navigatorDisplayList);
+	}
+	
+	@Override
+	public void initGui()
+	{
+		searchBar.xPosition = width / 2 - 100;
 	}
 	
 	@Override
