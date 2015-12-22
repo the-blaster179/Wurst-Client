@@ -24,6 +24,7 @@ public abstract class Cmd implements NavigatorItem
 	private String name = getClass().getAnnotation(Info.class).name();
 	private String help = getClass().getAnnotation(Info.class).help();
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
+	private String[] tags = getClass().getAnnotation(Info.class).tags();
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
@@ -33,6 +34,8 @@ public abstract class Cmd implements NavigatorItem
 		String help();
 		
 		String[] syntax();
+		
+		String[] tags() default {};
 	}
 	
 	public class SyntaxError extends Error
@@ -91,7 +94,7 @@ public abstract class Cmd implements NavigatorItem
 	@Override
 	public String[] getTags()
 	{
-		return new String[0];
+		return tags;
 	}
 
 	public final void printHelp()

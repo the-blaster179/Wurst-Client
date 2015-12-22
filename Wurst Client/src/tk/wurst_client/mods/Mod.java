@@ -27,6 +27,7 @@ public class Mod implements NavigatorItem
 		.description();
 	private final Category category = getClass().getAnnotation(Info.class)
 		.category();
+	private final String[] tags = getClass().getAnnotation(Info.class).tags();
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
@@ -58,6 +59,8 @@ public class Mod implements NavigatorItem
 		Category category();
 		
 		boolean noCheatCompatible() default true;
+		
+		String[] tags() default {};
 	}
 	
 	@Override
@@ -80,7 +83,7 @@ public class Mod implements NavigatorItem
 	@Override
 	public final String[] getTags()
 	{
-		return new String[0];
+		return tags;
 	}
 	
 	public final Category getCategory()
