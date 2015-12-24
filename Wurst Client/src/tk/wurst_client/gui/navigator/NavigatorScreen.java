@@ -25,6 +25,7 @@ public class NavigatorScreen extends GuiScreen
 	private NavigatorItem activeItem;
 	private int clickTimer = -1;
 	private boolean expanding = false;
+	private int scrollKnobPosition = 2;
 	
 	public NavigatorScreen()
 	{
@@ -52,8 +53,38 @@ public class NavigatorScreen extends GuiScreen
 	protected void mouseClicked(int x, int y, int button) throws IOException
 	{
 		super.mouseClicked(x, y, button);
-		if(button == 0 && activeItem != null && clickTimer == -1)
+		
+		if(button == 0 && clickTimer == -1 && activeItem != null)
 			expanding = true;
+	}
+	
+	@Override
+	protected void mouseClickMove(int mouseX, int mouseY,
+		int clickedMouseButton, long timeSinceLastClick)
+	{
+		if(clickedMouseButton == 0 && clickTimer == -1)
+		{
+			Rectangle area =
+				new Rectangle(width / 2 + 170, 60, 12, height - 103);
+			if(area.contains(mouseX, mouseY))
+			{
+				int maxScroll =
+					-navigatorDisplayList.size() / 3 * 20 + height - 120;
+				if(maxScroll > 0)
+					maxScroll = 0;
+				
+				if(maxScroll == 0)
+					scroll = 0;
+				else
+					scroll =
+						(int)((mouseY - 72) * (float)maxScroll / (height - 131));
+				
+				if(scroll > 0)
+					scroll = 0;
+				else if(scroll < maxScroll)
+					scroll = maxScroll;
+			}
+		}
 	}
 	
 	@Override
@@ -91,17 +122,23 @@ public class NavigatorScreen extends GuiScreen
 		if(clickTimer == -1)
 		{
 			scroll += Mouse.getDWheel() / 10;
+			
+			int maxScroll =
+				-navigatorDisplayList.size() / 3 * 20 + height - 120;
+			if(maxScroll > 0)
+				maxScroll = 0;
+			
 			if(scroll > 0)
 				scroll = 0;
+			else if(scroll < maxScroll)
+				scroll = maxScroll;
+			
+			if(maxScroll == 0)
+				scrollKnobPosition = 0;
 			else
-			{
-				int maxScroll =
-					-navigatorDisplayList.size() / 3 * 20 + height - 120;
-				if(maxScroll > 0)
-					maxScroll = 0;
-				if(scroll < maxScroll)
-					scroll = maxScroll;
-			}
+				scrollKnobPosition =
+					(int)((height - 131) * scroll / (float)maxScroll);
+			scrollKnobPosition += 2;
 		}
 		
 		searchBar.updateCursorCounter();
@@ -230,6 +267,45 @@ public class NavigatorScreen extends GuiScreen
 		}
 		glDisable(GL_SCISSOR_TEST);
 		
+		if(clickTimerNotRunning)
+		{
+			// scroll bar
+			Rectangle area =
+				new Rectangle(width / 2 + 170, 60, 12, height - 103);
+			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+			glBegin(GL_QUADS);
+			{
+				glVertex2d(area.x, area.y);
+				glVertex2d(area.x + area.width, area.y);
+				glVertex2d(area.x + area.width, area.y + area.height);
+				glVertex2d(area.x, area.y + area.height);
+			}
+			glEnd();
+			RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
+				+ area.height);
+			// scroll knob
+			area.x += 2;
+			area.y += scrollKnobPosition;
+			area.width = 8;
+			area.height = 24;
+			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+			glBegin(GL_QUADS);
+			{
+				glVertex2d(area.x, area.y);
+				glVertex2d(area.x + area.width, area.y);
+				glVertex2d(area.x + area.width, area.y + area.height);
+				glVertex2d(area.x, area.y + area.height);
+			}
+			glEnd();
+			RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
+				+ area.height);
+			RenderUtil.downShadow(area.x + 1, area.y + 8, area.x + area.width
+				- 1, area.y + 9);
+			RenderUtil.downShadow(area.x + 1, area.y + 12, area.x + area.width
+				- 1, area.y + 13);
+			RenderUtil.downShadow(area.x + 1, area.y + 16, area.x + area.width
+				- 1, area.y + 17);
+		}
 		// GL resets
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
