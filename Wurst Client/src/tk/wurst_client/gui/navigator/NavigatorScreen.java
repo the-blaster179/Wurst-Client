@@ -120,8 +120,10 @@ public class NavigatorScreen extends GuiScreen
 	{
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
+		boolean clickTimerNotRunning = clickTimer == -1;
+		
 		// search bar
-		if(clickTimer == -1)
+		if(clickTimerNotRunning)
 		{
 			Fonts.segoe22.drawString("Search: ", width / 2 - 150, 32, 0xffffff);
 			searchBar.drawTextBox();
@@ -136,7 +138,7 @@ public class NavigatorScreen extends GuiScreen
 		
 		// feature list
 		int x = width / 2 - 50;
-		if(clickTimer == -1)
+		if(clickTimerNotRunning)
 			activeItem = null;
 		RenderUtil.scissorBox(0, 59, width, height - 42);
 		glEnable(GL_SCISSOR_TEST);
@@ -170,7 +172,7 @@ public class NavigatorScreen extends GuiScreen
 			Rectangle area = new Rectangle(xi, y, 100, 16);
 			
 			// hovering
-			if(area.contains(mouseX, mouseY) && clickTimer == -1)
+			if(area.contains(mouseX, mouseY) && clickTimerNotRunning)
 			{
 				activeItem = item;
 				glColor4f(0.375F, 0.375F, 0.375F, 0.5F);
@@ -178,7 +180,7 @@ public class NavigatorScreen extends GuiScreen
 				glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
 			
 			// click animation
-			if(clickTimer != -1)
+			if(!clickTimerNotRunning)
 			{
 				if(item != activeItem)
 					continue;
@@ -207,7 +209,7 @@ public class NavigatorScreen extends GuiScreen
 				+ area.height);
 			
 			// text
-			if(clickTimer == -1)
+			if(clickTimerNotRunning)
 			{
 				glEnable(GL_TEXTURE_2D);
 				try
