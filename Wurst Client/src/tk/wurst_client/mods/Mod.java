@@ -86,6 +86,18 @@ public class Mod implements NavigatorItem
 		return tags;
 	}
 	
+	@Override
+	public final String getPrimaryAction()
+	{
+		return enabled ? "Disable" : "Enable";
+	}
+	
+	@Override
+	public final void doPrimaryAction()
+	{
+		toggle();
+	}
+	
 	public final Category getCategory()
 	{
 		return category;

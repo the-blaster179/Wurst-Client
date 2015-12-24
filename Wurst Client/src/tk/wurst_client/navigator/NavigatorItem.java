@@ -15,4 +15,8 @@ public interface NavigatorItem
 	public String getDescription();
 	
 	public String[] getTags();
+	
+	public String getPrimaryAction();
+	
+	public void doPrimaryAction();
 }

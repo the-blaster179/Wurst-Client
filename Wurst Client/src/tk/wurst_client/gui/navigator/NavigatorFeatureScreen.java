@@ -22,6 +22,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private NavigatorItem item;
 	private NavigatorScreen parent;
 	private String type;
+	private GuiButton primaryButton;
 	
 	public NavigatorFeatureScreen(NavigatorItem item, NavigatorScreen parent)
 	{
@@ -40,8 +41,14 @@ public class NavigatorFeatureScreen extends GuiScreen
 	@Override
 	public void initGui()
 	{
-		buttonList.add(new GuiButton(0, width / 2 - 152, height - 65, 100, 20,
-			"Enable"));
+		String primaryAction = item.getPrimaryAction();
+		primaryButton =
+			new GuiButton(0, width / 2 - 152, height - 65, 100, 20,
+				primaryAction);
+		if(primaryAction.isEmpty())
+			primaryButton.visible = false;
+		buttonList.add(primaryButton);
+		
 		buttonList.add(new GuiButton(1, width / 2 - 50, height - 65, 100, 20,
 			"Add Keybind"));
 		buttonList.add(new GuiButton(2, width / 2 + 52, height - 65, 100, 20,
@@ -57,7 +64,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		switch(button.id)
 		{
 			case 0:
-				
+				item.doPrimaryAction();
+				primaryButton.displayString = item.getPrimaryAction();
 				break;
 			case 1:
 				

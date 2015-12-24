@@ -86,17 +86,29 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
-	public String getDescription()
+	public final String getDescription()
 	{
 		return help;
 	}
 	
 	@Override
-	public String[] getTags()
+	public final String[] getTags()
 	{
 		return tags;
 	}
 
+	@Override
+	public String getPrimaryAction()
+	{
+		return "";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		
+	}
+	
 	public final void printHelp()
 	{
 		for(String line : help.split("\n"))
