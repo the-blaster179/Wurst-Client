@@ -162,11 +162,15 @@ public class NavigatorFeatureScreen extends GuiScreen
 			+ area.height);
 		glEnable(GL_SCISSOR_TEST);
 		
-		// text
+		// type
 		String text = "Type: " + type;
+		
+		// description
 		String description = item.getDescription();
 		if(!description.isEmpty())
 			text += "\n\nDescription:\n" + description;
+		
+		// slider values
 		ArrayList<BasicSlider> sliders = item.getSettings();
 		if(!sliders.isEmpty())
 		{
@@ -194,6 +198,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 				text += "\n";
 			}
 		}
+		
+		// text
 		drawString(Fonts.segoe15, text, area.x + 2, area.y, 0xffffff);
 		
 		// buttons
