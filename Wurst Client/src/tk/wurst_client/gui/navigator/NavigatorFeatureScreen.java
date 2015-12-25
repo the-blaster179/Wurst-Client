@@ -209,6 +209,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glEnd();
 		RenderUtil.boxShadow(scrollbar.x, scrollbar.y, scrollbar.x
 			+ scrollbar.width, scrollbar.y + scrollbar.height);
+		
 		// scroll knob
 		scrollbar.x += 2;
 		scrollbar.y += scrollKnobPosition;
