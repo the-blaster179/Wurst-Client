@@ -15,6 +15,7 @@ import tk.wurst_client.commands.Cmd;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.mods.Mod;
 import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.utils.MiscUtils;
 
 public class NavigatorFeatureScreen extends GuiScreen
 {
@@ -51,8 +52,12 @@ public class NavigatorFeatureScreen extends GuiScreen
 		
 		buttonList.add(new GuiButton(1, width / 2 - 50, height - 65, 100, 20,
 			"Add Keybind"));
-		buttonList.add(new GuiButton(2, width / 2 + 52, height - 65, 100, 20,
-			"Tutorial"));
+		
+		GuiButton tutorialButton = new GuiButton(2, width / 2 + 52, height - 65, 100, 20,
+			"Tutorial");
+		buttonList.add(tutorialButton);
+		if(item.getTutorialLink().isEmpty())
+			tutorialButton.visible = false;
 	}
 	
 	@Override
@@ -71,7 +76,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				
 				break;
 			case 2:
-				
+				MiscUtils.openLink(item.getTutorialLink());
 				break;
 		}
 	}

@@ -19,4 +19,6 @@ public interface NavigatorItem
 	public String getPrimaryAction();
 	
 	public void doPrimaryAction();
+	
+	public String getTutorialLink();
 }
