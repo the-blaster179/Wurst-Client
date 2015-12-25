@@ -26,6 +26,9 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private NavigatorScreen parent;
 	private String type;
 	private GuiButton primaryButton;
+	private int scrollKnobPosition = 2;
+	private boolean scrolling;
+	private int textHeight;
 	
 	public NavigatorFeatureScreen(NavigatorItem item, NavigatorScreen parent)
 	{
@@ -94,12 +97,40 @@ public class NavigatorFeatureScreen extends GuiScreen
 	protected void mouseClicked(int x, int y, int button) throws IOException
 	{
 		super.mouseClicked(x, y, button);
+		
+		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
+			scrolling = true;
+	}
+	
+	@Override
+	protected void mouseClickMove(int mouseX, int mouseY,
+		int clickedMouseButton, long timeSinceLastClick)
+	{
+		if(scrolling && clickedMouseButton == 0)
+		{
+			int maxScroll = -textHeight + height - 146;
+			if(maxScroll > 0)
+				maxScroll = 0;
+			
+			if(maxScroll == 0)
+				scroll = 0;
+			else
+				scroll =
+					(int)((mouseY - 72) * (float)maxScroll / (height - 131));
+			
+			if(scroll > 0)
+				scroll = 0;
+			else if(scroll < maxScroll)
+				scroll = maxScroll;
+		}
 	}
 	
 	@Override
 	public void mouseReleased(int x, int y, int button)
 	{
 		super.mouseReleased(x, y, button);
+		
+		scrolling = false;
 	}
 	
 	@Override
@@ -116,16 +147,22 @@ public class NavigatorFeatureScreen extends GuiScreen
 	public void updateScreen()
 	{
 		scroll += Mouse.getDWheel() / 10;
+		
+		int maxScroll = -textHeight + height - 146;
+		if(maxScroll > 0)
+			maxScroll = 0;
+		
 		if(scroll > 0)
 			scroll = 0;
+		else if(scroll < maxScroll)
+			scroll = maxScroll;
+		
+		if(maxScroll == 0)
+			scrollKnobPosition = 0;
 		else
-		{
-			int maxScroll = 0;
-			if(maxScroll > 0)
-				maxScroll = 0;
-			if(scroll < maxScroll)
-				scroll = maxScroll;
-		}
+			scrollKnobPosition =
+				(int)((height - 131) * scroll / (float)maxScroll);
+		scrollKnobPosition += 2;
 	}
 	
 	@Override
@@ -156,6 +193,45 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glEnd();
 		RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
 			+ area.height);
+		
+		// scroll bar
+		Rectangle scrollbar =
+			new Rectangle(width / 2 + 170, 60, 12, height - 103);
+		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+		glBegin(GL_QUADS);
+		{
+			glVertex2d(scrollbar.x, scrollbar.y);
+			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y);
+			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y
+				+ scrollbar.height);
+			glVertex2d(scrollbar.x, scrollbar.y + scrollbar.height);
+		}
+		glEnd();
+		RenderUtil.boxShadow(scrollbar.x, scrollbar.y, scrollbar.x
+			+ scrollbar.width, scrollbar.y + scrollbar.height);
+		// scroll knob
+		scrollbar.x += 2;
+		scrollbar.y += scrollKnobPosition;
+		scrollbar.width = 8;
+		scrollbar.height = 24;
+		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+		glBegin(GL_QUADS);
+		{
+			glVertex2d(scrollbar.x, scrollbar.y);
+			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y);
+			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y
+				+ scrollbar.height);
+			glVertex2d(scrollbar.x, scrollbar.y + scrollbar.height);
+		}
+		glEnd();
+		RenderUtil.boxShadow(scrollbar.x, scrollbar.y, scrollbar.x
+			+ scrollbar.width, scrollbar.y + scrollbar.height);
+		RenderUtil.downShadow(scrollbar.x + 1, scrollbar.y + 8, scrollbar.x
+			+ scrollbar.width - 1, scrollbar.y + 9);
+		RenderUtil.downShadow(scrollbar.x + 1, scrollbar.y + 12, scrollbar.x
+			+ scrollbar.width - 1, scrollbar.y + 13);
+		RenderUtil.downShadow(scrollbar.x + 1, scrollbar.y + 16, scrollbar.x
+			+ scrollbar.width - 1, scrollbar.y + 17);
 		
 		// scissor box
 		RenderUtil.scissorBox(area.x, area.y, area.x + area.width, area.y
@@ -196,7 +272,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 						break;
 				}
 				text += "\n";
-				int y = area.y + Fonts.segoe15.getStringHeight(text);
+				int y = area.y + scroll + Fonts.segoe15.getStringHeight(text);
 				
 				// rail
 				glColor4f(0.0625F, 0.0625F, 0.0625F, 0.25F);
@@ -232,7 +308,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		}
 		
 		// text
-		drawString(Fonts.segoe15, text, area.x + 2, area.y, 0xffffff);
+		drawString(Fonts.segoe15, text, area.x + 2, area.y + scroll, 0xffffff);
+		textHeight = Fonts.segoe15.getStringHeight(text);
 		
 		// buttons
 		for(int i = 0; i < buttonList.size(); ++i)
