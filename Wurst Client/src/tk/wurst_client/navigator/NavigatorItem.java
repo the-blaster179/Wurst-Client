@@ -20,5 +20,5 @@ public interface NavigatorItem
 	
 	public void doPrimaryAction();
 	
-	public String getTutorialLink();
+	public String getTutorialPage();
 }

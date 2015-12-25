@@ -56,7 +56,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 		GuiButton tutorialButton =
 			new GuiButton(2, width / 2 + 52, height - 65, 100, 20, "Tutorial");
 		buttonList.add(tutorialButton);
-		if(item.getTutorialLink().isEmpty())
+		if(item.getTutorialPage().isEmpty())
 			tutorialButton.visible = false;
 	}
 	
@@ -76,7 +76,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				
 				break;
 			case 2:
-				MiscUtils.openLink(item.getTutorialLink());
+				MiscUtils.openLink("https://www.wurst-client.tk/wiki/" + item.getTutorialPage());
 				break;
 		}
 	}
