@@ -26,6 +26,7 @@ public class NavigatorScreen extends GuiScreen
 	private int clickTimer = -1;
 	private boolean expanding = false;
 	private int scrollKnobPosition = 2;
+	private boolean scrolling;
 	
 	public NavigatorScreen()
 	{
@@ -56,34 +57,31 @@ public class NavigatorScreen extends GuiScreen
 		
 		if(button == 0 && clickTimer == -1 && activeItem != null)
 			expanding = true;
+		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
+			scrolling = true;
 	}
 	
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY,
 		int clickedMouseButton, long timeSinceLastClick)
 	{
-		if(clickedMouseButton == 0 && clickTimer == -1)
+		if(scrolling && clickedMouseButton == 0 && clickTimer == -1)
 		{
-			Rectangle area =
-				new Rectangle(width / 2 + 170, 60, 12, height - 103);
-			if(area.contains(mouseX, mouseY))
-			{
-				int maxScroll =
-					-navigatorDisplayList.size() / 3 * 20 + height - 120;
-				if(maxScroll > 0)
-					maxScroll = 0;
-				
-				if(maxScroll == 0)
-					scroll = 0;
-				else
-					scroll =
-						(int)((mouseY - 72) * (float)maxScroll / (height - 131));
-				
-				if(scroll > 0)
-					scroll = 0;
-				else if(scroll < maxScroll)
-					scroll = maxScroll;
-			}
+			int maxScroll =
+				-navigatorDisplayList.size() / 3 * 20 + height - 120;
+			if(maxScroll > 0)
+				maxScroll = 0;
+			
+			if(maxScroll == 0)
+				scroll = 0;
+			else
+				scroll =
+					(int)((mouseY - 72) * (float)maxScroll / (height - 131));
+			
+			if(scroll > 0)
+				scroll = 0;
+			else if(scroll < maxScroll)
+				scroll = maxScroll;
 		}
 	}
 	
@@ -91,6 +89,8 @@ public class NavigatorScreen extends GuiScreen
 	public void mouseReleased(int x, int y, int button)
 	{
 		super.mouseReleased(x, y, button);
+		
+		scrolling = false;
 	}
 	
 	@Override
