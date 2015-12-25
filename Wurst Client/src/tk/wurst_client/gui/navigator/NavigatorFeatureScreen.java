@@ -53,8 +53,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		buttonList.add(new GuiButton(1, width / 2 - 50, height - 65, 100, 20,
 			"Add Keybind"));
 		
-		GuiButton tutorialButton = new GuiButton(2, width / 2 + 52, height - 65, 100, 20,
-			"Tutorial");
+		GuiButton tutorialButton =
+			new GuiButton(2, width / 2 + 52, height - 65, 100, 20, "Tutorial");
 		buttonList.add(tutorialButton);
 		if(item.getTutorialLink().isEmpty())
 			tutorialButton.visible = false;
@@ -160,8 +160,10 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glEnable(GL_SCISSOR_TEST);
 		
 		// text
-		String text = "Type: " + type + "\n";
-		text += "\nDescription:\n" + item.getDescription();
+		String text = "Type: " + type;
+		String description = item.getDescription();
+		if(!description.isEmpty())
+			text += "\n\nDescription:\n" + description;
 		drawString(Fonts.segoe15, text, area.x + 2, area.y, 0xffffff);
 		
 		// buttons
