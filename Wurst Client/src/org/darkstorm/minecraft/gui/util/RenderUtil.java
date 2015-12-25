@@ -225,6 +225,51 @@ public class RenderUtil
 		glEnd();
 	}
 	
+	public static void invertedBoxShadow(double x1, double y1, double x2, double y2)
+	{
+		// outline
+		RenderUtil.setColor(outline);
+		glLineWidth(1f);
+		glBegin(GL_LINE_LOOP);
+		{
+			glVertex2d(x1 - 0.1, y1 - 0.1);
+			glVertex2d(x2 + 0.1, y1 - 0.1);
+			glVertex2d(x2 + 0.1, y2 + 0.1);
+			glVertex2d(x1 - 0.1, y2 + 0.1);
+		}
+		glEnd();
+		
+		// top left
+		glBegin(GL_POLYGON);
+		{
+			RenderUtil.setColor(shadow1);
+			glVertex2d(x1, y1);
+			glVertex2d(x2, y1);
+			RenderUtil.setColor(shadow2);
+			glVertex2d(x2 - 1d, y1 + 1d);
+			glVertex2d(x1 + 1d, y1 + 1d);
+			glVertex2d(x1 + 1d, y2 - 1d);
+			RenderUtil.setColor(shadow1);
+			glVertex2d(x1, y2);
+		}
+		glEnd();
+		
+		// bottom right
+		glBegin(GL_POLYGON);
+		{
+			RenderUtil.setColor(shadow1);
+			glVertex2d(x2, y2);
+			glVertex2d(x2, y1);
+			RenderUtil.setColor(shadow2);
+			glVertex2d(x2 - 1d, y1 + 1d);
+			glVertex2d(x2 - 1d, y2 - 1d);
+			glVertex2d(x1 + 1d, y2 - 1d);
+			RenderUtil.setColor(shadow1);
+			glVertex2d(x1, y2);
+		}
+		glEnd();
+	}
+
 	public static void downShadow(double x1, double y1, double x2, double y2)
 	{
 		// outline

@@ -275,7 +275,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				int y = area.y + scroll + Fonts.segoe15.getStringHeight(text);
 				
 				// rail
-				glColor4f(0.0625F, 0.0625F, 0.0625F, 0.25F);
+				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
 				glBegin(GL_QUADS);
 				{
 					glVertex2d(area.x + 2, y + 4);
@@ -284,6 +284,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 					glVertex2d(area.x + 2, y + 8);
 				}
 				glEnd();
+				RenderUtil.invertedBoxShadow(area.x + 2, y + 4, area.x
+					+ area.width - 2, y + 8);
 				
 				double sliderPercentage =
 					(slider.getValue() - slider.getMinimumValue())
@@ -292,7 +294,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				
 				// knob
 				glColor4f(0.0f + (float)sliderPercentage,
-					1.0f - (float)sliderPercentage, 0.0f, 0.5f);
+					1.0f - (float)sliderPercentage, 0.0f, 0.75f);
 				glBegin(GL_QUADS);
 				{
 					glVertex2d(x + 1, y + 2);
@@ -301,8 +303,6 @@ public class NavigatorFeatureScreen extends GuiScreen
 					glVertex2d(x + 1, y + 10);
 				}
 				glEnd();
-				
-				// knob shadow
 				RenderUtil.boxShadow(x + 1, y + 2, x + 9, y + 10);
 			}
 		}
