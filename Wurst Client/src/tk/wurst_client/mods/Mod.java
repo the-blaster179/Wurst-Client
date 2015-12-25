@@ -222,7 +222,8 @@ public class Mod implements NavigatorItem
 		}
 	}
 	
-	public final ArrayList<BasicSlider> getSliders()
+	@Override
+	public final ArrayList<BasicSlider> getSettings()
 	{
 		return sliders;
 	}

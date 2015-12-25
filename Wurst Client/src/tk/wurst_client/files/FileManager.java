@@ -344,10 +344,10 @@ public class FileManager
 			JsonObject json = new JsonObject();
 			for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
 			{
-				if(mod.getSliders().isEmpty())
+				if(mod.getSettings().isEmpty())
 					continue;
 				JsonObject jsonModule = new JsonObject();
-				for(BasicSlider slider : mod.getSliders())
+				for(BasicSlider slider : mod.getSettings())
 					jsonModule.addProperty(slider.getText(),
 						(double)(Math.round(slider.getValue()
 							/ slider.getIncrement()) * 1000000 * (long)(slider
@@ -380,7 +380,7 @@ public class FileManager
 				if(mod != null)
 				{
 					JsonObject jsonModule = (JsonObject)entry.getValue();
-					for(BasicSlider slider : mod.getSliders())
+					for(BasicSlider slider : mod.getSettings())
 						try
 						{
 							slider.setValue(jsonModule.get(slider.getText())

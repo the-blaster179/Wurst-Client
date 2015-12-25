@@ -4,10 +4,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Mouse;
 
@@ -76,7 +78,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 				
 				break;
 			case 2:
-				MiscUtils.openLink("https://www.wurst-client.tk/wiki/" + item.getTutorialPage());
+				MiscUtils.openLink("https://www.wurst-client.tk/wiki/"
+					+ item.getTutorialPage());
 				break;
 		}
 	}
@@ -164,6 +167,33 @@ public class NavigatorFeatureScreen extends GuiScreen
 		String description = item.getDescription();
 		if(!description.isEmpty())
 			text += "\n\nDescription:\n" + description;
+		ArrayList<BasicSlider> sliders = item.getSettings();
+		if(!sliders.isEmpty())
+		{
+			text += "\n\nSettings:";
+			for(BasicSlider slider : sliders)
+			{
+				text += "\n" + slider.getText() + ": ";
+				switch(slider.getValueDisplay())
+				{
+					case DECIMAL:
+						text += slider.getValue();
+						break;
+					case DEGREES:
+						text += (int)slider.getValue() + "°";
+						break;
+					case INTEGER:
+						text += (int)slider.getValue();
+						break;
+					case NONE:
+						break;
+					case PERCENTAGE:
+						text += (slider.getValue() * 100D) + "%";
+						break;
+				}
+				text += "\n";
+			}
+		}
 		drawString(Fonts.segoe15, text, area.x + 2, area.y, 0xffffff);
 		
 		// buttons

@@ -10,6 +10,9 @@ package tk.wurst_client.commands;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+
+import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
@@ -98,6 +101,12 @@ public abstract class Cmd implements NavigatorItem
 	public final String[] getTags()
 	{
 		return tags;
+	}
+	
+	@Override
+	public final ArrayList<BasicSlider> getSettings()
+	{
+		return new ArrayList<BasicSlider>();
 	}
 
 	@Override
