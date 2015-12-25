@@ -170,7 +170,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 		if(!description.isEmpty())
 			text += "\n\nDescription:\n" + description;
 		
-		// slider values
+		// sliders
 		ArrayList<BasicSlider> sliders = item.getSettings();
 		if(!sliders.isEmpty())
 		{
@@ -196,6 +196,38 @@ public class NavigatorFeatureScreen extends GuiScreen
 						break;
 				}
 				text += "\n";
+				int y = area.y + Fonts.segoe15.getStringHeight(text);
+				
+				// rail
+				glColor4f(0.0625F, 0.0625F, 0.0625F, 0.25F);
+				glBegin(GL_QUADS);
+				{
+					glVertex2d(area.x + 2, y + 4);
+					glVertex2d(area.x + area.width - 2, y + 4);
+					glVertex2d(area.x + area.width - 2, y + 8);
+					glVertex2d(area.x + 2, y + 8);
+				}
+				glEnd();
+				
+				double sliderPercentage =
+					(slider.getValue() - slider.getMinimumValue())
+						/ (slider.getMaximumValue() - slider.getMinimumValue());
+				int x = area.x + (int)((area.width - 10) * sliderPercentage);
+				
+				// knob
+				glColor4f(0.0f + (float)sliderPercentage,
+					1.0f - (float)sliderPercentage, 0.0f, 0.5f);
+				glBegin(GL_QUADS);
+				{
+					glVertex2d(x + 1, y + 2);
+					glVertex2d(x + 9, y + 2);
+					glVertex2d(x + 9, y + 10);
+					glVertex2d(x + 1, y + 10);
+				}
+				glEnd();
+				
+				// knob shadow
+				RenderUtil.boxShadow(x + 1, y + 2, x + 9, y + 10);
 			}
 		}
 		
