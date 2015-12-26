@@ -11,6 +11,7 @@ package tk.wurst_client.commands;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
@@ -29,6 +30,7 @@ public abstract class Cmd implements NavigatorItem
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
 	private String[] tags = getClass().getAnnotation(Info.class).tags();
 	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
+	protected HashMap<String, String> possibleKeybinds = new HashMap<String, String>();
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
@@ -107,6 +109,12 @@ public abstract class Cmd implements NavigatorItem
 	public final ArrayList<BasicSlider> getSettings()
 	{
 		return new ArrayList<BasicSlider>();
+	}
+	
+	@Override
+	public final HashMap<String, String> getPossibleKeybinds()
+	{
+		return possibleKeybinds;
 	}
 
 	@Override

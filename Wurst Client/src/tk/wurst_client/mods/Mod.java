@@ -11,6 +11,7 @@ package tk.wurst_client.mods;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
 
@@ -28,13 +29,23 @@ public class Mod implements NavigatorItem
 	private final Category category = getClass().getAnnotation(Info.class)
 		.category();
 	private final String[] tags = getClass().getAnnotation(Info.class).tags();
-	private final String tutorial = getClass().getAnnotation(Info.class).tutorial();
+	private final String tutorial = getClass().getAnnotation(Info.class)
+		.tutorial();
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
 	protected ArrayList<BasicSlider> sliders = new ArrayList<BasicSlider>();
+	protected HashMap<String, String> possibleKeybinds =
+		new HashMap<String, String>();
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
+	
+	{
+		String dotT = ".t " + name.toLowerCase();
+		possibleKeybinds.put(dotT, "Toggle " + name);
+		possibleKeybinds.put(dotT + " on", "Enable " + name);
+		possibleKeybinds.put(dotT + " off", "Disable " + name);
+	}
 	
 	public enum Category
 	{
@@ -87,6 +98,18 @@ public class Mod implements NavigatorItem
 	public final String[] getTags()
 	{
 		return tags;
+	}
+	
+	@Override
+	public final ArrayList<BasicSlider> getSettings()
+	{
+		return sliders;
+	}
+	
+	@Override
+	public final HashMap<String, String> getPossibleKeybinds()
+	{
+		return possibleKeybinds;
 	}
 	
 	@Override
@@ -220,12 +243,6 @@ public class Mod implements NavigatorItem
 						""));
 			}
 		}
-	}
-	
-	@Override
-	public final ArrayList<BasicSlider> getSettings()
-	{
-		return sliders;
 	}
 	
 	public final void setSliders(ArrayList<BasicSlider> newSliders)
