@@ -311,7 +311,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 					.getMaximumValue() - slider.getMinimumValue()));
 			
 			// x
-			sliderData.x = area.x + (int)((area.width - 10) * sliderData.percentage);
+			sliderData.x =
+				area.x + (int)((area.width - 10) * sliderData.percentage);
 		}
 	}
 	
@@ -443,8 +444,43 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glDisable(GL_SCISSOR_TEST);
 		
 		// buttons
-		for(int i = 0; i < buttonList.size(); ++i)
-			((GuiButton)buttonList.get(i)).drawButton(mc, mouseX, mouseY);
+		int buttons =
+			(!item.getPrimaryAction().isEmpty() ? 1 : 0)
+				+ (!item.getTutorialPage().isEmpty() ? 1 : 0);
+		if(buttons > 0)
+		{
+			boolean oneButton = buttons == 1;
+			for(int i = 0; i < buttons; i++)
+			{
+				boolean first = i == 0;
+				Rectangle button =
+					new Rectangle(width / 2 + (first ? -151 : 2), height - 64,
+						oneButton ? 302 : 149, 18);
+				
+				if(button.contains(mouseX, mouseY))
+					glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
+				else
+					glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+				
+				int x2 = button.x + button.width;
+				int y2 = button.y + button.height;
+				
+				glDisable(GL_TEXTURE_2D);
+				glBegin(GL_QUADS);
+				{
+					glVertex2d(button.x, button.y);
+					glVertex2d(x2, button.y);
+					glVertex2d(x2, y2);
+					glVertex2d(button.x, y2);
+				}
+				glEnd();
+				RenderUtil.boxShadow(button.x, button.y, x2, y2);
+				
+				drawCenteredString(Fonts.segoe18,
+					first ? item.getPrimaryAction() : "Tutorial", oneButton
+						? width / 2 : button.x + 74, button.y + 2, 0xffffff);
+			}
+		}
 		
 		// GL resets
 		glEnable(GL_CULL_FACE);
