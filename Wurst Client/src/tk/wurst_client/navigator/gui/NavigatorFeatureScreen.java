@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL11.*;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,6 +15,7 @@ import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Mouse;
 
+import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.mods.Mod;
@@ -127,6 +130,28 @@ public class NavigatorFeatureScreen extends GuiScreen
 				int y = area.y + Fonts.segoe15.getStringHeight(text);
 				
 				sliderDatas[i] = new SliderData(x, y, percentage, value);
+			}
+		}
+		
+		// keybinds
+		HashMap<String, String> possibleKeybinds = item.getPossibleKeybinds();
+		if(!possibleKeybinds.isEmpty())
+		{
+			boolean missingKeybindsHeading = true;
+			for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
+				.entrySet())
+			{
+				String keybindDescription =
+					possibleKeybinds.get(entry.getValue());
+				if(keybindDescription != null)
+				{
+					if(missingKeybindsHeading)
+					{
+						text += "\n\nKeybinds:";
+						missingKeybindsHeading = false;
+					}
+					text += "\n" + entry.getKey() + ": " + keybindDescription;
+				}
 			}
 		}
 		
