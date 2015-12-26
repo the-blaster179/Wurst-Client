@@ -9,9 +9,9 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
-import tk.wurst_client.gui.navigator.NavigatorScreen;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.gui.NavigatorScreen;
 
 @Info(category = Category.HIDDEN, description = "", name = "Navigator")
 public class NavigatorMod extends Mod

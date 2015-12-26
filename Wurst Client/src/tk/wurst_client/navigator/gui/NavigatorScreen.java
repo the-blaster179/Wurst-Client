@@ -1,4 +1,4 @@
-package tk.wurst_client.gui.navigator;
+package tk.wurst_client.navigator.gui;
 
 import static org.lwjgl.opengl.GL11.*;
 
