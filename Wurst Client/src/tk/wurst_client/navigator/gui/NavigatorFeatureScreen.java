@@ -52,18 +52,21 @@ public class NavigatorFeatureScreen extends GuiScreen
 	{
 		// primary button
 		String primaryAction = item.getPrimaryAction();
-		if(!primaryAction.isEmpty())
+		boolean hasPrimaryAction = !primaryAction.isEmpty();
+		boolean hasTutorial = !item.getTutorialPage().isEmpty();
+		if(hasPrimaryAction)
 		{
 			primaryButton =
-				new GuiButton(0, width / 2 - 152, height - 65, 100, 20,
-					primaryAction);
+				new GuiButton(0, width / 2 - 151, height - 65, hasTutorial
+					? 149 : 302, 18, primaryAction);
 			buttonList.add(primaryButton);
 		}
 		
 		// tutorial button
-		if(item.getTutorialPage().isEmpty())
-			buttonList.add(new GuiButton(1, width / 2 + 52, height - 65, 100,
-				20, "Tutorial"));
+		if(hasTutorial)
+			buttonList.add(new GuiButton(1, width / 2
+				+ (hasPrimaryAction ? 2 : -151), height - 65, hasPrimaryAction
+				? 149 : 302, 20, "Tutorial"));
 		
 		// type
 		text = "Type: " + type;
@@ -438,37 +441,35 @@ public class NavigatorFeatureScreen extends GuiScreen
 		// buttons
 		if(!buttonList.isEmpty())
 		{
-			int buttonListSize = buttonList.size();
-			boolean singleButton = buttonListSize == 1;
-			for(int i = 0; i < buttonListSize; i++)
+			for(int i = 0; i < buttonList.size(); i++)
 			{
-				boolean first = i == 0;
-				Rectangle button =
-					new Rectangle(width / 2 + (first ? -151 : 2), height - 64,
-						singleButton ? 302 : 149, 18);
+				GuiButton button = (GuiButton)buttonList.get(i);
+				Rectangle buttonArea =
+					new Rectangle(button.xPosition, button.yPosition,
+						button.getButtonWidth(), 18);
 				
-				if(button.contains(mouseX, mouseY))
+				if(buttonArea.contains(mouseX, mouseY))
 					glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
 				else
 					glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
 				
-				int x2 = button.x + button.width;
-				int y2 = button.y + button.height;
+				int x2 = buttonArea.x + buttonArea.width;
+				int y2 = buttonArea.y + buttonArea.height;
 				
 				glDisable(GL_TEXTURE_2D);
 				glBegin(GL_QUADS);
 				{
-					glVertex2d(button.x, button.y);
-					glVertex2d(x2, button.y);
+					glVertex2d(buttonArea.x, buttonArea.y);
+					glVertex2d(x2, buttonArea.y);
 					glVertex2d(x2, y2);
-					glVertex2d(button.x, y2);
+					glVertex2d(buttonArea.x, y2);
 				}
 				glEnd();
-				RenderUtil.boxShadow(button.x, button.y, x2, y2);
+				RenderUtil.boxShadow(buttonArea.x, buttonArea.y, x2, y2);
 				
-				drawCenteredString(Fonts.segoe18,
-					first ? item.getPrimaryAction() : "Tutorial", singleButton
-						? width / 2 : button.x + 74, button.y + 2, 0xffffff);
+				drawCenteredString(Fonts.segoe18, button.displayString,
+					buttonArea.x + buttonArea.width / 2, buttonArea.y + 2,
+					0xffffff);
 			}
 		}
 		
