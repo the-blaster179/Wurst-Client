@@ -386,7 +386,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 		
 		// scissor box
 		RenderUtil.scissorBox(area.x, area.y, area.x + area.width, area.y
-			+ area.height);
+			+ area.height - (buttonList.isEmpty() ? 0 : 24));
 		glEnable(GL_SCISSOR_TEST);
 		
 		// sliders
@@ -439,12 +439,12 @@ public class NavigatorFeatureScreen extends GuiScreen
 		// text
 		drawString(Fonts.segoe15, text, area.x + 2, area.y + scroll, 0xffffff);
 		
+		// scissor box
+		glDisable(GL_SCISSOR_TEST);
+		
 		// buttons
 		for(int i = 0; i < buttonList.size(); ++i)
 			((GuiButton)buttonList.get(i)).drawButton(mc, mouseX, mouseY);
-		
-		// scissor box
-		glDisable(GL_SCISSOR_TEST);
 		
 		// GL resets
 		glEnable(GL_CULL_FACE);
