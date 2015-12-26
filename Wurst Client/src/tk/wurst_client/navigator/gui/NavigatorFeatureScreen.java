@@ -29,6 +29,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
 	private int textHeight;
+	private String text;
+	private SliderData[] sliderDatas = {};
 	
 	public NavigatorFeatureScreen(NavigatorItem item, NavigatorScreen parent)
 	{
@@ -47,6 +49,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	@Override
 	public void initGui()
 	{
+		// primary button
 		String primaryAction = item.getPrimaryAction();
 		primaryButton =
 			new GuiButton(0, width / 2 - 152, height - 65, 100, 20,
@@ -55,14 +58,71 @@ public class NavigatorFeatureScreen extends GuiScreen
 			primaryButton.visible = false;
 		buttonList.add(primaryButton);
 		
+		// keybind button
 		buttonList.add(new GuiButton(1, width / 2 - 50, height - 65, 100, 20,
 			"Add Keybind"));
 		
+		// tutorial button
 		GuiButton tutorialButton =
 			new GuiButton(2, width / 2 + 52, height - 65, 100, 20, "Tutorial");
 		buttonList.add(tutorialButton);
 		if(item.getTutorialPage().isEmpty())
 			tutorialButton.visible = false;
+		
+		// type
+		text = "Type: " + type;
+		
+		// description
+		String description = item.getDescription();
+		if(!description.isEmpty())
+			text += "\n\nDescription:\n" + description;
+		
+		// area
+		Rectangle area =
+			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
+		
+		// sliders
+		ArrayList<BasicSlider> sliders = item.getSettings();
+		if(!sliders.isEmpty())
+		{
+			// text
+			text += "\n\nSettings:";
+			sliderDatas = new SliderData[sliders.size()];
+			for(int i = 0; i < sliders.size(); i++)
+			{
+				BasicSlider slider = sliders.get(i);
+				text += "\n" + slider.getText() + ": ";
+				switch(slider.getValueDisplay())
+				{
+					case DECIMAL:
+						text += slider.getValue();
+						break;
+					case DEGREES:
+						text += (int)slider.getValue() + "°";
+						break;
+					case INTEGER:
+						text += (int)slider.getValue();
+						break;
+					case NONE:
+						break;
+					case PERCENTAGE:
+						text += (slider.getValue() * 100D) + "%";
+						break;
+				}
+				text += "\n";
+				
+				// data
+				int y = area.y + Fonts.segoe15.getStringHeight(text);
+				float value =
+					(float)((slider.getValue() - slider.getMinimumValue()) / (slider
+						.getMaximumValue() - slider.getMinimumValue()));
+				int x = area.x + (int)((area.width - 10) * value);
+				sliderDatas[i] = new SliderData(x, y, value);
+			}
+		}
+		
+		// text height
+		textHeight = Fonts.segoe15.getStringHeight(text);
 	}
 	
 	@Override
@@ -146,6 +206,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	@Override
 	public void updateScreen()
 	{
+		// scroll
 		scroll += Mouse.getDWheel() / 10;
 		
 		int maxScroll = -textHeight + height - 146;
@@ -163,6 +224,22 @@ public class NavigatorFeatureScreen extends GuiScreen
 			scrollKnobPosition =
 				(int)((height - 131) * scroll / (float)maxScroll);
 		scrollKnobPosition += 2;
+		
+		// area
+		Rectangle area =
+			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
+		
+		// slider data
+		ArrayList<BasicSlider> sliders = item.getSettings();
+		for(int i = 0; i < sliders.size(); i++)
+		{
+			BasicSlider slider = sliders.get(i);
+			float value =
+				(float)((slider.getValue() - slider.getMinimumValue()) / (slider
+					.getMaximumValue() - slider.getMinimumValue()));
+			sliderDatas[i].x = area.x + (int)((area.width - 10) * value);
+			sliderDatas[i].value = value;
+		}
 	}
 	
 	@Override
@@ -239,78 +316,46 @@ public class NavigatorFeatureScreen extends GuiScreen
 			+ area.height);
 		glEnable(GL_SCISSOR_TEST);
 		
-		// type
-		String text = "Type: " + type;
-		
-		// description
-		String description = item.getDescription();
-		if(!description.isEmpty())
-			text += "\n\nDescription:\n" + description;
-		
 		// sliders
-		ArrayList<BasicSlider> sliders = item.getSettings();
-		if(!sliders.isEmpty())
+		for(int i = 0; i < sliderDatas.length; i++)
 		{
-			text += "\n\nSettings:";
-			for(BasicSlider slider : sliders)
+			SliderData sliderData = sliderDatas[i];
+			
+			// rail
+			int x1 = area.x + 2;
+			int x2 = x1 + area.width - 4;
+			int y1 = sliderData.y + scroll + 4;
+			int y2 = y1 + 4;
+			glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+			glBegin(GL_QUADS);
 			{
-				text += "\n" + slider.getText() + ": ";
-				switch(slider.getValueDisplay())
-				{
-					case DECIMAL:
-						text += slider.getValue();
-						break;
-					case DEGREES:
-						text += (int)slider.getValue() + "°";
-						break;
-					case INTEGER:
-						text += (int)slider.getValue();
-						break;
-					case NONE:
-						break;
-					case PERCENTAGE:
-						text += (slider.getValue() * 100D) + "%";
-						break;
-				}
-				text += "\n";
-				int y = area.y + scroll + Fonts.segoe15.getStringHeight(text);
-				
-				// rail
-				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
-				glBegin(GL_QUADS);
-				{
-					glVertex2d(area.x + 2, y + 4);
-					glVertex2d(area.x + area.width - 2, y + 4);
-					glVertex2d(area.x + area.width - 2, y + 8);
-					glVertex2d(area.x + 2, y + 8);
-				}
-				glEnd();
-				RenderUtil.invertedBoxShadow(area.x + 2, y + 4, area.x
-					+ area.width - 2, y + 8);
-				
-				double sliderPercentage =
-					(slider.getValue() - slider.getMinimumValue())
-						/ (slider.getMaximumValue() - slider.getMinimumValue());
-				int x = area.x + (int)((area.width - 10) * sliderPercentage);
-				
-				// knob
-				glColor4f(0.0f + (float)sliderPercentage,
-					1.0f - (float)sliderPercentage, 0.0f, 0.75f);
-				glBegin(GL_QUADS);
-				{
-					glVertex2d(x + 1, y + 2);
-					glVertex2d(x + 9, y + 2);
-					glVertex2d(x + 9, y + 10);
-					glVertex2d(x + 1, y + 10);
-				}
-				glEnd();
-				RenderUtil.boxShadow(x + 1, y + 2, x + 9, y + 10);
+				glVertex2d(x1, y1);
+				glVertex2d(x2, y1);
+				glVertex2d(x2, y2);
+				glVertex2d(x1, y2);
 			}
+			glEnd();
+			RenderUtil.invertedBoxShadow(x1, y1, x2, y2);
+			
+			// knob
+			x1 = sliderData.x + 1;
+			x2 = x1 + 8;
+			y1 -= 2;
+			y2 += 2;
+			glColor4f(sliderData.value, 1F - sliderData.value, 0F, 0.75F);
+			glBegin(GL_QUADS);
+			{
+				glVertex2d(x1, y1);
+				glVertex2d(x2, y1);
+				glVertex2d(x2, y2);
+				glVertex2d(x1, y2);
+			}
+			glEnd();
+			RenderUtil.boxShadow(x1, y1, x2, y2);
 		}
 		
 		// text
 		drawString(Fonts.segoe15, text, area.x + 2, area.y + scroll, 0xffffff);
-		textHeight = Fonts.segoe15.getStringHeight(text);
 		
 		// buttons
 		for(int i = 0; i < buttonList.size(); ++i)
@@ -323,5 +368,19 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
+	}
+	
+	private class SliderData
+	{
+		public int x;
+		public int y;
+		public float value;
+		
+		public SliderData(int x, int y, float value)
+		{
+			this.x = x;
+			this.y = y;
+			this.value = value;
+		}
 	}
 }
