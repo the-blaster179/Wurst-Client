@@ -52,19 +52,18 @@ public class NavigatorFeatureScreen extends GuiScreen
 	{
 		// primary button
 		String primaryAction = item.getPrimaryAction();
-		primaryButton =
-			new GuiButton(0, width / 2 - 152, height - 65, 100, 20,
-				primaryAction);
-		if(primaryAction.isEmpty())
-			primaryButton.visible = false;
-		buttonList.add(primaryButton);
+		if(!primaryAction.isEmpty())
+		{
+			primaryButton =
+				new GuiButton(0, width / 2 - 152, height - 65, 100, 20,
+					primaryAction);
+			buttonList.add(primaryButton);
+		}
 		
 		// tutorial button
-		GuiButton tutorialButton =
-			new GuiButton(1, width / 2 + 52, height - 65, 100, 20, "Tutorial");
-		buttonList.add(tutorialButton);
 		if(item.getTutorialPage().isEmpty())
-			tutorialButton.visible = false;
+			buttonList.add(new GuiButton(1, width / 2 + 52, height - 65, 100,
+				20, "Tutorial"));
 		
 		// type
 		text = "Type: " + type;
@@ -437,18 +436,16 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glDisable(GL_SCISSOR_TEST);
 		
 		// buttons
-		int buttons =
-			(!item.getPrimaryAction().isEmpty() ? 1 : 0)
-				+ (!item.getTutorialPage().isEmpty() ? 1 : 0);
-		if(buttons > 0)
+		if(!buttonList.isEmpty())
 		{
-			boolean oneButton = buttons == 1;
-			for(int i = 0; i < buttons; i++)
+			int buttonListSize = buttonList.size();
+			boolean singleButton = buttonListSize == 1;
+			for(int i = 0; i < buttonListSize; i++)
 			{
 				boolean first = i == 0;
 				Rectangle button =
 					new Rectangle(width / 2 + (first ? -151 : 2), height - 64,
-						oneButton ? 302 : 149, 18);
+						singleButton ? 302 : 149, 18);
 				
 				if(button.contains(mouseX, mouseY))
 					glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
@@ -470,7 +467,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				RenderUtil.boxShadow(button.x, button.y, x2, y2);
 				
 				drawCenteredString(Fonts.segoe18,
-					first ? item.getPrimaryAction() : "Tutorial", oneButton
+					first ? item.getPrimaryAction() : "Tutorial", singleButton
 						? width / 2 : button.x + 74, button.y + 2, 0xffffff);
 			}
 		}
