@@ -16,7 +16,6 @@ public class NavigatorKeybind
 	
 	public NavigatorKeybind(String command, String description, int key)
 	{
-		super();
 		this.command = command;
 		this.description = description;
 		this.key = key;
