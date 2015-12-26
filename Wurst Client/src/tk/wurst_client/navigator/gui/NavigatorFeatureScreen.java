@@ -28,7 +28,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private GuiButton primaryButton;
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
-	private int sliding;
+	private int sliding = -1;
 	private int textHeight;
 	private String text;
 	private SliderData[] sliderDatas = {};
