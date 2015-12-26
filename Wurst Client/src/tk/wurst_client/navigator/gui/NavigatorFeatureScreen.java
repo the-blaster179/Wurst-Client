@@ -59,10 +59,6 @@ public class NavigatorFeatureScreen extends GuiScreen
 			primaryButton.visible = false;
 		buttonList.add(primaryButton);
 		
-		// keybind button
-		buttonList.add(new GuiButton(1, width / 2 - 50, height - 65, 100, 20,
-			"Add Keybind"));
-		
 		// tutorial button
 		GuiButton tutorialButton =
 			new GuiButton(2, width / 2 + 52, height - 65, 100, 20, "Tutorial");
