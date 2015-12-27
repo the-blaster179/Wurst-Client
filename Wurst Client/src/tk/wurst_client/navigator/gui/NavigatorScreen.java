@@ -267,45 +267,43 @@ public class NavigatorScreen extends GuiScreen
 		}
 		glDisable(GL_SCISSOR_TEST);
 		
-		if(clickTimerNotRunning)
+		// scroll bar
+		Rectangle area = new Rectangle(width / 2 + 170, 60, 12, height - 103);
+		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+		glBegin(GL_QUADS);
 		{
-			// scroll bar
-			Rectangle area =
-				new Rectangle(width / 2 + 170, 60, 12, height - 103);
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2d(area.x, area.y);
-				glVertex2d(area.x + area.width, area.y);
-				glVertex2d(area.x + area.width, area.y + area.height);
-				glVertex2d(area.x, area.y + area.height);
-			}
-			glEnd();
-			RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
-				+ area.height);
-			// scroll knob
-			area.x += 2;
-			area.y += scrollKnobPosition;
-			area.width = 8;
-			area.height = 24;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2d(area.x, area.y);
-				glVertex2d(area.x + area.width, area.y);
-				glVertex2d(area.x + area.width, area.y + area.height);
-				glVertex2d(area.x, area.y + area.height);
-			}
-			glEnd();
-			RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
-				+ area.height);
-			RenderUtil.downShadow(area.x + 1, area.y + 8, area.x + area.width
-				- 1, area.y + 9);
-			RenderUtil.downShadow(area.x + 1, area.y + 12, area.x + area.width
-				- 1, area.y + 13);
-			RenderUtil.downShadow(area.x + 1, area.y + 16, area.x + area.width
-				- 1, area.y + 17);
+			glVertex2d(area.x, area.y);
+			glVertex2d(area.x + area.width, area.y);
+			glVertex2d(area.x + area.width, area.y + area.height);
+			glVertex2d(area.x, area.y + area.height);
 		}
+		glEnd();
+		RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
+			+ area.height);
+		
+		// scroll knob
+		area.x += 2;
+		area.y += scrollKnobPosition;
+		area.width = 8;
+		area.height = 24;
+		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+		glBegin(GL_QUADS);
+		{
+			glVertex2d(area.x, area.y);
+			glVertex2d(area.x + area.width, area.y);
+			glVertex2d(area.x + area.width, area.y + area.height);
+			glVertex2d(area.x, area.y + area.height);
+		}
+		glEnd();
+		RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
+			+ area.height);
+		RenderUtil.downShadow(area.x + 1, area.y + 8, area.x + area.width - 1,
+			area.y + 9);
+		RenderUtil.downShadow(area.x + 1, area.y + 12, area.x + area.width - 1,
+			area.y + 13);
+		RenderUtil.downShadow(area.x + 1, area.y + 16, area.x + area.width - 1,
+			area.y + 17);
+		
 		// GL resets
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
