@@ -2,6 +2,7 @@ package tk.wurst_client.navigator.gui;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -150,7 +151,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 			// add keybind button
 			ButtonData addKeybindButton =
 				new ButtonData(area.x + area.width - 16, area.y
-					+ Fonts.segoe15.getStringHeight(text) - 8, 12, 8, "+")
+					+ Fonts.segoe15.getStringHeight(text) - 8, 12, 8, "+",
+					0x00ff00)
 				{
 					@Override
 					public void press()
@@ -181,7 +183,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				// remove keybind button
 				buttonDatas.add(new ButtonData(addKeybindButton.x,
 					addKeybindButton.y, addKeybindButton.width,
-					addKeybindButton.height, "-")
+					addKeybindButton.height, "-", 0xff0000)
 				{
 					@Override
 					public void press()
@@ -515,12 +517,15 @@ public class NavigatorFeatureScreen extends GuiScreen
 			int x2 = buttonArea.x + buttonArea.width;
 			int y2 = buttonArea.y + buttonArea.height;
 			
+			Color color = buttonData.color;
 			if(buttonArea.contains(mouseX, mouseY))
 			{
 				activeButton = buttonData;
-				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
+				glColor4ub((byte)color.getRed(), (byte)color.getGreen(),
+					(byte)color.getBlue(), (byte)192);
 			}else
-				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+				glColor4ub((byte)color.getRed(), (byte)color.getGreen(),
+					(byte)color.getBlue(), (byte)96);
 			glBegin(GL_QUADS);
 			{
 				glVertex2d(buttonArea.x, buttonArea.y);
@@ -603,12 +608,14 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private abstract class ButtonData extends Rectangle
 	{
 		public String displayString = "";
+		public Color color;
 		
 		public ButtonData(int x, int y, int width, int height,
-			String displayString)
+			String displayString, int color)
 		{
 			super(x, y, width, height);
 			this.displayString = displayString;
+			this.color = new Color(color);
 		}
 		
 		public abstract void press();
