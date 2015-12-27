@@ -182,17 +182,29 @@ public class RenderUtil
 	
 	public static void boxShadow(double x1, double y1, double x2, double y2)
 	{
+		// outline positions
+		double xi1 = x1 - 0.1;
+		double xi2 = x2 + 0.1;
+		double yi1 = y1 - 0.1;
+		double yi2 = y2 + 0.1;
+		
 		// outline
 		RenderUtil.setColor(outline);
-		glLineWidth(1f);
+		glLineWidth(1F);
 		glBegin(GL_LINE_LOOP);
 		{
-			glVertex2d(x1 - 0.1, y1 - 0.1);
-			glVertex2d(x2 + 0.1, y1 - 0.1);
-			glVertex2d(x2 + 0.1, y2 + 0.1);
-			glVertex2d(x1 - 0.1, y2 + 0.1);
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
 		}
 		glEnd();
+		
+		// shadow positions
+		xi1 -= 0.9;
+		xi2 += 0.9;
+		yi1 -= 0.9;
+		yi2 += 0.9;
 		
 		// top left
 		glBegin(GL_POLYGON);
@@ -201,9 +213,9 @@ public class RenderUtil
 			glVertex2d(x1, y1);
 			glVertex2d(x2, y1);
 			RenderUtil.setColor(shadow2);
-			glVertex2d(x2 + 1d, y1 - 1d);
-			glVertex2d(x1 - 1d, y1 - 1d);
-			glVertex2d(x1 - 1d, y2 + 1d);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi1, yi2);
 			RenderUtil.setColor(shadow1);
 			glVertex2d(x1, y2);
 		}
@@ -212,13 +224,12 @@ public class RenderUtil
 		// bottom right
 		glBegin(GL_POLYGON);
 		{
-			RenderUtil.setColor(shadow1);
 			glVertex2d(x2, y2);
 			glVertex2d(x2, y1);
 			RenderUtil.setColor(shadow2);
-			glVertex2d(x2 + 1d, y1 - 1d);
-			glVertex2d(x2 + 1d, y2 + 1d);
-			glVertex2d(x1 - 1d, y2 + 1d);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
 			RenderUtil.setColor(shadow1);
 			glVertex2d(x1, y2);
 		}
@@ -227,17 +238,29 @@ public class RenderUtil
 	
 	public static void invertedBoxShadow(double x1, double y1, double x2, double y2)
 	{
+		// outline positions
+		double xi1 = x1 + 0.1;
+		double xi2 = x2 - 0.1;
+		double yi1 = y1 + 0.1;
+		double yi2 = y2 - 0.1;
+		
 		// outline
 		RenderUtil.setColor(outline);
-		glLineWidth(1f);
+		glLineWidth(1F);
 		glBegin(GL_LINE_LOOP);
 		{
-			glVertex2d(x1 - 0.1, y1 - 0.1);
-			glVertex2d(x2 + 0.1, y1 - 0.1);
-			glVertex2d(x2 + 0.1, y2 + 0.1);
-			glVertex2d(x1 - 0.1, y2 + 0.1);
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
 		}
 		glEnd();
+		
+		// shadow positions
+		xi1 += 0.9;
+		xi2 -= 0.9;
+		yi1 += 0.9;
+		yi2 -= 0.9;
 		
 		// top left
 		glBegin(GL_POLYGON);
@@ -246,9 +269,9 @@ public class RenderUtil
 			glVertex2d(x1, y1);
 			glVertex2d(x2, y1);
 			RenderUtil.setColor(shadow2);
-			glVertex2d(x2 - 1d, y1 + 1d);
-			glVertex2d(x1 + 1d, y1 + 1d);
-			glVertex2d(x1 + 1d, y2 - 1d);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi1, yi2);
 			RenderUtil.setColor(shadow1);
 			glVertex2d(x1, y2);
 		}
@@ -257,13 +280,12 @@ public class RenderUtil
 		// bottom right
 		glBegin(GL_POLYGON);
 		{
-			RenderUtil.setColor(shadow1);
 			glVertex2d(x2, y2);
 			glVertex2d(x2, y1);
 			RenderUtil.setColor(shadow2);
-			glVertex2d(x2 - 1d, y1 + 1d);
-			glVertex2d(x2 - 1d, y2 - 1d);
-			glVertex2d(x1 + 1d, y2 - 1d);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
 			RenderUtil.setColor(shadow1);
 			glVertex2d(x1, y2);
 		}
@@ -273,15 +295,17 @@ public class RenderUtil
 	public static void downShadow(double x1, double y1, double x2, double y2)
 	{
 		// outline
+		double yi1 = y1 + 0.1;
 		RenderUtil.setColor(outline);
-		glLineWidth(1f);
+		glLineWidth(1F);
 		glBegin(GL_LINES);
 		{
-			glVertex2d(x1, y1 + 0.1);
-			glVertex2d(x2, y1 + 0.1);
+			glVertex2d(x1, yi1);
+			glVertex2d(x2, yi1);
 		}
 		glEnd();
 		
+		// shadow
 		glBegin(GL_POLYGON);
 		{
 			RenderUtil.setColor(shadow1);
