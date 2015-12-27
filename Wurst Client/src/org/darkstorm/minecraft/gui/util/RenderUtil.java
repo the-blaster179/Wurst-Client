@@ -16,9 +16,9 @@ import org.lwjgl.input.Mouse;
 
 public class RenderUtil
 {
-	private static Color outline = new Color(0f, 0f, 0f, 0.5f);
-	private static Color shadow1 = new Color(0.125f, 0.125f, 0.125f, 0.75f);
-	private static Color shadow2 = new Color(0.125f, 0.125f, 0.125f, 0f);
+	private static final Color outline = new Color(0, 0, 0, 128);
+	private static final Color shadow1 = new Color(32, 32, 32, 192);
+	private static final Color shadow2 = new Color(0, 0, 0, 0);
 	
 	public static void scissorBox(int x, int y, int xend, int yend)
 	{
