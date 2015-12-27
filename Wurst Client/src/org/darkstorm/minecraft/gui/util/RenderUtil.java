@@ -141,8 +141,8 @@ public class RenderUtil
 	
 	public static void setColor(Color c)
 	{
-		glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(),
-			(byte)c.getAlpha());
+		glColor4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f,
+			c.getAlpha() / 255f);
 	}
 	
 	public static Color toColor(int rgba)
