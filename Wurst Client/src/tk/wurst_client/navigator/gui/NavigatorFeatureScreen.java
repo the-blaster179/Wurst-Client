@@ -34,6 +34,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private int sliding = -1;
 	private int textHeight;
 	private String text;
+	private ArrayList<ButtonData> buttonDatas = new ArrayList<>();
 	private SliderData[] sliderDatas = {};
 	
 	public NavigatorFeatureScreen(NavigatorItem item, NavigatorScreen parent)
@@ -53,6 +54,9 @@ public class NavigatorFeatureScreen extends GuiScreen
 	@Override
 	public void initGui()
 	{
+		buttonList.clear();
+		buttonDatas.clear();
+		
 		// primary button
 		String primaryAction = item.getPrimaryAction();
 		boolean hasPrimaryAction = !primaryAction.isEmpty();
@@ -137,7 +141,23 @@ public class NavigatorFeatureScreen extends GuiScreen
 		HashMap<String, String> possibleKeybinds = item.getPossibleKeybinds();
 		if(!possibleKeybinds.isEmpty())
 		{
+			// heading
 			text += "\n\nKeybinds:";
+			
+			// add keybind button
+			ButtonData addKeybindButton =
+				new ButtonData(area.x + area.width - 16, area.y
+					+ Fonts.segoe15.getStringHeight(text) - 8, 12, 8, "+")
+				{
+					@Override
+					public void press()
+					{
+						// add keybind
+					}
+				};
+			buttonDatas.add(addKeybindButton);
+			
+			// keybind list
 			boolean noKeybindsSet = true;
 			for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
 				.entrySet())
@@ -153,6 +173,20 @@ public class NavigatorFeatureScreen extends GuiScreen
 			}
 			if(noKeybindsSet)
 				text += "\nNone";
+			else
+			{
+				// remove keybind button
+				buttonDatas.add(new ButtonData(addKeybindButton.x,
+					addKeybindButton.y, addKeybindButton.width, addKeybindButton.height, "-")
+				{
+					@Override
+					public void press()
+					{
+						// remove keybind
+					}
+				});
+				addKeybindButton.x -= 16;
+			}
 		}
 		
 		// text height
@@ -411,10 +445,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glEnable(GL_SCISSOR_TEST);
 		
 		// sliders
-		for(int i = 0; i < sliderDatas.length; i++)
+		for(SliderData sliderData : sliderDatas)
 		{
-			SliderData sliderData = sliderDatas[i];
-			
 			// rail
 			int x1 = area.x + 2;
 			int x2 = x1 + area.width - 4;
@@ -457,13 +489,41 @@ public class NavigatorFeatureScreen extends GuiScreen
 			glDisable(GL_TEXTURE_2D);
 		}
 		
+		// buttons
+		for(ButtonData buttonData : buttonDatas)
+		{
+			Rectangle buttonArea = new Rectangle(buttonData);
+			buttonArea.y += scroll;
+			int x2 = buttonArea.x + buttonArea.width;
+			int y2 = buttonArea.y + buttonArea.height;
+			
+			if(buttonArea.contains(mouseX, mouseY))
+				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
+			else
+				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+			glBegin(GL_QUADS);
+			{
+				glVertex2d(buttonArea.x, buttonArea.y);
+				glVertex2d(x2, buttonArea.y);
+				glVertex2d(x2, y2);
+				glVertex2d(buttonArea.x, y2);
+			}
+			glEnd();
+			RenderUtil.boxShadow(buttonArea.x, buttonArea.y, x2, y2);
+			
+			drawCenteredString(Fonts.segoe18, buttonData.displayString,
+				buttonArea.x + buttonData.width / 2 - 1, buttonArea.y
+					+ (buttonData.height - 12) / 2 - 1, 0xffffff);
+			glDisable(GL_TEXTURE_2D);
+		}
+		
 		// text
 		drawString(Fonts.segoe15, text, area.x + 2, area.y + scroll, 0xffffff);
 		
 		// scissor box
 		glDisable(GL_SCISSOR_TEST);
 		
-		// buttons
+		// buttons below scissor box
 		if(!buttonList.isEmpty())
 		{
 			for(int i = 0; i < buttonList.size(); i++)
@@ -518,5 +578,19 @@ public class NavigatorFeatureScreen extends GuiScreen
 			this.percentage = percentage;
 			this.value = value;
 		}
+	}
+	
+	private abstract class ButtonData extends Rectangle
+	{
+		public String displayString = "";
+		
+		public ButtonData(int x, int y, int width, int height,
+			String displayString)
+		{
+			super(x, y, width, height);
+			this.displayString = displayString;
+		}
+		
+		public abstract void press();
 	}
 }
