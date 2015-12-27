@@ -512,20 +512,25 @@ public class NavigatorFeatureScreen extends GuiScreen
 		activeButton = null;
 		for(ButtonData buttonData : buttonDatas)
 		{
+			// area
 			Rectangle buttonArea = new Rectangle(buttonData);
 			buttonArea.y += scroll;
 			int x2 = buttonArea.x + buttonArea.width;
 			int y2 = buttonArea.y + buttonArea.height;
 			
-			Color color = buttonData.color;
+			// color
+			byte alpha;
 			if(buttonArea.contains(mouseX, mouseY))
 			{
+				alpha = (byte)192;
 				activeButton = buttonData;
-				glColor4ub((byte)color.getRed(), (byte)color.getGreen(),
-					(byte)color.getBlue(), (byte)192);
 			}else
-				glColor4ub((byte)color.getRed(), (byte)color.getGreen(),
-					(byte)color.getBlue(), (byte)96);
+				alpha = (byte)96;
+			Color color = buttonData.color;
+			glColor4ub((byte)color.getRed(), (byte)color.getGreen(),
+				(byte)color.getBlue(), alpha);
+			
+			// button
 			glBegin(GL_QUADS);
 			{
 				glVertex2d(buttonArea.x, buttonArea.y);
@@ -536,6 +541,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 			glEnd();
 			RenderUtil.boxShadow(buttonArea.x, buttonArea.y, x2, y2);
 			
+			// text
 			drawCenteredString(Fonts.segoe18, buttonData.displayString,
 				buttonArea.x + buttonData.width / 2 - 1, buttonArea.y
 					+ (buttonData.height - 12) / 2 - 1, 0xffffff);
