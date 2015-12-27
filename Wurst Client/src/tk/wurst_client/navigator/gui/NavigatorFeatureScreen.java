@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
 
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
@@ -28,6 +30,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private NavigatorItem item;
 	private NavigatorScreen parent;
 	private String type;
+	private ButtonData activeButton;
 	private GuiButton primaryButton;
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
@@ -177,7 +180,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 			{
 				// remove keybind button
 				buttonDatas.add(new ButtonData(addKeybindButton.x,
-					addKeybindButton.y, addKeybindButton.width, addKeybindButton.height, "-")
+					addKeybindButton.y, addKeybindButton.width,
+					addKeybindButton.height, "-")
 				{
 					@Override
 					public void press()
@@ -225,7 +229,20 @@ public class NavigatorFeatureScreen extends GuiScreen
 		
 		// scrollbar
 		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
+		{
 			scrolling = true;
+			return;
+		}
+		
+		// buttons
+		if(activeButton != null)
+		{
+			mc.getSoundHandler().playSound(
+				PositionedSoundRecord.createPositionedSoundRecord(
+					new ResourceLocation("gui.button.press"), 1.0F));
+			activeButton.press();
+			return;
+		}
 		
 		// sliders
 		Rectangle area =
@@ -240,7 +257,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				if(area.contains(x, y))
 				{
 					sliding = i;
-					break;
+					return;
 				}
 			}
 		}
@@ -490,6 +507,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 		}
 		
 		// buttons
+		activeButton = null;
 		for(ButtonData buttonData : buttonDatas)
 		{
 			Rectangle buttonArea = new Rectangle(buttonData);
@@ -498,8 +516,10 @@ public class NavigatorFeatureScreen extends GuiScreen
 			int y2 = buttonArea.y + buttonArea.height;
 			
 			if(buttonArea.contains(mouseX, mouseY))
+			{
+				activeButton = buttonData;
 				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
-			else
+			}else
 				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
 			glBegin(GL_QUADS);
 			{
