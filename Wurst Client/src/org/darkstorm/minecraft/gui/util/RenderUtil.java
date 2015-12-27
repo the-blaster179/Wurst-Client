@@ -141,8 +141,8 @@ public class RenderUtil
 	
 	public static void setColor(Color c)
 	{
-		glColor4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f,
-			c.getAlpha() / 255f);
+		glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(),
+			(byte)c.getAlpha());
 	}
 	
 	public static Color toColor(int rgba)
@@ -236,7 +236,8 @@ public class RenderUtil
 		glEnd();
 	}
 	
-	public static void invertedBoxShadow(double x1, double y1, double x2, double y2)
+	public static void invertedBoxShadow(double x1, double y1, double x2,
+		double y2)
 	{
 		// outline positions
 		double xi1 = x1 + 0.1;
@@ -291,7 +292,7 @@ public class RenderUtil
 		}
 		glEnd();
 	}
-
+	
 	public static void downShadow(double x1, double y1, double x2, double y2)
 	{
 		// outline
