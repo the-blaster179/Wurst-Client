@@ -137,7 +137,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		HashMap<String, String> possibleKeybinds = item.getPossibleKeybinds();
 		if(!possibleKeybinds.isEmpty())
 		{
-			boolean missingKeybindsHeading = true;
+			text += "\n\nKeybinds:";
+			boolean noKeybindsSet = true;
 			for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
 				.entrySet())
 			{
@@ -145,14 +146,13 @@ public class NavigatorFeatureScreen extends GuiScreen
 					possibleKeybinds.get(entry.getValue());
 				if(keybindDescription != null)
 				{
-					if(missingKeybindsHeading)
-					{
-						text += "\n\nKeybinds:";
-						missingKeybindsHeading = false;
-					}
+					if(noKeybindsSet)
+						noKeybindsSet = false;
 					text += "\n" + entry.getKey() + ": " + keybindDescription;
 				}
 			}
+			if(noKeybindsSet)
+				text += "\nNone";
 		}
 		
 		// text height
