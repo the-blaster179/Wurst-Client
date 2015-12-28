@@ -222,7 +222,16 @@ public class NavigatorScreen extends GuiScreen
 				if(item != activeItem)
 					continue;
 				
-				float factor = clickTimer / 4F;
+				float factor;
+				if(expanding)
+					if(clickTimer == 4)
+						factor = 1F;
+					else
+						factor = (clickTimer + partialTicks) / 4F;
+				else if(clickTimer == 0)
+					factor = 0F;
+				else
+					factor = (clickTimer - partialTicks) / 4F;
 				float antiFactor = 1 - factor;
 				
 				area.x =
