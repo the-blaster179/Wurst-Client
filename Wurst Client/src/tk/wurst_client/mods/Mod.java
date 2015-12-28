@@ -178,7 +178,7 @@ public class Mod implements NavigatorItem
 				Minecraft.getMinecraft().displayGuiScreen(
 					new GuiError(e, this, "disabling", ""));
 			}
-		if(!WurstClient.INSTANCE.files.isModBlacklited(this))
+		if(!WurstClient.INSTANCE.files.isModBlacklisted(this))
 			WurstClient.INSTANCE.files.saveMods();
 	}
 	

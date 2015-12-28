@@ -197,7 +197,7 @@ public class FileManager
 		OpSignMod.class.getName(), ProtectMod.class.getName(),
 		RemoteViewMod.class.getName(), SpammerMod.class.getName());
 	
-	public boolean isModBlacklited(Mod mod)
+	public boolean isModBlacklisted(Mod mod)
 	{
 		return modBlacklist.contains(mod.getClass().getName());
 	}
