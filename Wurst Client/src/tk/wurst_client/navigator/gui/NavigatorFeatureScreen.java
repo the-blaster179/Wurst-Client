@@ -397,92 +397,92 @@ public class NavigatorFeatureScreen extends GuiScreen
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks)
 	{
-		// title bar
-		drawCenteredString(Fonts.segoe22, item.getName(), width / 2, 32,
-			0xffffff);
+		int middleX = width / 2;
 		
 		// GL settings
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
-		glDisable(GL_TEXTURE_2D);
 		glShadeModel(GL_SMOOTH);
 		
-		// box & shadow
-		Rectangle area =
-			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
+		// title bar
+		drawCenteredString(Fonts.segoe22, item.getName(), middleX, 32, 0xffffff);
+		glDisable(GL_TEXTURE_2D);
+		
+		// background
+		int bgx1 = middleX - 154;
+		int bgx2 = middleX + 154;
+		int bgy1 = 60;
+		int bgy2 = height - 43;
 		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
 		glBegin(GL_QUADS);
 		{
-			glVertex2d(area.x, area.y);
-			glVertex2d(area.x + area.width, area.y);
-			glVertex2d(area.x + area.width, area.y + area.height);
-			glVertex2d(area.x, area.y + area.height);
+			glVertex2i(bgx1, bgy1);
+			glVertex2i(bgx2, bgy1);
+			glVertex2i(bgx2, bgy2);
+			glVertex2i(bgx1, bgy2);
 		}
 		glEnd();
-		RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
-			+ area.height);
+		RenderUtil.boxShadow(bgx1, bgy1, bgx2, bgy2);
 		
 		// scroll bar
-		Rectangle scrollbar =
-			new Rectangle(width / 2 + 170, 60, 12, height - 103);
-		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-		glBegin(GL_QUADS);
 		{
-			glVertex2d(scrollbar.x, scrollbar.y);
-			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y);
-			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y
-				+ scrollbar.height);
-			glVertex2d(scrollbar.x, scrollbar.y + scrollbar.height);
+			// bar
+			int x1 = bgx2 + 16;
+			int x2 = x1 + 12;
+			int y1 = bgy1;
+			int y2 = bgy2;
+			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+			glBegin(GL_QUADS);
+			{
+				glVertex2i(x1, y1);
+				glVertex2i(x2, y1);
+				glVertex2i(x2, y2);
+				glVertex2i(x1, y2);
+			}
+			glEnd();
+			RenderUtil.boxShadow(x1, y1, x2, y2);
+			
+			// knob
+			x1 += 2;
+			x2 -= 2;
+			y1 += scrollKnobPosition;
+			y2 = y1 + 24;
+			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+			glBegin(GL_QUADS);
+			{
+				glVertex2i(x1, y1);
+				glVertex2i(x2, y1);
+				glVertex2i(x2, y2);
+				glVertex2i(x1, y2);
+			}
+			glEnd();
+			RenderUtil.boxShadow(x1, y1, x2, y2);
+			int i;
+			for(x1++, x2--, y1 += 8, y2 -= 15, i = 0; i < 3; y1 += 4, y2 += 4, i++)
+				RenderUtil.downShadow(x1, y1, x2, y2);
 		}
-		glEnd();
-		RenderUtil.boxShadow(scrollbar.x, scrollbar.y, scrollbar.x
-			+ scrollbar.width, scrollbar.y + scrollbar.height);
-		
-		// scroll knob
-		scrollbar.x += 2;
-		scrollbar.y += scrollKnobPosition;
-		scrollbar.width = 8;
-		scrollbar.height = 24;
-		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-		glBegin(GL_QUADS);
-		{
-			glVertex2d(scrollbar.x, scrollbar.y);
-			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y);
-			glVertex2d(scrollbar.x + scrollbar.width, scrollbar.y
-				+ scrollbar.height);
-			glVertex2d(scrollbar.x, scrollbar.y + scrollbar.height);
-		}
-		glEnd();
-		RenderUtil.boxShadow(scrollbar.x, scrollbar.y, scrollbar.x
-			+ scrollbar.width, scrollbar.y + scrollbar.height);
-		RenderUtil.downShadow(scrollbar.x + 1, scrollbar.y + 8, scrollbar.x
-			+ scrollbar.width - 1, scrollbar.y + 9);
-		RenderUtil.downShadow(scrollbar.x + 1, scrollbar.y + 12, scrollbar.x
-			+ scrollbar.width - 1, scrollbar.y + 13);
-		RenderUtil.downShadow(scrollbar.x + 1, scrollbar.y + 16, scrollbar.x
-			+ scrollbar.width - 1, scrollbar.y + 17);
 		
 		// scissor box
-		RenderUtil.scissorBox(area.x, area.y, area.x + area.width, area.y
-			+ area.height - (buttonList.isEmpty() ? 0 : 24));
+		RenderUtil.scissorBox(bgx1, bgy1, bgx2, bgy2
+			- (buttonList.isEmpty() ? 0 : 24));
 		glEnable(GL_SCISSOR_TEST);
 		
 		// sliders
 		for(SliderData sliderData : sliderDatas)
 		{
 			// rail
-			int x1 = area.x + 2;
-			int x2 = x1 + area.width - 4;
+			int x1 = bgx1 + 2;
+			int x2 = bgx2 - 2;
 			int y1 = sliderData.y + scroll + 4;
 			int y2 = y1 + 4;
 			glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
 			glBegin(GL_QUADS);
 			{
-				glVertex2d(x1, y1);
-				glVertex2d(x2, y1);
-				glVertex2d(x2, y2);
-				glVertex2d(x1, y2);
+				glVertex2i(x1, y1);
+				glVertex2i(x2, y1);
+				glVertex2i(x2, y2);
+				glVertex2i(x1, y2);
 			}
 			glEnd();
 			RenderUtil.invertedBoxShadow(x1, y1, x2, y2);
@@ -492,24 +492,23 @@ public class NavigatorFeatureScreen extends GuiScreen
 			x2 = x1 + 8;
 			y1 -= 2;
 			y2 += 2;
-			glColor4f(sliderData.percentage, 1F - sliderData.percentage, 0F,
-				0.75F);
+			float percentage = sliderData.percentage;
+			glColor4f(percentage, 1F - percentage, 0F, 0.75F);
 			glBegin(GL_QUADS);
 			{
-				glVertex2d(x1, y1);
-				glVertex2d(x2, y1);
-				glVertex2d(x2, y2);
-				glVertex2d(x1, y2);
+				glVertex2i(x1, y1);
+				glVertex2i(x2, y1);
+				glVertex2i(x2, y2);
+				glVertex2i(x1, y2);
 			}
 			glEnd();
 			RenderUtil.boxShadow(x1, y1, x2, y2);
 			
 			// value
-			x1 =
-				area.x + area.width
-					- Fonts.segoe15.getStringWidth(sliderData.value) - 2;
+			String value = sliderData.value;
+			x1 = bgx2 - Fonts.segoe15.getStringWidth(value) - 2;
 			y1 -= 12;
-			drawString(Fonts.segoe15, sliderData.value, x1, y1, 0xffffff);
+			drawString(Fonts.segoe15, value, x1, y1, 0xffffff);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
@@ -517,81 +516,79 @@ public class NavigatorFeatureScreen extends GuiScreen
 		activeButton = null;
 		for(ButtonData buttonData : buttonDatas)
 		{
-			// area
-			Rectangle buttonArea = new Rectangle(buttonData);
-			buttonArea.y += scroll;
-			int x2 = buttonArea.x + buttonArea.width;
-			int y2 = buttonArea.y + buttonArea.height;
+			// positions
+			int x1 = buttonData.x;
+			int x2 = x1 + buttonData.width;
+			int y1 = buttonData.y + scroll;
+			int y2 = y1 + buttonData.height;
 			
 			// color
-			byte alpha;
-			if(buttonArea.contains(mouseX, mouseY))
+			float alpha;
+			if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
 			{
-				alpha = (byte)192;
+				alpha = 0.75F;
 				activeButton = buttonData;
 			}else
-				alpha = (byte)96;
-			Color color = buttonData.color;
-			glColor4ub((byte)color.getRed(), (byte)color.getGreen(),
-				(byte)color.getBlue(), alpha);
+				alpha = 0.375F;
+			float[] rgb = buttonData.color.getColorComponents(null);
+			glColor4f(rgb[0], rgb[1], rgb[2], alpha);
 			
 			// button
 			glBegin(GL_QUADS);
 			{
-				glVertex2d(buttonArea.x, buttonArea.y);
-				glVertex2d(x2, buttonArea.y);
-				glVertex2d(x2, y2);
-				glVertex2d(buttonArea.x, y2);
+				glVertex2i(x1, y1);
+				glVertex2i(x2, y1);
+				glVertex2i(x2, y2);
+				glVertex2i(x1, y2);
 			}
 			glEnd();
-			RenderUtil.boxShadow(buttonArea.x, buttonArea.y, x2, y2);
+			RenderUtil.boxShadow(x1, y1, x2, y2);
 			
 			// text
 			drawCenteredString(Fonts.segoe18, buttonData.displayString,
-				buttonArea.x + buttonData.width / 2 - 1, buttonArea.y
-					+ (buttonData.height - 12) / 2 - 1, 0xffffff);
+				(x1 + x2) / 2 - 1, y1 + (buttonData.height - 12) / 2 - 1,
+				0xffffff);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
 		// text
-		drawString(Fonts.segoe15, text, area.x + 2, area.y + scroll, 0xffffff);
+		drawString(Fonts.segoe15, text, bgx1 + 2, bgy1 + scroll, 0xffffff);
 		
 		// scissor box
 		glDisable(GL_SCISSOR_TEST);
 		
 		// buttons below scissor box
-		if(!buttonList.isEmpty())
+		for(int i = 0; i < buttonList.size(); i++)
 		{
-			for(int i = 0; i < buttonList.size(); i++)
+			GuiButton button = (GuiButton)buttonList.get(i);
+			
+			// positions
+			int x1 = button.xPosition;
+			int x2 = x1 + button.getButtonWidth();
+			int y1 = button.yPosition;
+			int y2 = y1 + 18;
+			
+			// color
+			if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
+				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
+			else
+				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+			
+			// button
+			glDisable(GL_TEXTURE_2D);
+			glBegin(GL_QUADS);
 			{
-				GuiButton button = (GuiButton)buttonList.get(i);
-				Rectangle buttonArea =
-					new Rectangle(button.xPosition, button.yPosition,
-						button.getButtonWidth(), 18);
-				
-				if(buttonArea.contains(mouseX, mouseY))
-					glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
-				else
-					glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
-				
-				int x2 = buttonArea.x + buttonArea.width;
-				int y2 = buttonArea.y + buttonArea.height;
-				
-				glDisable(GL_TEXTURE_2D);
-				glBegin(GL_QUADS);
-				{
-					glVertex2d(buttonArea.x, buttonArea.y);
-					glVertex2d(x2, buttonArea.y);
-					glVertex2d(x2, y2);
-					glVertex2d(buttonArea.x, y2);
-				}
-				glEnd();
-				RenderUtil.boxShadow(buttonArea.x, buttonArea.y, x2, y2);
-				
-				drawCenteredString(Fonts.segoe18, button.displayString,
-					buttonArea.x + buttonArea.width / 2, buttonArea.y + 2,
-					0xffffff);
+				glVertex2i(x1, y1);
+				glVertex2i(x2, y1);
+				glVertex2i(x2, y2);
+				glVertex2i(x1, y2);
 			}
+			glEnd();
+			RenderUtil.boxShadow(x1, y1, x2, y2);
+			
+			// text
+			drawCenteredString(Fonts.segoe18, button.displayString,
+				(x1 + x2) / 2, y1 + 2, 0xffffff);
 		}
 		
 		// GL resets
