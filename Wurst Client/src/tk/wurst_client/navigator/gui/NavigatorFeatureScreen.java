@@ -309,7 +309,12 @@ public class NavigatorFeatureScreen extends GuiScreen
 		super.mouseReleased(x, y, button);
 		
 		scrolling = false;
-		sliding = -1;
+		
+		if(sliding != -1)
+		{
+			WurstClient.INSTANCE.files.saveSliders();
+			sliding = -1;
+		}
 	}
 	
 	@Override
