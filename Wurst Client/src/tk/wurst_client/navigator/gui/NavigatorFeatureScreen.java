@@ -31,6 +31,7 @@ import tk.wurst_client.commands.Cmd;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.mods.Mod;
 import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 import tk.wurst_client.utils.MiscUtils;
 
 public class NavigatorFeatureScreen extends GuiScreen
@@ -150,7 +151,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 		}
 		
 		// keybinds
-		HashMap<String, String> possibleKeybinds = item.getPossibleKeybinds();
+		ArrayList<NavigatorPossibleKeybind> possibleKeybinds =
+			item.getPossibleKeybinds();
 		if(!possibleKeybinds.isEmpty())
 		{
 			// heading
@@ -173,12 +175,16 @@ public class NavigatorFeatureScreen extends GuiScreen
 			buttonDatas.add(addKeybindButton);
 			
 			// keybind list
+			HashMap<String, String> possibleKeybindsMap = new HashMap<>();
+			for(NavigatorPossibleKeybind possibleKeybind : possibleKeybinds)
+				possibleKeybindsMap.put(possibleKeybind.getCommand(),
+					possibleKeybind.getDescription());
 			boolean noKeybindsSet = true;
 			for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
 				.entrySet())
 			{
 				String keybindDescription =
-					possibleKeybinds.get(entry.getValue());
+					possibleKeybindsMap.get(entry.getValue());
 				if(keybindDescription != null)
 				{
 					if(noKeybindsSet)

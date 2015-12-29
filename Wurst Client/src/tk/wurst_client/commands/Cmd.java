@@ -11,15 +11,16 @@ package tk.wurst_client.commands;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
+
+import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
+
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 import tk.wurst_client.utils.EntityUtils;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -30,7 +31,6 @@ public abstract class Cmd implements NavigatorItem
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
 	private String[] tags = getClass().getAnnotation(Info.class).tags();
 	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
-	protected HashMap<String, String> possibleKeybinds = new HashMap<String, String>();
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
@@ -112,11 +112,11 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
-	public final HashMap<String, String> getPossibleKeybinds()
+	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
 	{
-		return possibleKeybinds;
+		return new ArrayList<>();
 	}
-
+	
 	@Override
 	public String getPrimaryAction()
 	{
@@ -125,7 +125,7 @@ public abstract class Cmd implements NavigatorItem
 	
 	@Override
 	public void doPrimaryAction()
-	{
+	{	
 		
 	}
 	

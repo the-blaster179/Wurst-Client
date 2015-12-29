@@ -14,8 +14,6 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
@@ -26,11 +24,12 @@ import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.font.Fonts;
+import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 
 public class NavigatorNewKeybindScreen extends GuiScreen
 {
 	private int scroll = 0;
-	private HashMap<String, String> possibleKeybinds;
+	private ArrayList<NavigatorPossibleKeybind> possibleKeybinds;
 	private NavigatorFeatureScreen parent;
 	private ButtonData activeButton;
 	private int scrollKnobPosition = 2;
@@ -40,7 +39,8 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	private ArrayList<ButtonData> buttonDatas = new ArrayList<>();
 	private String command;
 	
-	public NavigatorNewKeybindScreen(HashMap<String, String> possibleKeybinds,
+	public NavigatorNewKeybindScreen(
+		ArrayList<NavigatorPossibleKeybind> possibleKeybinds,
 		NavigatorFeatureScreen parent)
 	{
 		this.possibleKeybinds = possibleKeybinds;
@@ -70,16 +70,17 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		
 		// possible keybinds
 		int yi = area.y - 12;
-		for(Entry<String, String> entry : possibleKeybinds.entrySet())
+		for(NavigatorPossibleKeybind possibleKeybind : possibleKeybinds)
 		{
 			yi += 24;
 			buttonDatas.add(new ButtonData(area.x + 1, yi, area.width - 2, 20,
-				entry.getValue() + "\n" + entry.getKey(), 0x404040)
+				possibleKeybind.getDescription() + "\n"
+					+ possibleKeybind.getCommand(), 0x404040)
 			{
 				@Override
 				public void press()
-				{	
-					command = entry.getKey();
+				{
+					command = possibleKeybind.getCommand();
 				}
 			});
 		}

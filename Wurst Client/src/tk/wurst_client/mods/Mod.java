@@ -11,7 +11,7 @@ package tk.wurst_client.mods;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
 
@@ -20,6 +20,7 @@ import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.error.GuiError;
 import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 
 public class Mod implements NavigatorItem
 {
@@ -35,17 +36,8 @@ public class Mod implements NavigatorItem
 	private boolean blocked;
 	private boolean active;
 	protected ArrayList<BasicSlider> sliders = new ArrayList<BasicSlider>();
-	protected HashMap<String, String> possibleKeybinds =
-		new HashMap<String, String>();
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
-	
-	{
-		String dotT = ".t " + name.toLowerCase();
-		possibleKeybinds.put(dotT, "Toggle " + name);
-		possibleKeybinds.put(dotT + " on", "Enable " + name);
-		possibleKeybinds.put(dotT + " off", "Disable " + name);
-	}
 	
 	public enum Category
 	{
@@ -107,9 +99,13 @@ public class Mod implements NavigatorItem
 	}
 	
 	@Override
-	public final HashMap<String, String> getPossibleKeybinds()
+	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
 	{
-		return possibleKeybinds;
+		String dotT = ".t " + name.toLowerCase();
+		return (ArrayList<NavigatorPossibleKeybind>)Arrays.asList(
+			new NavigatorPossibleKeybind(dotT, "Toggle " + name),
+			new NavigatorPossibleKeybind(dotT + " on", "Enable " + name),
+			new NavigatorPossibleKeybind(dotT + " off", "Disable " + name));
 	}
 	
 	@Override
