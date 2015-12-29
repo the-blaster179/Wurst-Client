@@ -166,6 +166,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 					public void press()
 					{
 						// add keybind
+						mc.displayGuiScreen(new NavigatorNewKeybindScreen(
+							possibleKeybinds, NavigatorFeatureScreen.this));
 					}
 				};
 			buttonDatas.add(addKeybindButton);
