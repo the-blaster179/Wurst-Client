@@ -34,6 +34,7 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	private boolean scrolling;
 	private int contentHeight;
 	private String text;
+	private GuiButton okButton;
 	
 	public NavigatorNewKeybindScreen(
 		ArrayList<NavigatorPossibleKeybind> possibleKeybinds,
@@ -48,8 +49,10 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	public void initGui()
 	{
 		// OK button
-		buttonList.add(new GuiButton(0, width / 2 - 151, height - 65, 149, 18,
-			"OK"));
+		okButton =
+			new GuiButton(0, width / 2 - 151, height - 65, 149, 18, "OK");
+		okButton.enabled = selectedCommand != -1;
+		buttonList.add(okButton);
 		
 		// cancel button
 		buttonList.add(new GuiButton(1, width / 2 + 2, height - 65, 149, 18,
@@ -98,7 +101,10 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		
 		// commands
 		if(hoveredCommand != -1)
+		{
 			selectedCommand = hoveredCommand;
+			okButton.enabled = true;
+		}
 	}
 	
 	@Override
@@ -300,7 +306,10 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 			int y2 = y1 + 18;
 			
 			// color
-			if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
+			if(!button.enabled)
+				glColor4f(0F, 0F, 0F, 0.25F);
+			else if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1
+				&& mouseY <= y2)
 				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
 			else
 				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
