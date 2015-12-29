@@ -146,8 +146,10 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
 	{
 		if(choosingKey)
+		{
 			selectedKey = Keyboard.getKeyName(keyCode);
-		else if(keyCode == 1)
+			okButton.enabled = !selectedKey.equals("NONE");
+		}else if(keyCode == 1)
 			mc.displayGuiScreen(parent);
 	}
 	
