@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
@@ -179,6 +180,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 			for(NavigatorPossibleKeybind possibleKeybind : possibleKeybinds)
 				possibleKeybindsMap.put(possibleKeybind.getCommand(),
 					possibleKeybind.getDescription());
+			TreeMap<String, NavigatorPossibleKeybind> existingKeybinds =
+				new TreeMap<>();
 			boolean noKeybindsSet = true;
 			for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
 				.entrySet())
@@ -190,6 +193,9 @@ public class NavigatorFeatureScreen extends GuiScreen
 					if(noKeybindsSet)
 						noKeybindsSet = false;
 					text += "\n" + entry.getKey() + ": " + keybindDescription;
+					existingKeybinds.put(entry.getKey(),
+						new NavigatorPossibleKeybind(entry.getValue(),
+							keybindDescription));
 				}
 			}
 			if(noKeybindsSet)
@@ -205,6 +211,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 					public void press()
 					{
 						// remove keybind
+						mc.displayGuiScreen(new NavigatorRemoveKeybindScreen(
+							existingKeybinds, NavigatorFeatureScreen.this));
 					}
 				});
 				addKeybindButton.x -= 16;
