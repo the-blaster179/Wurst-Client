@@ -293,8 +293,8 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 					possibleKeybinds.get(i);
 				
 				// positions
-				int x1 = bgx1 + 1;
-				int x2 = bgx2 - 1;
+				int x1 = bgx1 + 2;
+				int x2 = bgx2 - 2;
 				int y1 = yi;
 				int y2 = y1 + 20;
 				
