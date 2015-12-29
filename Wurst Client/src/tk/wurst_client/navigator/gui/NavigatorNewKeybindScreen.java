@@ -24,6 +24,7 @@ import org.lwjgl.input.Mouse;
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.options.KeybindManager;
 
 public class NavigatorNewKeybindScreen extends GuiScreen
 {
@@ -169,7 +170,14 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		{
 			text = "Now press the key that should trigger this keybind.";
 			if(!selectedKey.equals("NONE"))
+			{
 				text += "\n\nKey: " + selectedKey;
+				KeybindManager keybinds = WurstClient.INSTANCE.keybinds;
+				if(keybinds.containsKey(selectedKey))
+					text +=
+						"\n\nWARNING! This will overwrite an existing keybind:\n"
+							+ selectedKey + ": " + keybinds.get(selectedKey);
+			}
 		}else
 			text = "Select what this keybind should do.";
 		
