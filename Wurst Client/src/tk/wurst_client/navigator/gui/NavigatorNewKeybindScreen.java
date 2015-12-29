@@ -21,6 +21,7 @@ import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 
@@ -71,7 +72,14 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		switch(button.id)
 		{
 			case 0:
-				if(!choosingKey)
+				if(choosingKey)
+				{
+					WurstClient wurst = WurstClient.INSTANCE;
+					wurst.keybinds.put(selectedKey,
+						possibleKeybinds.get(selectedCommand).getCommand());
+					wurst.files.saveKeybinds();
+					mc.displayGuiScreen(parent);
+				}else
 				{
 					choosingKey = true;
 					okButton.enabled = false;
