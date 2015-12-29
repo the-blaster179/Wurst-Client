@@ -18,6 +18,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.darkstorm.minecraft.gui.util.RenderUtil;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.font.Fonts;
@@ -30,11 +31,13 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	private NavigatorFeatureScreen parent;
 	private int hoveredCommand = -1;
 	private int selectedCommand = -1;
+	private String selectedKey = "NONE";
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
 	private int contentHeight;
 	private String text;
 	private GuiButton okButton;
+	private boolean choosingKey;
 	
 	public NavigatorNewKeybindScreen(
 		ArrayList<NavigatorPossibleKeybind> possibleKeybinds,
@@ -57,12 +60,6 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		// cancel button
 		buttonList.add(new GuiButton(1, width / 2 + 2, height - 65, 149, 18,
 			"Cancel"));
-		
-		// text
-		text = "Select what this keybind should do.";
-		
-		// content height
-		contentHeight = possibleKeybinds.size() * 24 - 10;
 	}
 	
 	@Override
@@ -74,6 +71,11 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		switch(button.id)
 		{
 			case 0:
+				if(!choosingKey)
+				{
+					choosingKey = true;
+					okButton.enabled = false;
+				}
 				break;
 			case 1:
 				mc.displayGuiScreen(parent);
@@ -143,13 +145,30 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
 	{
-		if(keyCode == 1)
+		if(choosingKey)
+			selectedKey = Keyboard.getKeyName(keyCode);
+		else if(keyCode == 1)
 			mc.displayGuiScreen(parent);
 	}
 	
 	@Override
 	public void updateScreen()
 	{
+		// text
+		if(choosingKey)
+		{
+			text = "Now press the key that should trigger this keybind.";
+			if(!selectedKey.equals("NONE"))
+				text += "\n\nKey: " + selectedKey;
+		}else
+			text = "Select what this keybind should do.";
+		
+		// content height
+		if(choosingKey)
+			contentHeight = Fonts.segoe15.getStringHeight(text);
+		else
+			contentHeight = possibleKeybinds.size() * 24 - 10;
+		
 		// scroll
 		scroll += Mouse.getDWheel() / 10;
 		
@@ -245,47 +264,52 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		glEnable(GL_SCISSOR_TEST);
 		
 		// possible keybinds
-		hoveredCommand = -1;
-		int yi = bgy1 - 12 + scroll;
-		for(int i = 0; i < possibleKeybinds.size(); i++)
+		if(!choosingKey)
 		{
-			yi += 24;
-			NavigatorPossibleKeybind possibleKeybind = possibleKeybinds.get(i);
-			
-			// positions
-			int x1 = bgx1 + 1;
-			int x2 = bgx2 - 1;
-			int y1 = yi;
-			int y2 = y1 + 20;
-			
-			// color
-			if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
+			hoveredCommand = -1;
+			int yi = bgy1 - 12 + scroll;
+			for(int i = 0; i < possibleKeybinds.size(); i++)
 			{
-				hoveredCommand = i;
-				if(i == selectedCommand)
-					glColor4f(0F, 1F, 0F, 0.375F);
+				yi += 24;
+				NavigatorPossibleKeybind possibleKeybind =
+					possibleKeybinds.get(i);
+				
+				// positions
+				int x1 = bgx1 + 1;
+				int x2 = bgx2 - 1;
+				int y1 = yi;
+				int y2 = y1 + 20;
+				
+				// color
+				if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
+				{
+					hoveredCommand = i;
+					if(i == selectedCommand)
+						glColor4f(0F, 1F, 0F, 0.375F);
+					else
+						glColor4f(0.25F, 0.25F, 0.25F, 0.375F);
+				}else if(i == selectedCommand)
+					glColor4f(0F, 1F, 0F, 0.25F);
 				else
-					glColor4f(0.25F, 0.25F, 0.25F, 0.375F);
-			}else if(i == selectedCommand)
-				glColor4f(0F, 1F, 0F, 0.25F);
-			else
-				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
-			
-			// button
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
+					glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+				
+				// button
+				glBegin(GL_QUADS);
+				{
+					glVertex2i(x1, y1);
+					glVertex2i(x2, y1);
+					glVertex2i(x2, y2);
+					glVertex2i(x1, y2);
+				}
+				glEnd();
+				RenderUtil.boxShadow(x1, y1, x2, y2);
+				
+				// text
+				drawString(Fonts.segoe15, possibleKeybind.getDescription()
+					+ "\n" + possibleKeybind.getCommand(), x1 + 1, y1 - 1,
+					0xffffff);
+				glDisable(GL_TEXTURE_2D);
 			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
-			
-			// text
-			drawString(Fonts.segoe15, possibleKeybind.getDescription() + "\n"
-				+ possibleKeybind.getCommand(), x1 + 1, y1 - 1, 0xffffff);
-			glDisable(GL_TEXTURE_2D);
 		}
 		
 		// text
