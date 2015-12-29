@@ -10,15 +10,12 @@ package tk.wurst_client.navigator.gui;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
 
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Mouse;
@@ -31,13 +28,12 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	private int scroll = 0;
 	private ArrayList<NavigatorPossibleKeybind> possibleKeybinds;
 	private NavigatorFeatureScreen parent;
-	private ButtonData activeButton;
+	private int hoveredCommand = -1;
+	private int selectedCommand = -1;
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
 	private int contentHeight;
 	private String text;
-	private ArrayList<ButtonData> buttonDatas = new ArrayList<>();
-	private String command;
 	
 	public NavigatorNewKeybindScreen(
 		ArrayList<NavigatorPossibleKeybind> possibleKeybinds,
@@ -51,8 +47,6 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	@Override
 	public void initGui()
 	{
-		buttonDatas.clear();
-		
 		// OK button
 		buttonList.add(new GuiButton(0, width / 2 - 151, height - 65, 149, 18,
 			"OK"));
@@ -64,29 +58,8 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		// text
 		text = "Select what this keybind should do.";
 		
-		// area
-		Rectangle area =
-			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
-		
-		// possible keybinds
-		int yi = area.y - 12;
-		for(NavigatorPossibleKeybind possibleKeybind : possibleKeybinds)
-		{
-			yi += 24;
-			buttonDatas.add(new ButtonData(area.x + 1, yi, area.width - 2, 20,
-				possibleKeybind.getDescription() + "\n"
-					+ possibleKeybind.getCommand(), 0x404040)
-			{
-				@Override
-				public void press()
-				{
-					command = possibleKeybind.getCommand();
-				}
-			});
-		}
-		
 		// content height
-		contentHeight = yi - area.y + 2;
+		contentHeight = possibleKeybinds.size() * 24 - 10;
 	}
 	
 	@Override
@@ -123,15 +96,9 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 			return;
 		}
 		
-		// buttons
-		if(activeButton != null)
-		{
-			mc.getSoundHandler().playSound(
-				PositionedSoundRecord.createPositionedSoundRecord(
-					new ResourceLocation("gui.button.press"), 1.0F));
-			activeButton.press();
-			return;
-		}
+		// commands
+		if(hoveredCommand != -1)
+			selectedCommand = hoveredCommand;
 	}
 	
 	@Override
@@ -271,26 +238,32 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 			- (buttonList.isEmpty() ? 0 : 24));
 		glEnable(GL_SCISSOR_TEST);
 		
-		// buttons
-		activeButton = null;
-		for(ButtonData buttonData : buttonDatas)
+		// possible keybinds
+		hoveredCommand = -1;
+		int yi = bgy1 - 12 + scroll;
+		for(int i = 0; i < possibleKeybinds.size(); i++)
 		{
+			yi += 24;
+			NavigatorPossibleKeybind possibleKeybind = possibleKeybinds.get(i);
+			
 			// positions
-			int x1 = buttonData.x;
-			int x2 = x1 + buttonData.width;
-			int y1 = buttonData.y + scroll;
-			int y2 = y1 + buttonData.height;
+			int x1 = bgx1 + 1;
+			int x2 = bgx2 - 1;
+			int y1 = yi;
+			int y2 = y1 + 20;
 			
 			// color
-			float alpha;
 			if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
 			{
-				alpha = 0.75F;
-				activeButton = buttonData;
-			}else
-				alpha = 0.375F;
-			float[] rgb = buttonData.color.getColorComponents(null);
-			glColor4f(rgb[0], rgb[1], rgb[2], alpha);
+				hoveredCommand = i;
+				if(i == selectedCommand)
+					glColor4f(0F, 1F, 0F, 0.375F);
+				else
+					glColor4f(0.25F, 0.25F, 0.25F, 0.375F);
+			}else if(i == selectedCommand)
+				glColor4f(0F, 1F, 0F, 0.25F);
+			else
+				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
 			
 			// button
 			glBegin(GL_QUADS);
@@ -304,8 +277,8 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 			RenderUtil.boxShadow(x1, y1, x2, y2);
 			
 			// text
-			drawString(Fonts.segoe15, buttonData.displayString, x1 + 1, y1 - 1,
-				0xffffff);
+			drawString(Fonts.segoe15, possibleKeybind.getDescription() + "\n"
+				+ possibleKeybind.getCommand(), x1 + 1, y1 - 1, 0xffffff);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
@@ -353,21 +326,5 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
-	}
-	
-	private abstract class ButtonData extends Rectangle
-	{
-		public String displayString = "";
-		public Color color;
-		
-		public ButtonData(int x, int y, int width, int height,
-			String displayString, int color)
-		{
-			super(x, y, width, height);
-			this.displayString = displayString;
-			this.color = new Color(color);
-		}
-		
-		public abstract void press();
 	}
 }
