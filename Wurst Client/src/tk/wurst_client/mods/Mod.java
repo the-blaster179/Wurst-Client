@@ -102,10 +102,10 @@ public class Mod implements NavigatorItem
 	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
 	{
 		String dotT = ".t " + name.toLowerCase();
-		return (ArrayList<NavigatorPossibleKeybind>)Arrays.asList(
+		return new ArrayList<NavigatorPossibleKeybind>(Arrays.asList(
 			new NavigatorPossibleKeybind(dotT, "Toggle " + name),
 			new NavigatorPossibleKeybind(dotT + " on", "Enable " + name),
-			new NavigatorPossibleKeybind(dotT + " off", "Disable " + name));
+			new NavigatorPossibleKeybind(dotT + " off", "Disable " + name)));
 	}
 	
 	@Override
