@@ -22,6 +22,7 @@ import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
+import tk.wurst_client.navigator.Navigator;
 import tk.wurst_client.navigator.NavigatorItem;
 
 public class NavigatorScreen extends GuiScreen
@@ -30,7 +31,7 @@ public class NavigatorScreen extends GuiScreen
 	private static ArrayList<NavigatorItem> navigatorDisplayList =
 		new ArrayList<>();
 	private GuiTextField searchBar;
-	private NavigatorItem activeItem;
+	private int hoveredItem = -1;
 	private int clickTimer = -1;
 	private boolean expanding = false;
 	private int scrollKnobPosition = 2;
@@ -63,7 +64,7 @@ public class NavigatorScreen extends GuiScreen
 	{
 		super.mouseClicked(x, y, button);
 		
-		if(button == 0 && clickTimer == -1 && activeItem != null)
+		if(button == 0 && clickTimer == -1 && hoveredItem != -1)
 			expanding = true;
 		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
 			scrolling = true;
@@ -115,12 +116,19 @@ public class NavigatorScreen extends GuiScreen
 			String oldText = searchBar.getText();
 			searchBar.textboxKeyTyped(typedChar, keyCode);
 			String newText = searchBar.getText();
+			Navigator navigator = WurstClient.INSTANCE.navigator;
 			if(newText.isEmpty())
-				WurstClient.INSTANCE.navigator
-					.copyNavigatorList(navigatorDisplayList);
+				navigator.copyNavigatorList(navigatorDisplayList);
 			else if(!newText.equals(oldText))
-				WurstClient.INSTANCE.navigator.getSearchResults(
-					navigatorDisplayList, newText.toLowerCase());
+			{
+				newText = newText.toLowerCase();
+				navigator.getSearchResults(navigatorDisplayList, newText);
+				WurstClient.INSTANCE.navigator.analytics.trackEvent("search",
+					"search", newText);
+				if(navigatorDisplayList.isEmpty())
+					WurstClient.INSTANCE.navigator.analytics.trackEvent(
+						"search", "no results", newText);
+			}
 		}
 	}
 	
@@ -155,7 +163,15 @@ public class NavigatorScreen extends GuiScreen
 			if(clickTimer < 4)
 				clickTimer++;
 			else
-				mc.displayGuiScreen(new NavigatorFeatureScreen(activeItem, this));
+			{
+				mc.displayGuiScreen(new NavigatorFeatureScreen(
+					navigatorDisplayList.get(hoveredItem), this));
+				String query = searchBar.getText();
+				if(!query.isEmpty())
+					WurstClient.INSTANCE.navigator.analytics.trackEvent(
+						"search", "result clicked", query.toLowerCase(),
+						hoveredItem);
+			}
 		else if(!expanding && clickTimer > -1)
 			clickTimer--;
 	}
@@ -184,7 +200,7 @@ public class NavigatorScreen extends GuiScreen
 		// feature list
 		int x = width / 2 - 50;
 		if(clickTimerNotRunning)
-			activeItem = null;
+			hoveredItem = -1;
 		RenderUtil.scissorBox(0, 59, width, height - 42);
 		glEnable(GL_SCISSOR_TEST);
 		for(int i = Math.max(-scroll * 3 / 20 - 3, 0); i < navigatorDisplayList
@@ -220,7 +236,7 @@ public class NavigatorScreen extends GuiScreen
 			boolean hovering =
 				area.contains(mouseX, mouseY) && clickTimerNotRunning;
 			if(hovering)
-				activeItem = item;
+				hoveredItem = i;
 			if(item.isEnabled() && clickTimerNotRunning)
 				if(item.isBlocked())
 					glColor4f(hovering ? 1F : 0.875F, 0F, 0F, 0.5F);
@@ -234,7 +250,7 @@ public class NavigatorScreen extends GuiScreen
 			// click animation
 			if(!clickTimerNotRunning)
 			{
-				if(item != activeItem)
+				if(i != hoveredItem)
 					continue;
 				
 				float factor;

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.analytics.AnalyticsManager;
 import tk.wurst_client.commands.CmdManager;
 import tk.wurst_client.mods.ModManager;
 
@@ -23,6 +24,8 @@ public class Navigator
 {
 	private ArrayList<NavigatorItem> navigatorList = new ArrayList<>();
 	private final HashMap<String, Long> clicksMap = new HashMap<>();
+	public AnalyticsManager analytics = new AnalyticsManager("UA-52838431-7",
+		"navigator.client.wurst-client.tk");
 	
 	public Navigator()
 	{
