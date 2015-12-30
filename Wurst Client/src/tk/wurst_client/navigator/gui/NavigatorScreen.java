@@ -124,7 +124,7 @@ public class NavigatorScreen extends GuiScreen
 				newText = newText.toLowerCase();
 				navigator.getSearchResults(navigatorDisplayList, newText);
 				WurstClient.INSTANCE.navigator.analytics.trackEvent("search",
-					"search", newText);
+					"query searched", newText);
 				if(navigatorDisplayList.isEmpty())
 					WurstClient.INSTANCE.navigator.analytics.trackEvent(
 						"search", "no results", newText);
