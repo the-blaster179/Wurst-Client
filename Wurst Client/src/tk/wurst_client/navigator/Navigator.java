@@ -10,6 +10,9 @@ package tk.wurst_client.navigator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.CmdManager;
@@ -18,6 +21,7 @@ import tk.wurst_client.mods.ModManager;
 public class Navigator
 {
 	private ArrayList<NavigatorItem> navigatorList = new ArrayList<>();
+	private final HashMap<String, Long> clicksMap = new HashMap<>();
 	
 	public Navigator()
 	{
@@ -71,5 +75,32 @@ public class Navigator
 				|| mod.getDescription().toLowerCase().contains(query))
 				list.add(mod);
 		list.sort(new SearchResultsComparator(query));
+	}
+	
+	public long getClicks(String feature)
+	{
+		Long clicks = clicksMap.get(feature);
+		if(clicks == null)
+			clicks = 0L;
+		return clicks;
+	}
+	
+	public void addClick(String feature)
+	{
+		Long clicks = clicksMap.get(feature);
+		if(clicks == null)
+			clicks = 0L;
+		clicks++;
+		clicksMap.put(feature, clicks);
+	}
+	
+	public void setClicks(String feature, long clicks)
+	{
+		clicksMap.put(feature, clicks);
+	}
+	
+	public Iterator<Entry<String, Long>> getClicksIterator()
+	{
+		return clicksMap.entrySet().iterator();
 	}
 }

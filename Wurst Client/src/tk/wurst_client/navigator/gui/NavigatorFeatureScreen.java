@@ -62,6 +62,10 @@ public class NavigatorFeatureScreen extends GuiScreen
 			type = "Command";
 		else
 			type = "unknown";
+		
+		WurstClient wurst = WurstClient.INSTANCE;
+		wurst.navigator.addClick(item.getName());
+		wurst.files.saveNavigatorData();
 	}
 	
 	@SuppressWarnings("unchecked")
