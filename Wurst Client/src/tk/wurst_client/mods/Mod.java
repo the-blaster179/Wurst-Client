@@ -131,6 +131,7 @@ public class Mod implements NavigatorItem
 		return category;
 	}
 	
+	@Override
 	public final boolean isEnabled()
 	{
 		return enabled;
@@ -206,6 +207,7 @@ public class Mod implements NavigatorItem
 		setEnabled(!isEnabled());
 	}
 	
+	@Override
 	public boolean isBlocked()
 	{
 		return blocked;

@@ -18,6 +18,10 @@ public interface NavigatorItem
 	
 	public String getDescription();
 	
+	public boolean isEnabled();
+	
+	public boolean isBlocked();
+	
 	public String[] getTags();
 	
 	public ArrayList<BasicSlider> getSettings();

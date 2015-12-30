@@ -593,7 +593,14 @@ public class NavigatorFeatureScreen extends GuiScreen
 			int y2 = y1 + 18;
 			
 			// color
-			if(mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2)
+			boolean hovering =
+				mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
+			if(item.isEnabled() && button.id == 0)
+				if(item.isBlocked())
+					glColor4f(hovering ? 1F : 0.875F, 0F, 0F, 0.25F);
+				else
+					glColor4f(0F, hovering ? 1F : 0.875F, 0F, 0.25F);
+			else if(hovering)
 				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
 			else
 				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);

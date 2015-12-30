@@ -100,6 +100,18 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
+	public final boolean isEnabled()
+	{
+		return false;
+	}
+	
+	@Override
+	public final boolean isBlocked()
+	{
+		return false;
+	}
+	
+	@Override
 	public final String[] getTags()
 	{
 		return tags;

@@ -216,12 +216,19 @@ public class NavigatorScreen extends GuiScreen
 			NavigatorItem item = navigatorDisplayList.get(i);
 			Rectangle area = new Rectangle(xi, y, 100, 16);
 			
-			// hovering
-			if(area.contains(mouseX, mouseY) && clickTimerNotRunning)
-			{
+			// color
+			boolean hovering =
+				area.contains(mouseX, mouseY) && clickTimerNotRunning;
+			if(hovering)
 				activeItem = item;
+			if(item.isEnabled() && clickTimerNotRunning)
+				if(item.isBlocked())
+					glColor4f(hovering ? 1F : 0.875F, 0F, 0F, 0.5F);
+				else
+					glColor4f(0F, hovering ? 1F : 0.875F, 0F, 0.5F);
+			else if(hovering)
 				glColor4f(0.375F, 0.375F, 0.375F, 0.5F);
-			}else
+			else
 				glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
 			
 			// click animation
