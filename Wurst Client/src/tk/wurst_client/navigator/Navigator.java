@@ -10,6 +10,7 @@ package tk.wurst_client.navigator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -102,5 +103,24 @@ public class Navigator
 	public Iterator<Entry<String, Long>> getClicksIterator()
 	{
 		return clicksMap.entrySet().iterator();
+	}
+	
+	public void sortFeatures()
+	{
+		navigatorList.sort(new Comparator<NavigatorItem>()
+		{
+			@Override
+			public int compare(NavigatorItem o1, NavigatorItem o2)
+			{
+				long clicks1 = getClicks(o1.getName());
+				long clicks2 = getClicks(o2.getName());
+				if(clicks1 < clicks2)
+					return 1;
+				else if(clicks1 > clicks2)
+					return -1;
+				else
+					return 0;
+			}
+		});
 	}
 }

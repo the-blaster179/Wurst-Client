@@ -60,6 +60,7 @@ public enum WurstClient
 		navigator = new Navigator();
 		
 		files.init();
+		navigator.sortFeatures();
 		Fonts.loadFonts();
 		gui.setTheme(new WurstTheme());
 		gui.setup();
@@ -67,7 +68,7 @@ public enum WurstClient
 		analytics =
 			new AnalyticsManager("UA-52838431-5", "client.wurst-client.tk");
 		files.saveOptions();
-
+		
 		FrameHook.maximize();
 	}
 }
