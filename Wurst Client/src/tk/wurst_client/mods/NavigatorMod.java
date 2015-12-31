@@ -11,7 +11,7 @@ package tk.wurst_client.mods;
 import net.minecraft.client.Minecraft;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
-import tk.wurst_client.navigator.gui.NavigatorScreen;
+import tk.wurst_client.navigator.gui.NavigatorMainScreen;
 
 @Info(category = Category.HIDDEN, description = "", name = "Navigator")
 public class NavigatorMod extends Mod
@@ -19,7 +19,7 @@ public class NavigatorMod extends Mod
 	@Override
 	public void onToggle()
 	{
-		if(!(Minecraft.getMinecraft().currentScreen instanceof NavigatorScreen))
-			Minecraft.getMinecraft().displayGuiScreen(new NavigatorScreen());
+		if(!(Minecraft.getMinecraft().currentScreen instanceof NavigatorMainScreen))
+			Minecraft.getMinecraft().displayGuiScreen(new NavigatorMainScreen());
 	}
 }

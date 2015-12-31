@@ -25,7 +25,7 @@ import tk.wurst_client.font.Fonts;
 import tk.wurst_client.navigator.Navigator;
 import tk.wurst_client.navigator.NavigatorItem;
 
-public class NavigatorScreen extends GuiScreen
+public class NavigatorMainScreen extends GuiScreen
 {
 	private int scroll = 0;
 	private static ArrayList<NavigatorItem> navigatorDisplayList =
@@ -37,7 +37,7 @@ public class NavigatorScreen extends GuiScreen
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
 	
-	public NavigatorScreen()
+	public NavigatorMainScreen()
 	{
 		searchBar = new GuiTextField(0, Fonts.segoe22, 0, 32, 200, 20);
 		searchBar.setEnableBackgroundDrawing(false);

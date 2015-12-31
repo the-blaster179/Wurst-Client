@@ -39,7 +39,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 {
 	private int scroll = 0;
 	private NavigatorItem item;
-	private NavigatorScreen parent;
+	private NavigatorMainScreen parent;
 	private String type;
 	private ButtonData activeButton;
 	private GuiButton primaryButton;
@@ -51,7 +51,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 	private ArrayList<ButtonData> buttonDatas = new ArrayList<>();
 	private SliderData[] sliderDatas = {};
 	
-	public NavigatorFeatureScreen(NavigatorItem item, NavigatorScreen parent)
+	public NavigatorFeatureScreen(NavigatorItem item, NavigatorMainScreen parent)
 	{
 		this.item = item;
 		this.parent = parent;
