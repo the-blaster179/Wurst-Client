@@ -20,7 +20,7 @@ import org.lwjgl.input.Mouse;
 
 public abstract class NavigatorScreen extends GuiScreen
 {
-	private int scroll = 0;
+	protected int scroll = 0;
 	private int scrollKnobPosition = 2;
 	private boolean scrolling;
 	private int maxScroll;
