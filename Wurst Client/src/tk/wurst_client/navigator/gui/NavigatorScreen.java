@@ -29,11 +29,6 @@ public abstract class NavigatorScreen extends GuiScreen
 	protected boolean hasBackground = true;
 	protected int nonScrollableArea = 26;
 	
-	public NavigatorScreen()
-	{
-		onInitialize();
-	}
-	
 	@Override
 	public final void initGui()
 	{
@@ -196,8 +191,6 @@ public abstract class NavigatorScreen extends GuiScreen
 		// vanilla buttons
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
-	
-	protected abstract void onInitialize();
 	
 	protected abstract void onResize();
 	
