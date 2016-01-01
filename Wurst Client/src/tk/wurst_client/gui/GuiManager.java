@@ -164,8 +164,8 @@ public final class GuiManager extends AbstractGuiManager
 				}
 			});
 			frame.add(button);
-			if(!mod.getSliders().isEmpty())
-				for(BasicSlider slider : mod.getSliders())
+			if(!mod.getSettings().isEmpty())
+				for(BasicSlider slider : mod.getSettings())
 				{
 					slider.addSliderListener(new SliderListener()
 					{
@@ -173,7 +173,7 @@ public final class GuiManager extends AbstractGuiManager
 						public void onSliderValueChanged(Slider slider)
 						{
 							ArrayList<BasicSlider> moduleSliders =
-								mod.getSliders();
+								mod.getSettings();
 							if(moduleSliders.contains(slider))
 							{
 								int id = moduleSliders.indexOf(slider);

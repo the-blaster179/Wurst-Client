@@ -11,6 +11,7 @@ package tk.wurst_client.mods;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
 
@@ -18,14 +19,19 @@ import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.error.GuiError;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 
-public class Mod
+public class Mod implements NavigatorItem
 {
 	private final String name = getClass().getAnnotation(Info.class).name();
 	private final String description = getClass().getAnnotation(Info.class)
 		.description();
 	private final Category category = getClass().getAnnotation(Info.class)
 		.category();
+	private final String[] tags = getClass().getAnnotation(Info.class).tags();
+	private final String tutorial = getClass().getAnnotation(Info.class)
+		.tutorial();
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
@@ -57,8 +63,13 @@ public class Mod
 		Category category();
 		
 		boolean noCheatCompatible() default true;
+		
+		String[] tags() default {};
+		
+		String tutorial() default "";
 	}
 	
+	@Override
 	public final String getName()
 	{
 		return name;
@@ -69,9 +80,50 @@ public class Mod
 		return name;
 	}
 	
+	@Override
 	public final String getDescription()
 	{
 		return description;
+	}
+	
+	@Override
+	public final String[] getTags()
+	{
+		return tags;
+	}
+	
+	@Override
+	public final ArrayList<BasicSlider> getSettings()
+	{
+		return sliders;
+	}
+	
+	@Override
+	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
+	{
+		String dotT = ".t " + name.toLowerCase();
+		return new ArrayList<NavigatorPossibleKeybind>(Arrays.asList(
+			new NavigatorPossibleKeybind(dotT, "Toggle " + name),
+			new NavigatorPossibleKeybind(dotT + " on", "Enable " + name),
+			new NavigatorPossibleKeybind(dotT + " off", "Disable " + name)));
+	}
+	
+	@Override
+	public final String getPrimaryAction()
+	{
+		return enabled ? "Disable" : "Enable";
+	}
+	
+	@Override
+	public final void doPrimaryAction()
+	{
+		toggle();
+	}
+	
+	@Override
+	public final String getTutorialPage()
+	{
+		return tutorial;
 	}
 	
 	public final Category getCategory()
@@ -79,6 +131,7 @@ public class Mod
 		return category;
 	}
 	
+	@Override
 	public final boolean isEnabled()
 	{
 		return enabled;
@@ -122,7 +175,7 @@ public class Mod
 				Minecraft.getMinecraft().displayGuiScreen(
 					new GuiError(e, this, "disabling", ""));
 			}
-		if(!WurstClient.INSTANCE.files.isModBlacklited(this))
+		if(!WurstClient.INSTANCE.files.isModBlacklisted(this))
 			WurstClient.INSTANCE.files.saveMods();
 	}
 	
@@ -154,6 +207,7 @@ public class Mod
 		setEnabled(!isEnabled());
 	}
 	
+	@Override
 	public boolean isBlocked()
 	{
 		return blocked;
@@ -187,11 +241,6 @@ public class Mod
 						""));
 			}
 		}
-	}
-	
-	public final ArrayList<BasicSlider> getSliders()
-	{
-		return sliders;
 	}
 	
 	public final void setSliders(ArrayList<BasicSlider> newSliders)

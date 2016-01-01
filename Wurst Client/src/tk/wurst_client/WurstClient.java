@@ -19,6 +19,7 @@ import tk.wurst_client.font.Fonts;
 import tk.wurst_client.gui.GuiManager;
 import tk.wurst_client.hooks.FrameHook;
 import tk.wurst_client.mods.ModManager;
+import tk.wurst_client.navigator.Navigator;
 import tk.wurst_client.options.FriendsList;
 import tk.wurst_client.options.KeybindManager;
 import tk.wurst_client.options.OptionsManager;
@@ -28,9 +29,10 @@ public enum WurstClient
 {
 	INSTANCE;
 	
-	public static final String VERSION = "2.12";
+	public static final String VERSION = "2.13pre1";
 	public boolean startupMessageDisabled = false;
 	
+	public AnalyticsManager analytics;
 	public ChatManager chat;
 	public CmdManager commands;
 	public EventManager events;
@@ -38,10 +40,10 @@ public enum WurstClient
 	public FriendsList friends;
 	public GuiManager gui;
 	public ModManager mods;
+	public Navigator navigator;
 	public KeybindManager keybinds;
 	public OptionsManager options;
 	public Updater updater;
-	public AnalyticsManager analytics;
 	
 	public void startClient()
 	{
@@ -55,8 +57,10 @@ public enum WurstClient
 		keybinds = new KeybindManager();
 		options = new OptionsManager();
 		friends = new FriendsList();
+		navigator = new Navigator();
 		
 		files.init();
+		navigator.sortFeatures();
 		Fonts.loadFonts();
 		gui.setTheme(new WurstTheme());
 		gui.setup();
@@ -64,7 +68,7 @@ public enum WurstClient
 		analytics =
 			new AnalyticsManager("UA-52838431-5", "client.wurst-client.tk");
 		files.saveOptions();
-
+		
 		FrameHook.maximize();
 	}
 }

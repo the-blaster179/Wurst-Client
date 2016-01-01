@@ -10,19 +10,27 @@ package tk.wurst_client.commands;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
+
+import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
+
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.NavigatorPossibleKeybind;
 import tk.wurst_client.utils.EntityUtils;
 import tk.wurst_client.utils.MiscUtils;
 
-public abstract class Cmd
+public abstract class Cmd implements NavigatorItem
 {
 	private String name = getClass().getAnnotation(Info.class).name();
 	private String help = getClass().getAnnotation(Info.class).help();
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
+	private String[] tags = getClass().getAnnotation(Info.class).tags();
+	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
@@ -32,6 +40,10 @@ public abstract class Cmd
 		String help();
 		
 		String[] syntax();
+		
+		String[] tags() default {};
+		
+		String tutorial() default "";
 	}
 	
 	public class SyntaxError extends Error
@@ -60,28 +72,88 @@ public abstract class Cmd
 		}
 	}
 	
-	public String getName()
+	public final String getCmdName()
 	{
 		return name;
 	}
 	
-	public String getHelp()
+	public final String getHelp()
 	{
 		return help;
 	}
 	
-	public String[] getSyntax()
+	public final String[] getSyntax()
 	{
 		return syntax;
 	}
 	
-	public void printHelp()
+	@Override
+	public final String getName()
+	{
+		return "." + name;
+	}
+	
+	@Override
+	public final String getDescription()
+	{
+		return help;
+	}
+	
+	@Override
+	public final boolean isEnabled()
+	{
+		return false;
+	}
+	
+	@Override
+	public final boolean isBlocked()
+	{
+		return false;
+	}
+	
+	@Override
+	public final String[] getTags()
+	{
+		return tags;
+	}
+	
+	@Override
+	public final ArrayList<BasicSlider> getSettings()
+	{
+		return new ArrayList<BasicSlider>();
+	}
+	
+	@Override
+	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
+	{
+		return new ArrayList<>();
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{	
+		
+	}
+	
+	@Override
+	public final String getTutorialPage()
+	{
+		return tutorial;
+	}
+	
+	public final void printHelp()
 	{
 		for(String line : help.split("\n"))
 			WurstClient.INSTANCE.chat.message(line);
 	}
 	
-	public void printSyntax()
+	public final void printSyntax()
 	{
 		String output = "§o." + name + "§r";
 		if(syntax.length != 0)
