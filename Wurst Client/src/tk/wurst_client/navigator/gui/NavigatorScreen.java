@@ -187,9 +187,6 @@ public abstract class NavigatorScreen extends GuiScreen
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
-		
-		// vanilla buttons
-		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 	
 	protected abstract void onResize();
