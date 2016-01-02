@@ -11,34 +11,32 @@ package tk.wurst_client.navigator.gui;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Rectangle;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 
 import org.darkstorm.minecraft.gui.util.RenderUtil;
-import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.navigator.Navigator;
 import tk.wurst_client.navigator.NavigatorItem;
 
-public class NavigatorMainScreen extends GuiScreen
+public class NavigatorMainScreen extends NavigatorScreen
 {
-	private int scroll = 0;
 	private static ArrayList<NavigatorItem> navigatorDisplayList =
 		new ArrayList<>();
 	private GuiTextField searchBar;
 	private int hoveredItem = -1;
 	private int clickTimer = -1;
 	private boolean expanding = false;
-	private int scrollKnobPosition = 2;
-	private boolean scrolling;
 	
 	public NavigatorMainScreen()
 	{
+		hasBackground = false;
+		nonScrollableArea = 0;
+		
 		searchBar = new GuiTextField(0, Fonts.segoe22, 0, 32, 200, 20);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setMaxStringLength(128);
@@ -48,62 +46,14 @@ public class NavigatorMainScreen extends GuiScreen
 	}
 	
 	@Override
-	public void initGui()
+	protected void onResize()
 	{
-		searchBar.xPosition = width / 2 - 100;
+		searchBar.xPosition = middleX - 100;
+		setContentHeight(navigatorDisplayList.size() / 3 * 20);
 	}
 	
 	@Override
-	public boolean doesGuiPauseGame()
-	{
-		return false;
-	}
-	
-	@Override
-	protected void mouseClicked(int x, int y, int button) throws IOException
-	{
-		super.mouseClicked(x, y, button);
-		
-		if(button == 0 && clickTimer == -1 && hoveredItem != -1)
-			expanding = true;
-		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
-			scrolling = true;
-	}
-	
-	@Override
-	protected void mouseClickMove(int mouseX, int mouseY,
-		int clickedMouseButton, long timeSinceLastClick)
-	{
-		if(scrolling && clickedMouseButton == 0 && clickTimer == -1)
-		{
-			int maxScroll =
-				-navigatorDisplayList.size() / 3 * 20 + height - 120;
-			if(maxScroll > 0)
-				maxScroll = 0;
-			
-			if(maxScroll == 0)
-				scroll = 0;
-			else
-				scroll =
-					(int)((mouseY - 72) * (float)maxScroll / (height - 131));
-			
-			if(scroll > 0)
-				scroll = 0;
-			else if(scroll < maxScroll)
-				scroll = maxScroll;
-		}
-	}
-	
-	@Override
-	public void mouseReleased(int x, int y, int button)
-	{
-		super.mouseReleased(x, y, button);
-		
-		scrolling = false;
-	}
-	
-	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException
+	protected void onKeyPress(char typedChar, int keyCode)
 	{
 		if(keyCode == 1)
 		{
@@ -129,34 +79,32 @@ public class NavigatorMainScreen extends GuiScreen
 					WurstClient.INSTANCE.navigator.analytics.trackEvent(
 						"search", "no results", newText);
 			}
+			setContentHeight(navigatorDisplayList.size() / 3 * 20);
 		}
 	}
 	
 	@Override
-	public void updateScreen()
+	protected void onMouseClick(int x, int y, int button)
 	{
-		if(clickTimer == -1)
-		{
-			scroll += Mouse.getDWheel() / 10;
-			
-			int maxScroll =
-				-navigatorDisplayList.size() / 3 * 20 + height - 120;
-			if(maxScroll > 0)
-				maxScroll = 0;
-			
-			if(scroll > 0)
-				scroll = 0;
-			else if(scroll < maxScroll)
-				scroll = maxScroll;
-			
-			if(maxScroll == 0)
-				scrollKnobPosition = 0;
-			else
-				scrollKnobPosition =
-					(int)((height - 131) * scroll / (float)maxScroll);
-			scrollKnobPosition += 2;
-		}
+		if(button == 0 && clickTimer == -1 && hoveredItem != -1)
+			expanding = true;
+	}
+	
+	@Override
+	protected void onMouseDrag(int x, int y, int button, long timeDragged)
+	{	
 		
+	}
+	
+	@Override
+	protected void onMouseRelease(int x, int y, int button)
+	{	
+		
+	}
+	
+	@Override
+	protected void onUpdate()
+	{
 		searchBar.updateCursorCounter();
 		
 		if(expanding)
@@ -174,31 +122,24 @@ public class NavigatorMainScreen extends GuiScreen
 			}
 		else if(!expanding && clickTimer > -1)
 			clickTimer--;
+		scrollbarLocked = clickTimer != -1;
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks)
+	protected void onRender(int mouseX, int mouseY, float partialTicks)
 	{
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		
 		boolean clickTimerNotRunning = clickTimer == -1;
 		
 		// search bar
 		if(clickTimerNotRunning)
 		{
-			Fonts.segoe22.drawString("Search: ", width / 2 - 150, 32, 0xffffff);
+			Fonts.segoe22.drawString("Search: ", middleX - 150, 32, 0xffffff);
 			searchBar.drawTextBox();
+			glDisable(GL_TEXTURE_2D);
 		}
 		
-		// GL settings
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_TEXTURE_2D);
-		glShadeModel(GL_SMOOTH);
-		
 		// feature list
-		int x = width / 2 - 50;
+		int x = middleX - 50;
 		if(clickTimerNotRunning)
 			hoveredItem = -1;
 		RenderUtil.scissorBox(0, 59, width, height - 42);
@@ -265,8 +206,7 @@ public class NavigatorMainScreen extends GuiScreen
 					factor = (clickTimer - partialTicks) / 4F;
 				float antiFactor = 1 - factor;
 				
-				area.x =
-					(int)(area.x * antiFactor + (width / 2 - 154) * factor);
+				area.x = (int)(area.x * antiFactor + (middleX - 154) * factor);
 				area.y = (int)(area.y * antiFactor + 60 * factor);
 				area.width = (int)(area.width * antiFactor + 308 * factor);
 				area.height =
@@ -306,48 +246,6 @@ public class NavigatorMainScreen extends GuiScreen
 			}
 		}
 		glDisable(GL_SCISSOR_TEST);
-		
-		// scroll bar
-		Rectangle area = new Rectangle(width / 2 + 170, 60, 12, height - 103);
-		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-		glBegin(GL_QUADS);
-		{
-			glVertex2d(area.x, area.y);
-			glVertex2d(area.x + area.width, area.y);
-			glVertex2d(area.x + area.width, area.y + area.height);
-			glVertex2d(area.x, area.y + area.height);
-		}
-		glEnd();
-		RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
-			+ area.height);
-		
-		// scroll knob
-		area.x += 2;
-		area.y += scrollKnobPosition;
-		area.width = 8;
-		area.height = 24;
-		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-		glBegin(GL_QUADS);
-		{
-			glVertex2d(area.x, area.y);
-			glVertex2d(area.x + area.width, area.y);
-			glVertex2d(area.x + area.width, area.y + area.height);
-			glVertex2d(area.x, area.y + area.height);
-		}
-		glEnd();
-		RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
-			+ area.height);
-		RenderUtil.downShadow(area.x + 1, area.y + 8, area.x + area.width - 1,
-			area.y + 9);
-		RenderUtil.downShadow(area.x + 1, area.y + 12, area.x + area.width - 1,
-			area.y + 13);
-		RenderUtil.downShadow(area.x + 1, area.y + 16, area.x + area.width - 1,
-			area.y + 17);
-		
-		// GL resets
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
 	}
 	
 	public void setExpanding(boolean expanding)
