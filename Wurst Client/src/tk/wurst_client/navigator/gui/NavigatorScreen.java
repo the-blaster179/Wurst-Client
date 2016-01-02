@@ -93,6 +93,8 @@ public abstract class NavigatorScreen extends GuiScreen
 	@Override
 	public final void updateScreen()
 	{
+		onUpdate();
+		
 		// scrollbar
 		if(!scrollbarLocked)
 		{
@@ -110,8 +112,6 @@ public abstract class NavigatorScreen extends GuiScreen
 					(int)((height - 131) * scroll / (float)maxScroll);
 			scrollKnobPosition += 2;
 		}
-		
-		onUpdate();
 	}
 	
 	@Override
