@@ -40,7 +40,7 @@ public abstract class NavigatorScreen extends GuiScreen
 	@Override
 	public final void keyTyped(char typedChar, int keyCode) throws IOException
 	{
-		onKeyPress(keyCode);
+		onKeyPress(typedChar, keyCode);
 	}
 	
 	@Override
@@ -191,7 +191,7 @@ public abstract class NavigatorScreen extends GuiScreen
 	
 	protected abstract void onResize();
 	
-	protected abstract void onKeyPress(int key);
+	protected abstract void onKeyPress(char typedChar, int keyCode);
 	
 	protected abstract void onMouseClick(int x, int y, int button);
 	

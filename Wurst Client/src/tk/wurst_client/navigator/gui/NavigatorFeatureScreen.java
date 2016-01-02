@@ -240,9 +240,9 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 	}
 	
 	@Override
-	protected void onKeyPress(int key)
+	protected void onKeyPress(char typedChar, int keyCode)
 	{
-		if(key == 1)
+		if(keyCode == 1)
 		{
 			parent.setExpanding(false);
 			mc.displayGuiScreen(parent);
@@ -513,7 +513,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 	}
-
+	
 	private abstract class ButtonData extends Rectangle
 	{
 		public String displayString = "";
@@ -529,7 +529,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		
 		public abstract void press();
 	}
-
+	
 	private class SliderData
 	{
 		public int x;
