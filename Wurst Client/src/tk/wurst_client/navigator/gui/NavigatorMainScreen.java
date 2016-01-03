@@ -173,21 +173,6 @@ public class NavigatorMainScreen extends NavigatorScreen
 			NavigatorItem item = navigatorDisplayList.get(i);
 			Rectangle area = new Rectangle(xi, y, 100, 16);
 			
-			// color
-			boolean hovering =
-				area.contains(mouseX, mouseY) && clickTimerNotRunning;
-			if(hovering)
-				hoveredItem = i;
-			if(item.isEnabled() && clickTimerNotRunning)
-				if(item.isBlocked())
-					glColor4f(hovering ? 1F : 0.875F, 0F, 0F, 0.5F);
-				else
-					glColor4f(0F, hovering ? 1F : 0.875F, 0F, 0.5F);
-			else if(hovering)
-				glColor4f(0.375F, 0.375F, 0.375F, 0.5F);
-			else
-				glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			
 			// click animation
 			if(!clickTimerNotRunning)
 			{
@@ -211,25 +196,31 @@ public class NavigatorMainScreen extends NavigatorScreen
 				area.width = (int)(area.width * antiFactor + 308 * factor);
 				area.height =
 					(int)(area.height * antiFactor + (height - 103) * factor);
-			}
-			
-			// box & shadow
-			glBegin(GL_QUADS);
+				
+				drawBackgroundBox(area.x, area.y, area.x + area.width, area.y
+					+ area.height);
+			}else
 			{
-				glVertex2d(area.x, area.y);
-				glVertex2d(area.x + area.width, area.y);
-				glVertex2d(area.x + area.width, area.y + area.height);
-				glVertex2d(area.x, area.y + area.height);
-			}
-			glEnd();
-			RenderUtil.boxShadow(area.x, area.y, area.x + area.width, area.y
-				+ area.height);
-			
-			// text
-			if(clickTimerNotRunning)
-			{
-				glEnable(GL_TEXTURE_2D);
-				try
+				// color
+				boolean hovering = area.contains(mouseX, mouseY);
+				if(hovering)
+					hoveredItem = i;
+				if(item.isEnabled())
+					if(item.isBlocked())
+						glColor4f(hovering ? 1F : 0.875F, 0F, 0F, 0.5F);
+					else
+						glColor4f(0F, hovering ? 1F : 0.875F, 0F, 0.5F);
+				else if(hovering)
+					glColor4f(0.375F, 0.375F, 0.375F, 0.5F);
+				else
+					glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+				
+				// box & shadow
+				drawBox(area.x, area.y, area.x + area.width, area.y
+					+ area.height);
+				
+				// text
+				if(clickTimerNotRunning)
 				{
 					String buttonText = item.getName();
 					Fonts.segoe15.drawString(
@@ -238,11 +229,8 @@ public class NavigatorMainScreen extends NavigatorScreen
 							+ (area.width - Fonts.segoe15
 								.getStringWidth(buttonText)) / 2, area.y + 2,
 						0xffffff);
-				}catch(Exception e)
-				{
-					e.printStackTrace();
+					glDisable(GL_TEXTURE_2D);
 				}
-				glDisable(GL_TEXTURE_2D);
 			}
 		}
 		glDisable(GL_SCISSOR_TEST);
