@@ -386,16 +386,8 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			int x2 = bgx2 - 2;
 			int y1 = sliderData.y + scroll + 4;
 			int y2 = y1 + 4;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.invertedBoxShadow(x1, y1, x2, y2);
+			setColorToForeground();
+			drawEngravedBox(x1, y1, x2, y2);
 			
 			// knob
 			x1 = sliderData.x + 1;
@@ -404,15 +396,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			y2 += 2;
 			float percentage = sliderData.percentage;
 			glColor4f(percentage, 1F - percentage, 0F, 0.75F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// value
 			String value = sliderData.value;
@@ -444,15 +428,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			glColor4f(rgb[0], rgb[1], rgb[2], alpha);
 			
 			// button
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// text
 			drawCenteredString(Fonts.segoe18, buttonData.displayString,
@@ -493,15 +469,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			
 			// button
 			glDisable(GL_TEXTURE_2D);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// text
 			drawCenteredString(Fonts.segoe18, button.displayString,
