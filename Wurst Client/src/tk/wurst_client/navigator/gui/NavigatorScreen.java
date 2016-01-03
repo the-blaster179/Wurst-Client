@@ -27,6 +27,7 @@ public abstract class NavigatorScreen extends GuiScreen
 	protected int middleX;
 	protected boolean hasBackground = true;
 	protected int nonScrollableArea = 26;
+	private boolean showScrollbar;
 	
 	@Override
 	public final void initGui()
@@ -132,6 +133,7 @@ public abstract class NavigatorScreen extends GuiScreen
 			drawBackgroundBox(bgx1, bgy1, bgx2, bgy2);
 		
 		// scrollbar
+		if(showScrollbar)
 		{
 			// bar
 			int x1 = bgx2 + 16;
@@ -185,6 +187,7 @@ public abstract class NavigatorScreen extends GuiScreen
 		maxScroll = height - contentHeight - nonScrollableArea - 120;
 		if(maxScroll > 0)
 			maxScroll = 0;
+		showScrollbar = maxScroll != 0;
 	}
 	
 	protected final void drawQuads(int x1, int y1, int x2, int y2)
