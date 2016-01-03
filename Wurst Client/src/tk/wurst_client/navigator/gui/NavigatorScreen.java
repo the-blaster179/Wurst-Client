@@ -210,7 +210,7 @@ public abstract class NavigatorScreen extends GuiScreen
 		return false;
 	}
 	
-	protected void setContentHeight(int contentHeight)
+	protected final void setContentHeight(int contentHeight)
 	{
 		maxScroll = height - contentHeight - nonScrollableArea - 120;
 		if(maxScroll > 0)
