@@ -14,6 +14,8 @@ import net.minecraft.client.gui.GuiIngameMenu;
 
 import org.lwjgl.input.Keyboard;
 
+import tk.wurst_client.navigator.gui.NavigatorScreen;
+
 @Mod.Info(category = Mod.Category.MOVEMENT,
 	description = "Allows you to walk while viewing a menu (e.g. the inventory\n"
 		+ "menu).",
@@ -32,7 +34,9 @@ public class MenuWalkMod extends Mod
 			return false;
 		
 		// check if player is viewing chat
-		if((mc.currentScreen instanceof GuiChat) || (mc.currentScreen instanceof GuiIngameMenu))
+		if((mc.currentScreen instanceof GuiChat)
+			|| (mc.currentScreen instanceof GuiIngameMenu)
+			|| (mc.currentScreen instanceof NavigatorScreen))
 			return false;
 		
 		// check if inventory key is pressed
