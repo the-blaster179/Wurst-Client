@@ -16,6 +16,8 @@ public interface NavigatorItem
 {
 	public String getName();
 	
+	public String getType();
+	
 	public String getDescription();
 	
 	public boolean isEnabled();

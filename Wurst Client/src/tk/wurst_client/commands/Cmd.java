@@ -94,6 +94,12 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
+	public final String getType()
+	{
+		return "Command";
+	}
+	
+	@Override
 	public final String getDescription()
 	{
 		return help;
