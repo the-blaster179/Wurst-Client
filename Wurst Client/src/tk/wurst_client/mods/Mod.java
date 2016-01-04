@@ -20,7 +20,7 @@ import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.error.GuiError;
 import tk.wurst_client.navigator.NavigatorItem;
-import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.navigator.PossibleKeybind;
 
 public class Mod implements NavigatorItem
 {
@@ -105,13 +105,13 @@ public class Mod implements NavigatorItem
 	}
 	
 	@Override
-	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
+	public final ArrayList<PossibleKeybind> getPossibleKeybinds()
 	{
 		String dotT = ".t " + name.toLowerCase();
-		return new ArrayList<NavigatorPossibleKeybind>(Arrays.asList(
-			new NavigatorPossibleKeybind(dotT, "Toggle " + name),
-			new NavigatorPossibleKeybind(dotT + " on", "Enable " + name),
-			new NavigatorPossibleKeybind(dotT + " off", "Disable " + name)));
+		return new ArrayList<PossibleKeybind>(Arrays.asList(
+			new PossibleKeybind(dotT, "Toggle " + name),
+			new PossibleKeybind(dotT + " on", "Enable " + name),
+			new PossibleKeybind(dotT + " off", "Disable " + name)));
 	}
 	
 	@Override
