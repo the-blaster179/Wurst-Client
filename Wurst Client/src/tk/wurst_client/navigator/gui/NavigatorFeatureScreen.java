@@ -56,10 +56,6 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			type = "Command";
 		else
 			type = "unknown";
-		
-		WurstClient wurst = WurstClient.INSTANCE;
-		wurst.navigator.addClick(item.getName());
-		wurst.files.saveNavigatorData();
 	}
 	
 	@Override
@@ -79,6 +75,10 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 					+ item.getTutorialPage());
 				break;
 		}
+		
+		WurstClient wurst = WurstClient.INSTANCE;
+		wurst.navigator.addClick(item.getName());
+		wurst.files.saveNavigatorData();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -307,8 +307,12 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 	{
 		if(sliding != -1)
 		{
-			WurstClient.INSTANCE.files.saveSliders();
+			WurstClient wurst = WurstClient.INSTANCE;
+			wurst.files.saveSliders();
 			sliding = -1;
+			
+			wurst.navigator.addClick(item.getName());
+			wurst.files.saveNavigatorData();
 		}
 	}
 	
@@ -482,6 +486,11 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		glDisable(GL_BLEND);
 	}
 	
+	public NavigatorItem getItem()
+	{
+		return item;
+	}
+
 	private abstract class ButtonData extends Rectangle
 	{
 		public String displayString = "";
