@@ -24,19 +24,19 @@ import org.darkstorm.minecraft.gui.util.RenderUtil;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
-import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.navigator.PossibleKeybind;
 
 public class NavigatorRemoveKeybindScreen extends NavigatorScreen
 {
 	private NavigatorFeatureScreen parent;
-	private TreeMap<String, NavigatorPossibleKeybind> existingKeybinds;
+	private TreeMap<String, PossibleKeybind> existingKeybinds;
 	private String hoveredKeybind = "";
 	private String selectedKey = "";
 	private String text = "Select the keybind you want to remove.";
 	private GuiButton removeButton;
 	
 	public NavigatorRemoveKeybindScreen(
-		TreeMap<String, NavigatorPossibleKeybind> existingKeybinds,
+		TreeMap<String, PossibleKeybind> existingKeybinds,
 		NavigatorFeatureScreen parent)
 	{
 		this.existingKeybinds = existingKeybinds;
@@ -139,11 +139,11 @@ public class NavigatorRemoveKeybindScreen extends NavigatorScreen
 		// possible keybinds
 		hoveredKeybind = "";
 		int yi = bgy1 - 12 + scroll;
-		for(Entry<String, NavigatorPossibleKeybind> entry : existingKeybinds
+		for(Entry<String, PossibleKeybind> entry : existingKeybinds
 			.entrySet())
 		{
 			String key = entry.getKey();
-			NavigatorPossibleKeybind keybind = entry.getValue();
+			PossibleKeybind keybind = entry.getValue();
 			yi += 24;
 			
 			// positions

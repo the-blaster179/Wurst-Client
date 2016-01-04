@@ -28,7 +28,7 @@ public interface NavigatorItem
 	
 	public ArrayList<BasicSlider> getSettings();
 	
-	public ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds();
+	public ArrayList<PossibleKeybind> getPossibleKeybinds();
 	
 	public String getPrimaryAction();
 	
