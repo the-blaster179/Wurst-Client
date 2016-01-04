@@ -75,6 +75,12 @@ public class Mod implements NavigatorItem
 		return name;
 	}
 	
+	@Override
+	public final String getType()
+	{
+		return "Mod";
+	}
+	
 	public String getRenderName()
 	{
 		return name;
