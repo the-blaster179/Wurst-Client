@@ -73,12 +73,44 @@ public class Navigator
 	
 	public void getSearchResults(ArrayList<NavigatorItem> list, String query)
 	{
+		// clear display list
 		list.clear();
+		
+		// add search results
 		for(NavigatorItem mod : navigatorList)
 			if(mod.getName().toLowerCase().contains(query)
 				|| mod.getDescription().toLowerCase().contains(query))
 				list.add(mod);
-		list.sort(new SearchResultsComparator(query));
+		
+		// sort search results
+		list.sort(new Comparator<NavigatorItem>()
+		{
+			@Override
+			public int compare(NavigatorItem o1, NavigatorItem o2)
+			{
+				int result = compareNext(o1.getName(), o2.getName());
+				if(result != 0)
+					return result;
+				
+				result = compareNext(o1.getDescription(), o2.getDescription());
+				return result;
+			}
+			
+			private int compareNext(String o1, String o2)
+			{
+				int index1 = o1.toLowerCase().indexOf(query);
+				int index2 = o2.toLowerCase().indexOf(query);
+				
+				if(index1 == index2)
+					return 0;
+				else if(index1 == -1)
+					return 1;
+				else if(index2 == -1)
+					return -1;
+				else
+					return index1 - index2;
+			}
+		});
 	}
 	
 	public long getClicks(String feature)
