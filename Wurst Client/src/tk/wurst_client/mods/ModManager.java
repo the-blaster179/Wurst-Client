@@ -151,7 +151,7 @@ public class ModManager
 				{
 					Mod mod = (Mod)field.get(this);
 					mods.put(mod.getName(), mod);
-					mod.initSliders();
+					mod.initSettings();
 				}
 			}
 		}catch(Exception e)

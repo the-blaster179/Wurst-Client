@@ -15,12 +15,10 @@ import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.PossibleKeybind;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 import tk.wurst_client.utils.EntityUtils;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -124,9 +122,9 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
-	public final ArrayList<BasicSlider> getSettings()
+	public final ArrayList<NavigatorSetting> getSettings()
 	{
-		return new ArrayList<BasicSlider>();
+		return new ArrayList<NavigatorSetting>();
 	}
 	
 	@Override

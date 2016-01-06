@@ -22,7 +22,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.LeftClickListener;
@@ -30,6 +29,7 @@ import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
 
@@ -64,16 +64,16 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	}
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("Nuker range", normalRange, 1, 6, 0.05,
+		settings.add(new SliderSetting("Nuker range", normalRange, 1, 6, 0.05,
 			ValueDisplay.DECIMAL));
 	}
 	
 	@Override
 	public void updateSettings()
 	{
-		normalRange = (float)sliders.get(0).getValue();
+		normalRange = (float)((SliderSetting)settings.get(0)).getValue();
 		yesCheatRange = Math.min(normalRange, 4.25F);
 	}
 	

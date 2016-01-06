@@ -9,10 +9,10 @@
 package tk.wurst_client.mods;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.BLOCKS,
 	description = "Allows you to break blocks faster.\n"
@@ -23,15 +23,15 @@ public class FastBreakMod extends Mod
 	public float speed = 2;
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("FastBreak speed", speed, 1, 5, 0.05,
+		settings.add(new SliderSetting("FastBreak speed", speed, 1, 5, 0.05,
 			ValueDisplay.DECIMAL));
 	}
 	
 	@Override
 	public void updateSettings()
 	{
-		speed = (int)sliders.get(0).getValue();
+		speed = (int)((SliderSetting)settings.get(0)).getValue();
 	}
 }

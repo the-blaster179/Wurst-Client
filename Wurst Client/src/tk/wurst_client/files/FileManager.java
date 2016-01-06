@@ -30,6 +30,7 @@ import tk.wurst_client.alts.Encryption;
 import tk.wurst_client.gui.alts.GuiAltList;
 import tk.wurst_client.mods.*;
 import tk.wurst_client.mods.Mod.Category;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 import tk.wurst_client.options.FriendsList;
 import tk.wurst_client.options.OptionsManager;
 import tk.wurst_client.utils.JsonUtils;
@@ -395,11 +396,17 @@ public class FileManager
 				if(mod.getSettings().isEmpty())
 					continue;
 				JsonObject jsonModule = new JsonObject();
-				for(BasicSlider slider : mod.getSettings())
-					jsonModule.addProperty(slider.getText(),
-						(double)(Math.round(slider.getValue()
-							/ slider.getIncrement()) * 1000000 * (long)(slider
-							.getIncrement() * 1000000)) / 1000000 / 1000000);
+				for(NavigatorSetting setting : mod.getSettings())
+					if(setting instanceof BasicSlider)
+					{
+						BasicSlider slider = (BasicSlider)setting;
+						jsonModule
+							.addProperty(
+								slider.getText(),
+								(double)(Math.round(slider.getValue()
+									/ slider.getIncrement()) * 1000000 * (long)(slider
+									.getIncrement() * 1000000)) / 1000000 / 1000000);
+					}
 				json.add(mod.getName(), jsonModule);
 			}
 			PrintWriter save = new PrintWriter(new FileWriter(sliders));
@@ -428,14 +435,18 @@ public class FileManager
 				if(mod != null)
 				{
 					JsonObject jsonModule = (JsonObject)entry.getValue();
-					for(BasicSlider slider : mod.getSettings())
-						try
+					for(NavigatorSetting setting : mod.getSettings())
+						if(setting instanceof BasicSlider)
 						{
-							slider.setValue(jsonModule.get(slider.getText())
-								.getAsDouble());
-						}catch(Exception e)
-						{
-							e.printStackTrace();
+							BasicSlider slider = (BasicSlider)setting;
+							try
+							{
+								slider.setValue(jsonModule
+									.get(slider.getText()).getAsDouble());
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
 						}
 				}
 			}
