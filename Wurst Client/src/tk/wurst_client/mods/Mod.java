@@ -14,13 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.error.GuiError;
 import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.PossibleKeybind;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 public class Mod implements NavigatorItem
 {
@@ -35,7 +33,7 @@ public class Mod implements NavigatorItem
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
-	protected ArrayList<BasicSlider> sliders = new ArrayList<BasicSlider>();
+	protected ArrayList<NavigatorSetting> settings = new ArrayList<>();
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
 	
@@ -99,9 +97,9 @@ public class Mod implements NavigatorItem
 	}
 	
 	@Override
-	public final ArrayList<BasicSlider> getSettings()
+	public final ArrayList<NavigatorSetting> getSettings()
 	{
-		return sliders;
+		return settings;
 	}
 	
 	@Override
@@ -109,9 +107,9 @@ public class Mod implements NavigatorItem
 	{
 		String dotT = ".t " + name.toLowerCase();
 		return new ArrayList<PossibleKeybind>(Arrays.asList(
-			new PossibleKeybind(dotT, "Toggle " + name),
-			new PossibleKeybind(dotT + " on", "Enable " + name),
-			new PossibleKeybind(dotT + " off", "Disable " + name)));
+			new PossibleKeybind(dotT, "Toggle " + name), new PossibleKeybind(
+				dotT + " on", "Enable " + name), new PossibleKeybind(dotT
+				+ " off", "Disable " + name)));
 	}
 	
 	@Override
@@ -249,11 +247,6 @@ public class Mod implements NavigatorItem
 		}
 	}
 	
-	public final void setSliders(ArrayList<BasicSlider> newSliders)
-	{
-		sliders = newSliders;
-	}
-	
 	public final void noCheatMessage()
 	{
 		WurstClient.INSTANCE.chat.warning(name + " cannot bypass NoCheat+.");
@@ -288,7 +281,7 @@ public class Mod implements NavigatorItem
 	public void onDisable()
 	{}
 	
-	public void initSliders()
+	public void initSettings()
 	{}
 	
 	public void updateSettings()

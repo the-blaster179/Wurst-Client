@@ -39,7 +39,6 @@ package tk.wurst_client.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,6 +69,7 @@ import tk.wurst_client.gui.target.TargetFrame;
 import tk.wurst_client.mods.AutoBuildMod;
 import tk.wurst_client.mods.Mod;
 import tk.wurst_client.mods.Mod.Category;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 /**
  * Minecraft GUI API
@@ -109,14 +109,14 @@ public final class GuiManager extends AbstractGuiManager
 		if(!setup.compareAndSet(false, true))
 			return;
 		
-		ModuleFrame settings = new ModuleFrame("Settings");
-		settings.setTheme(theme);
-		settings.setLayoutManager(new GridLayoutManager(1, 0));
-		settings.setVisible(true);
-		settings.setClosable(false);
-		settings.setMinimized(true);
-		settings.setPinnable(true);
-		addFrame(settings);
+		ModuleFrame settingsFrame = new ModuleFrame("Settings");
+		settingsFrame.setTheme(theme);
+		settingsFrame.setLayoutManager(new GridLayoutManager(1, 0));
+		settingsFrame.setVisible(true);
+		settingsFrame.setClosable(false);
+		settingsFrame.setMinimized(true);
+		settingsFrame.setPinnable(true);
+		addFrame(settingsFrame);
 		for(final Mod mod : WurstClient.INSTANCE.mods.getAllMods())
 		{
 			ModuleFrame frame = categoryFrames.get(mod.getCategory());
@@ -164,26 +164,19 @@ public final class GuiManager extends AbstractGuiManager
 				}
 			});
 			frame.add(button);
-			if(!mod.getSettings().isEmpty())
-				for(BasicSlider slider : mod.getSettings())
+			for(NavigatorSetting setting : mod.getSettings())
+				if(setting instanceof BasicSlider)
 				{
+					BasicSlider slider = ((BasicSlider)setting);
 					slider.addSliderListener(new SliderListener()
 					{
 						@Override
 						public void onSliderValueChanged(Slider slider)
 						{
-							ArrayList<BasicSlider> moduleSliders =
-								mod.getSettings();
-							if(moduleSliders.contains(slider))
-							{
-								int id = moduleSliders.indexOf(slider);
-								moduleSliders.set(id, (BasicSlider)slider);
-							}
-							mod.setSliders(moduleSliders);
 							mod.updateSettings();
 						}
 					});
-					settings.add(slider);
+					settingsFrame.add(slider);
 				}
 		}
 		
