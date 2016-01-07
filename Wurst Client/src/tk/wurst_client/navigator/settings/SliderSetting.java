@@ -10,6 +10,8 @@ package tk.wurst_client.navigator.settings;
 
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
+import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
+
 public class SliderSetting extends BasicSlider implements NavigatorSetting
 {
 	public SliderSetting()
@@ -43,6 +45,17 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	public SliderSetting(String text)
 	{
 		super(text);
+	}
+	
+	@Override
+	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
+	{
+		// text
+		featureScreen.addText(getText() + ":\n");
+		
+		// slider
+		featureScreen.addSlider(featureScreen.new SliderData(this,
+			60 + featureScreen.getTextHeight()));
 	}
 	
 	@Override

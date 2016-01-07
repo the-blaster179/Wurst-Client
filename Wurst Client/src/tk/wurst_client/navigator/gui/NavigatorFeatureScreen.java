@@ -120,19 +120,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			text += "\n\nSettings:";
 			sliderDatas.clear();
 			for(NavigatorSetting setting : settings)
-			{
-				if(setting instanceof BasicSlider)
-				{
-					BasicSlider slider = (BasicSlider)setting;
-					
-					// text
-					text += "\n" + slider.getText() + ":\n";
-					
-					// slider
-					sliderDatas.add(new SliderData(slider, area.y
-						+ Fonts.segoe15.getStringHeight(text)));
-				}
-			}
+				setting.addToFeatureScreen(this);
 		}
 		
 		// keybinds
@@ -401,7 +389,27 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		return item;
 	}
 	
-	private abstract class ButtonData extends Rectangle
+	public void addText(String text)
+	{
+		this.text += "\n" + text;
+	}
+	
+	public int getTextHeight()
+	{
+		return Fonts.segoe15.getStringHeight(text);
+	}
+	
+	public void addButton(ButtonData button)
+	{
+		buttonDatas.add(button);
+	}
+	
+	public void addSlider(SliderData slider)
+	{
+		sliderDatas.add(slider);
+	}
+	
+	public abstract class ButtonData extends Rectangle
 	{
 		public String displayString = "";
 		public Color color;
@@ -417,7 +425,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		public abstract void press();
 	}
 	
-	private class SliderData
+	public class SliderData
 	{
 		public BasicSlider slider;
 		public int x;
