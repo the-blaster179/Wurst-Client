@@ -8,7 +8,9 @@
  */
 package tk.wurst_client.navigator.settings;
 
+import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
+
 public interface NavigatorSetting
-{	
-	
+{
+	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen);
 }
