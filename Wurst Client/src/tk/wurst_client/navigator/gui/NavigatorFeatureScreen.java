@@ -391,7 +391,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 	
 	public void addText(String text)
 	{
-		this.text += "\n" + text;
+		this.text += text;
 	}
 	
 	public int getTextHeight()

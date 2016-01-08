@@ -51,7 +51,7 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
 		// text
-		featureScreen.addText(getText() + ":\n");
+		featureScreen.addText("\n" + getText() + ":\n");
 		
 		// slider
 		featureScreen.addSlider(featureScreen.new SliderData(this,
