@@ -74,7 +74,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		}
 		
 		WurstClient wurst = WurstClient.INSTANCE;
-		wurst.navigator.addClick(item.getName());
+		wurst.navigator.addPreference(item.getName());
 		wurst.files.saveNavigatorData();
 	}
 	
@@ -250,7 +250,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			WurstClient wurst = WurstClient.INSTANCE;
 			sliding = -1;
 			
-			wurst.navigator.addClick(item.getName());
+			wurst.navigator.addPreference(item.getName());
 			wurst.files.saveNavigatorData();
 		}
 	}

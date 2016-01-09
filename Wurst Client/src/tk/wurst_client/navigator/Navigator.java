@@ -22,7 +22,7 @@ import tk.wurst_client.mods.ModManager;
 public class Navigator
 {
 	private ArrayList<NavigatorItem> navigatorList = new ArrayList<>();
-	private final HashMap<String, Long> clicksMap = new HashMap<>();
+	private final HashMap<String, Long> preferences = new HashMap<>();
 	public AnalyticsManager analytics = new AnalyticsManager("UA-52838431-7",
 		"navigator.client.wurst-client.tk");
 	
@@ -112,26 +112,26 @@ public class Navigator
 		});
 	}
 	
-	public long getClicks(String feature)
+	public long getPreference(String feature)
 	{
-		Long clicks = clicksMap.get(feature);
-		if(clicks == null)
-			clicks = 0L;
-		return clicks;
+		Long preference = preferences.get(feature);
+		if(preference == null)
+			preference = 0L;
+		return preference;
 	}
 	
-	public void addClick(String feature)
+	public void addPreference(String feature)
 	{
-		Long clicks = clicksMap.get(feature);
-		if(clicks == null)
-			clicks = 0L;
-		clicks++;
-		clicksMap.put(feature, clicks);
+		Long preference = preferences.get(feature);
+		if(preference == null)
+			preference = 0L;
+		preference++;
+		preferences.put(feature, preference);
 	}
 	
-	public void setClicks(String feature, long clicks)
+	public void setPreference(String feature, long preference)
 	{
-		clicksMap.put(feature, clicks);
+		preferences.put(feature, preference);
 	}
 	
 	public void forEach(Consumer<NavigatorItem> action)
@@ -146,11 +146,11 @@ public class Navigator
 			@Override
 			public int compare(NavigatorItem o1, NavigatorItem o2)
 			{
-				long clicks1 = getClicks(o1.getName());
-				long clicks2 = getClicks(o2.getName());
-				if(clicks1 < clicks2)
+				long preference1 = getPreference(o1.getName());
+				long preference2 = getPreference(o2.getName());
+				if(preference1 < preference2)
 					return 1;
-				else if(clicks1 > clicks2)
+				else if(preference1 > preference2)
 					return -1;
 				else
 					return 0;

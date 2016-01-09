@@ -295,9 +295,9 @@ public class FileManager
 				{
 					JsonObject jsonFeature = new JsonObject();
 					
-					long clicks = navigator.getClicks(item.getName());
-					if(clicks != 0L)
-						jsonFeature.addProperty("clicks", clicks);
+					long preference = navigator.getPreference(item.getName());
+					if(preference != 0L)
+						jsonFeature.addProperty("preference", preference);
 					
 					if(!item.getSettings().isEmpty())
 					{
@@ -342,9 +342,9 @@ public class FileManager
 					JsonObject jsonFeature =
 						json.get(itemName).getAsJsonObject();
 					
-					if(jsonFeature.has("clicks"))
-						navigator.setClicks(itemName, jsonFeature.get("clicks")
-							.getAsLong());
+					if(jsonFeature.has("preference"))
+						navigator.setPreference(itemName,
+							jsonFeature.get("preference").getAsLong());
 					
 					if(jsonFeature.has("settings"))
 					{
