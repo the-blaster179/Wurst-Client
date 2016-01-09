@@ -10,6 +10,8 @@ package tk.wurst_client.navigator.settings;
 
 import java.awt.Color;
 
+import com.google.gson.JsonObject;
+
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen.ButtonData;
 
@@ -72,9 +74,21 @@ public class ModeSetting implements NavigatorSetting
 			featureScreen.addButton(button);
 		}
 	}
-
+	
 	public int getSelected()
 	{
 		return selected;
+	}
+	
+	@Override
+	public void save(JsonObject json)
+	{
+		json.addProperty(name, selected);
+	}
+	
+	@Override
+	public void load(JsonObject json)
+	{
+		selected = json.get(name).getAsInt();
 	}
 }

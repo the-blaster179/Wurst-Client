@@ -10,6 +10,8 @@ package tk.wurst_client.navigator.settings;
 
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
+import com.google.gson.JsonObject;
+
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 public class SliderSetting extends BasicSlider implements NavigatorSetting
@@ -62,5 +64,17 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	public double getValue()
 	{
 		return super.getValue();
+	}
+	
+	@Override
+	public void save(JsonObject json)
+	{
+		json.addProperty(getText(), getValue());
+	}
+	
+	@Override
+	public void load(JsonObject json)
+	{
+		setValue(json.get(getText()).getAsDouble());
 	}
 }

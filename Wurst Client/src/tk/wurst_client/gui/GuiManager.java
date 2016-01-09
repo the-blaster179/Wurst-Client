@@ -202,10 +202,6 @@ public final class GuiManager extends AbstractGuiManager
 		// Target
 		addFrame(new TargetFrame());
 		
-		if(!WurstClient.INSTANCE.files.sliders.exists())
-			WurstClient.INSTANCE.files.saveSliders();
-		else
-			WurstClient.INSTANCE.files.loadSliders();
 		resizeComponents();
 		Minecraft minecraft = Minecraft.getMinecraft();
 		int offsetX = 5, offsetY = 5;

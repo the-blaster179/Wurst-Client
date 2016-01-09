@@ -248,7 +248,6 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		if(sliding != -1)
 		{
 			WurstClient wurst = WurstClient.INSTANCE;
-			wurst.files.saveSliders();
 			sliding = -1;
 			
 			wurst.navigator.addClick(item.getName());

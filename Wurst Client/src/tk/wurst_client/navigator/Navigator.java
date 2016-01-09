@@ -12,8 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.analytics.AnalyticsManager;
@@ -135,9 +134,9 @@ public class Navigator
 		clicksMap.put(feature, clicks);
 	}
 	
-	public Iterator<Entry<String, Long>> getClicksIterator()
+	public void forEach(Consumer<NavigatorItem> action)
 	{
-		return clicksMap.entrySet().iterator();
+		navigatorList.forEach(action);
 	}
 	
 	public void sortFeatures()
