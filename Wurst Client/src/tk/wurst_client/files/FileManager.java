@@ -303,7 +303,13 @@ public class FileManager
 					{
 						JsonObject jsonSettings = new JsonObject();
 						for(NavigatorSetting setting : item.getSettings())
-							setting.save(jsonSettings);
+							try
+							{
+								setting.save(jsonSettings);
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
 						jsonFeature.add("settings", jsonSettings);
 					}
 					
@@ -351,7 +357,13 @@ public class FileManager
 						JsonObject jsonSettings =
 							jsonFeature.get("settings").getAsJsonObject();
 						for(NavigatorSetting setting : item.getSettings())
-							setting.load(jsonSettings);
+							try
+							{
+								setting.load(jsonSettings);
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
 					}
 				}
 			});
