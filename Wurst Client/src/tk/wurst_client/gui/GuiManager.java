@@ -176,6 +176,7 @@ public final class GuiManager extends AbstractGuiManager
 							mod.updateSettings();
 						}
 					});
+					slider.setModNamePrefix(mod.getName());
 					settingsFrame.add(slider);
 				}
 		}

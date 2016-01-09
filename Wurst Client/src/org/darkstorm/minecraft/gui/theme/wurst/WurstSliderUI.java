@@ -53,7 +53,7 @@ public class WurstSliderUI extends AbstractComponentUI<Slider>
 		FontRenderer fontRenderer = theme.getFontRenderer();
 		
 		// text
-		fontRenderer.drawString(component.getText(), 0, 0,
+		fontRenderer.drawString(component.getTextWithModPrefix(), 0, 0,
 			RenderUtil.toRGBA(component.getForegroundColor()));
 		
 		// value

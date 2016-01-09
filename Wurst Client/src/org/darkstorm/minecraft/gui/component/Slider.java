@@ -15,4 +15,6 @@ public interface Slider extends Component, TextComponent, BoundedRangeComponent
 	public void addSliderListener(SliderListener listener);
 	
 	public void removeSliderListener(SliderListener listener);
+	
+	public String getTextWithModPrefix();
 }
