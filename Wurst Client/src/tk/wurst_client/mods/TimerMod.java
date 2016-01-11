@@ -31,7 +31,7 @@ public class TimerMod extends Mod
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
 		speed = (float)((SliderSetting)settings.get(0)).getValue();
 	}

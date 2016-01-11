@@ -173,7 +173,7 @@ public final class GuiManager extends AbstractGuiManager
 						@Override
 						public void onSliderValueChanged(Slider slider)
 						{
-							mod.updateSettings();
+							mod.updateSliders();
 						}
 					});
 					slider.setModNamePrefix(mod.getName());

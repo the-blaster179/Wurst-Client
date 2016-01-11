@@ -35,7 +35,7 @@ public class FlightMod extends Mod implements UpdateListener
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
 		speed = (float)((SliderSetting)settings.get(0)).getValue();
 	}

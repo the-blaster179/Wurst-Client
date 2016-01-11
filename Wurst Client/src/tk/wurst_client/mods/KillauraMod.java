@@ -45,7 +45,7 @@ public class KillauraMod extends Mod implements UpdateListener
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
 		normalSpeed = (float)((SliderSetting)settings.get(0)).getValue();
 		yesCheatSpeed = Math.min(normalSpeed, 12F);

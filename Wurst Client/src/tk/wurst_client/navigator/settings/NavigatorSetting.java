@@ -19,4 +19,6 @@ public interface NavigatorSetting
 	public void save(JsonObject json);
 	
 	public void load(JsonObject json);
+	
+	public void update();
 }
