@@ -67,9 +67,8 @@ public abstract class ModeSetting implements NavigatorSetting
 					public void press()
 					{
 						buttons[selected].color = new Color(0x404040);
-						selected = iFinal;
 						color = new Color(0x00ff00);
-						update();
+						setSelected(iFinal);
 						WurstClient.INSTANCE.files.saveNavigatorData();
 					}
 				};
@@ -83,6 +82,12 @@ public abstract class ModeSetting implements NavigatorSetting
 		return selected;
 	}
 	
+	private void setSelected(int selected)
+	{
+		this.selected = selected;
+		update();
+	}
+	
 	@Override
 	public void save(JsonObject json)
 	{
@@ -92,6 +97,6 @@ public abstract class ModeSetting implements NavigatorSetting
 	@Override
 	public void load(JsonObject json)
 	{
-		selected = json.get(name).getAsInt();
+		setSelected(json.get(name).getAsInt());
 	}
 }
