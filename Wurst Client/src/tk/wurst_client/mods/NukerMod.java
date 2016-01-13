@@ -353,4 +353,19 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 					}
 				}
 	}
+
+	public int getMode()
+	{
+		return mode;
+	}
+
+	public void setMode(int mode)
+	{
+		((ModeSetting)settings.get(1)).setSelected(mode);
+	}
+
+	public String[] getModes()
+	{
+		return modes;
+	}
 }

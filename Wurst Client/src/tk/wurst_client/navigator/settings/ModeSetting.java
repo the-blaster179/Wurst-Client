@@ -82,7 +82,7 @@ public abstract class ModeSetting implements NavigatorSetting
 		return selected;
 	}
 	
-	private void setSelected(int selected)
+	public void setSelected(int selected)
 	{
 		this.selected = selected;
 		update();

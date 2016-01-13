@@ -46,14 +46,7 @@ public class NukerLegitMod extends Mod implements LeftClickListener,
 	@Override
 	public String getRenderName()
 	{
-		if(WurstClient.INSTANCE.options.nukerMode == 1)
-			return "IDNukerLegit [" + NukerMod.id + "]";
-		else if(WurstClient.INSTANCE.options.nukerMode == 2)
-			return "FlatNukerLegit";
-		else if(WurstClient.INSTANCE.options.nukerMode == 3)
-			return "SmashNukerLegit";
-		else
-			return "NukerLegit";
+		return WurstClient.INSTANCE.mods.nukerMod.getRenderName() + "Legit";
 	}
 	
 	@Override
@@ -179,7 +172,7 @@ public class NukerLegitMod extends Mod implements LeftClickListener,
 		if(Minecraft.getMinecraft().objectMouseOver == null
 			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
 			return;
-		if(WurstClient.INSTANCE.options.nukerMode == 1
+		if(WurstClient.INSTANCE.mods.nukerMod.getMode() == 1
 			&& Minecraft.getMinecraft().theWorld
 				.getBlockState(
 					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
@@ -211,7 +204,7 @@ public class NukerLegitMod extends Mod implements LeftClickListener,
 				Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
 					.getBlockState(currentPos).getBlock());
 			if(currentID != 0)
-				switch(WurstClient.INSTANCE.options.nukerMode)
+				switch(WurstClient.INSTANCE.mods.nukerMod.getMode())
 				{
 					case 1:
 						if(currentID == NukerMod.id)
