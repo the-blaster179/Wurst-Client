@@ -18,6 +18,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.analytics.AnalyticsManager;
 import tk.wurst_client.commands.CmdManager;
 import tk.wurst_client.mods.ModManager;
+import tk.wurst_client.special.SpecialFeatureManager;
 
 public class Navigator
 {
@@ -54,6 +55,22 @@ public class Navigator
 				if(field.getName().endsWith("Cmd"))
 					navigatorList.add((NavigatorItem)field
 						.get(WurstClient.INSTANCE.commands));
+			}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		// add special features
+		Field[] specialFields = SpecialFeatureManager.class.getFields();
+		try
+		{
+			for(int i = 0; i < specialFields.length; i++)
+			{
+				Field field = specialFields[i];
+				if(field.getName().endsWith("Feature"))
+					navigatorList.add((NavigatorItem)field
+						.get(WurstClient.INSTANCE.specialFeatures));
 			}
 		}catch(Exception e)
 		{
