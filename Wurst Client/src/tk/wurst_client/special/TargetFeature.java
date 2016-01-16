@@ -18,16 +18,16 @@ import tk.wurst_client.navigator.settings.NavigatorSetting;
 	+ "other features (e.g. Killaura).", name = "Target")
 public class TargetFeature extends SpecialFeature
 {
-	public boolean players = true;
-	public boolean animals = true;
-	public boolean monsters = true;
-	public boolean golems = true;
+	private boolean players = true;
+	private boolean animals = true;
+	private boolean monsters = true;
+	private boolean golems = true;
 	
-	public boolean sleeping_players = false;
-	public boolean invisible_players = false;
-	public boolean invisible_mobs = false;
+	private boolean sleeping_players = false;
+	private boolean invisible_players = false;
+	private boolean invisible_mobs = false;
 	
-	public boolean teams = false;
+	private boolean teams = false;
 	
 	@Override
 	public String getPrimaryAction()
@@ -81,5 +81,85 @@ public class TargetFeature extends SpecialFeature
 		}
 		
 		return settings;
+	}
+
+	public boolean isPlayers()
+	{
+		return players;
+	}
+
+	public void setPlayers(boolean players)
+	{
+		this.players = players;
+	}
+
+	public boolean isAnimals()
+	{
+		return animals;
+	}
+
+	public void setAnimals(boolean animals)
+	{
+		this.animals = animals;
+	}
+
+	public boolean isMonsters()
+	{
+		return monsters;
+	}
+
+	public void setMonsters(boolean monsters)
+	{
+		this.monsters = monsters;
+	}
+
+	public boolean isGolems()
+	{
+		return golems;
+	}
+
+	public void setGolems(boolean golems)
+	{
+		this.golems = golems;
+	}
+
+	public boolean isSleeping_players()
+	{
+		return sleeping_players;
+	}
+
+	public void setSleeping_players(boolean sleeping_players)
+	{
+		this.sleeping_players = sleeping_players;
+	}
+
+	public boolean isInvisible_players()
+	{
+		return invisible_players;
+	}
+
+	public void setInvisible_players(boolean invisible_players)
+	{
+		this.invisible_players = invisible_players;
+	}
+
+	public boolean isInvisible_mobs()
+	{
+		return invisible_mobs;
+	}
+
+	public void setInvisible_mobs(boolean invisible_mobs)
+	{
+		this.invisible_mobs = invisible_mobs;
+	}
+
+	public boolean isTeams()
+	{
+		return teams;
+	}
+
+	public void setTeams(boolean teams)
+	{
+		this.teams = teams;
 	}
 }
