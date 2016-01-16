@@ -41,6 +41,11 @@ public abstract class CheckboxSetting implements NavigatorSetting
 		});
 	}
 	
+	protected boolean isChecked()
+	{
+		return checked;
+	}
+	
 	@Override
 	public void save(JsonObject json)
 	{
