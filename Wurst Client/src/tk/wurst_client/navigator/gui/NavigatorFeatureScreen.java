@@ -213,6 +213,9 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 				PositionedSoundRecord.createPositionedSoundRecord(
 					new ResourceLocation("gui.button.press"), 1.0F));
 			activeButton.press();
+			WurstClient wurst = WurstClient.INSTANCE;
+			wurst.navigator.addPreference(item.getName());
+			wurst.files.saveNavigatorData();
 			return;
 		}
 		
@@ -237,6 +240,9 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			{
 				checkboxData.checked = !checkboxData.checked;
 				checkboxData.toggle();
+				WurstClient wurst = WurstClient.INSTANCE;
+				wurst.navigator.addPreference(item.getName());
+				wurst.files.saveNavigatorData();
 				return;
 			}
 		}
