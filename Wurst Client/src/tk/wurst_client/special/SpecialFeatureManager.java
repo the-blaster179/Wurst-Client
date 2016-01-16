@@ -25,6 +25,8 @@ public class SpecialFeatureManager
 			}
 		});
 	
+	public final TargetFeature targetFeature = new TargetFeature();
+	
 	public SpecialFeatureManager()
 	{
 		try
