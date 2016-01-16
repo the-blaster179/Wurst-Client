@@ -9,10 +9,8 @@
 package tk.wurst_client.special;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 import tk.wurst_client.navigator.settings.CheckboxSetting;
-import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 @SpecialFeature.Info(description = "Controls what entities are targeted by "
 	+ "other features (e.g. Killaura).", name = "Target")
@@ -29,23 +27,8 @@ public class TargetFeature extends SpecialFeature
 	
 	private boolean teams = false;
 	
-	@Override
-	public String getPrimaryAction()
+	public TargetFeature()
 	{
-		return "";
-	}
-	
-	@Override
-	public void doPrimaryAction()
-	{	
-		
-	}
-	
-	@Override
-	public ArrayList<NavigatorSetting> getSettings()
-	{
-		ArrayList<NavigatorSetting> settings = super.getSettings();
-		
 		for(Field field : TargetFeature.class.getFields())
 		{
 			if(!field.getType().equals(boolean.class))
@@ -79,8 +62,18 @@ public class TargetFeature extends SpecialFeature
 				}
 			});
 		}
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{	
 		
-		return settings;
 	}
 
 	public boolean isPlayers()
