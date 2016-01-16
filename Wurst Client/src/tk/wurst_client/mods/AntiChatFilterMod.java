@@ -23,7 +23,7 @@ public class AntiChatFilterMod extends Mod implements ChatOutputListener
 	@Override
 	public void onSentMessage(ChatOutputEvent event)
 	{
-		if(event.getMessage().startsWith("/"))
+		if(event.getMessage().startsWith("/") || event.getMessage().startsWith("."))
 			return;
 			
 		String out = "";
