@@ -8,60 +8,35 @@
  */
 package tk.wurst_client.special;
 
-import java.lang.reflect.Field;
-
 import tk.wurst_client.navigator.settings.CheckboxSetting;
 
 @SpecialFeature.Info(description = "Controls what entities are targeted by "
 	+ "other features (e.g. Killaura).", name = "Target")
 public class TargetFeature extends SpecialFeature
 {
-	private boolean players = true;
-	private boolean animals = true;
-	private boolean monsters = true;
-	private boolean golems = true;
+	public final CheckboxSetting players = new CheckboxSetting("Players", true);
+	public final CheckboxSetting animals = new CheckboxSetting("Animals", true);
+	public final CheckboxSetting monsters = new CheckboxSetting("Monsters", true);
+	public final CheckboxSetting golems = new CheckboxSetting("Golems", true);
 	
-	private boolean sleeping_players = false;
-	private boolean invisible_players = false;
-	private boolean invisible_mobs = false;
+	public final CheckboxSetting sleepingPlayers = new CheckboxSetting("Sleeping players", false);
+	public final CheckboxSetting invisiblePlayers = new CheckboxSetting("Invisible players", false);
+	public final CheckboxSetting invisibleMobs = new CheckboxSetting("Invisible mobs", false);
 	
-	private boolean teams = false;
+	public final CheckboxSetting teams = new CheckboxSetting("Teams", false);
 	
 	public TargetFeature()
 	{
-		for(Field field : TargetFeature.class.getFields())
-		{
-			if(!field.getType().equals(boolean.class))
-				continue;
-			
-			String name =
-				field.getName().substring(0, 1).toUpperCase()
-					+ field.getName().substring(1).replace("_", " ");
-			
-			boolean checked = false;
-			try
-			{
-				checked = field.getBoolean(this);
-			}catch(IllegalArgumentException | IllegalAccessException e)
-			{
-				e.printStackTrace();
-			}
-			
-			settings.add(new CheckboxSetting(name, checked)
-			{
-				@Override
-				public void update()
-				{
-					try
-					{
-						field.setBoolean(TargetFeature.this, isChecked());
-					}catch(IllegalArgumentException | IllegalAccessException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			});
-		}
+		settings.add(players);
+		settings.add(animals);
+		settings.add(monsters);
+		settings.add(golems);
+		
+		settings.add(sleepingPlayers);
+		settings.add(invisiblePlayers);
+		settings.add(invisibleMobs);
+		
+		settings.add(teams);
 	}
 	
 	@Override
@@ -74,85 +49,5 @@ public class TargetFeature extends SpecialFeature
 	public void doPrimaryAction()
 	{	
 		
-	}
-
-	public boolean isPlayers()
-	{
-		return players;
-	}
-
-	public void setPlayers(boolean players)
-	{
-		this.players = players;
-	}
-
-	public boolean isAnimals()
-	{
-		return animals;
-	}
-
-	public void setAnimals(boolean animals)
-	{
-		this.animals = animals;
-	}
-
-	public boolean isMonsters()
-	{
-		return monsters;
-	}
-
-	public void setMonsters(boolean monsters)
-	{
-		this.monsters = monsters;
-	}
-
-	public boolean isGolems()
-	{
-		return golems;
-	}
-
-	public void setGolems(boolean golems)
-	{
-		this.golems = golems;
-	}
-
-	public boolean isSleeping_players()
-	{
-		return sleeping_players;
-	}
-
-	public void setSleeping_players(boolean sleeping_players)
-	{
-		this.sleeping_players = sleeping_players;
-	}
-
-	public boolean isInvisible_players()
-	{
-		return invisible_players;
-	}
-
-	public void setInvisible_players(boolean invisible_players)
-	{
-		this.invisible_players = invisible_players;
-	}
-
-	public boolean isInvisible_mobs()
-	{
-		return invisible_mobs;
-	}
-
-	public void setInvisible_mobs(boolean invisible_mobs)
-	{
-		this.invisible_mobs = invisible_mobs;
-	}
-
-	public boolean isTeams()
-	{
-		return teams;
-	}
-
-	public void setTeams(boolean teams)
-	{
-		this.teams = teams;
 	}
 }
