@@ -13,7 +13,7 @@ import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 import com.google.gson.JsonObject;
 
-public abstract class CheckboxSetting implements NavigatorSetting
+public class CheckboxSetting implements NavigatorSetting
 {
 	private String name;
 	private boolean checked;
@@ -25,7 +25,7 @@ public abstract class CheckboxSetting implements NavigatorSetting
 	}
 	
 	@Override
-	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
+	public final void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
 		featureScreen.addText("\n");
 		featureScreen.addCheckbox(featureScreen.new CheckboxData(name, checked,
@@ -41,20 +41,26 @@ public abstract class CheckboxSetting implements NavigatorSetting
 		});
 	}
 	
-	protected boolean isChecked()
+	public final boolean isChecked()
 	{
 		return checked;
 	}
 	
 	@Override
-	public void save(JsonObject json)
+	public final void save(JsonObject json)
 	{
 		json.addProperty(name, checked);
 	}
 	
 	@Override
-	public void load(JsonObject json)
+	public final void load(JsonObject json)
 	{
 		checked = json.get(name).getAsBoolean();
+	}
+
+	@Override
+	public void update()
+	{
+		
 	}
 }
