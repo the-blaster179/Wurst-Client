@@ -34,16 +34,26 @@ public class CheckboxSetting implements NavigatorSetting
 			@Override
 			public void toggle()
 			{
-				CheckboxSetting.this.checked = checked;
-				update();
+				setChecked(checked);
 				WurstClient.INSTANCE.files.saveNavigatorData();
 			}
 		});
 	}
 	
+	public final String getName()
+	{
+		return name;
+	}
+	
 	public final boolean isChecked()
 	{
 		return checked;
+	}
+	
+	public final void setChecked(boolean checked)
+	{
+		this.checked = checked;
+		update();
 	}
 	
 	@Override

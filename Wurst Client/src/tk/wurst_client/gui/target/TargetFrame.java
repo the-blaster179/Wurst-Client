@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.gui.target;
 
-import java.lang.reflect.Field;
-
 import net.minecraft.client.Minecraft;
 
 import org.darkstorm.minecraft.gui.component.Button;
@@ -21,6 +19,8 @@ import org.darkstorm.minecraft.gui.layout.GridLayoutManager.HorizontalGridConstr
 import org.darkstorm.minecraft.gui.listener.ButtonListener;
 
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.navigator.settings.CheckboxSetting;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 public class TargetFrame extends BasicFrame
 {
@@ -34,45 +34,28 @@ public class TargetFrame extends BasicFrame
 		setMinimized(true);
 		setPinnable(true);
 		
-		for(Field option : WurstClient.INSTANCE.options.target.getClass()
-			.getFields())
+		WurstClient wurst = WurstClient.INSTANCE;
+		
+		for(NavigatorSetting setting : wurst.specialFeatures.targetFeature
+			.getSettings())
 		{
-			if(!option.getType().equals(boolean.class))
+			if(!(setting instanceof CheckboxSetting))
 				continue;
-			String title =
-				option.getName().substring(0, 1).toUpperCase()
-					+ option.getName().substring(1).replace("_", " ");
-			BasicCheckButton checkbox = new BasicCheckButton(title);
+			
+			CheckboxSetting checkboxSetting = (CheckboxSetting)setting;
+			BasicCheckButton checkbox =
+				new BasicCheckButton(checkboxSetting.getName());
+			checkbox.setSelected(checkboxSetting.isChecked());
 			checkbox.addButtonListener(new ButtonListener()
 			{
 				@Override
 				public void onButtonPress(Button button)
 				{
-					try
-					{
-						option.setBoolean(WurstClient.INSTANCE.options.target,
-							((BasicCheckButton)button).isSelected());
-						WurstClient.INSTANCE.files.saveOptions();
-					}catch(Exception e)
-					{
-						System.err
-							.println("[Wurst] Failed to save option \"target."
-								+ option.getName() + "\"!");
-						e.printStackTrace();
-					}
+					checkboxSetting.setChecked(((BasicCheckButton)button)
+						.isSelected());
+					wurst.files.saveNavigatorData();
 				}
 			});
-			try
-			{
-				checkbox.setSelected(option
-					.getBoolean(WurstClient.INSTANCE.options.target));
-			}catch(Exception e)
-			{
-				System.err.println("[Wurst] Failed to load option \"target."
-					+ option.getName() + "\"!");
-				e.printStackTrace();
-				checkbox.setSelected(false);
-			}
 			add(checkbox, HorizontalGridConstraint.FILL);
 		}
 		
