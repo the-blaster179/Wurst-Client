@@ -191,12 +191,17 @@ public class EntityUtils
 				"d", "e", "f"};
 		boolean[] teamColors =
 			WurstClient.INSTANCE.options.target.getTeamColorsSafely();
+		boolean hasKnownColor = false;
 		for(int i = 0; i < 16; i++)
-			if(teamColors[i] && name.contains("§" + colors[i]))
-				return true;
+			if(name.contains("§" + colors[i]))
+			{
+				hasKnownColor = true;
+				if(teamColors[i])
+					return true;
+			}
 		
-		// unknown color / no color => white
-		return teamColors[15];
+		// no known color => white
+		return !hasKnownColor && teamColors[15];
 	}
 	
 	public static EntityLivingBase getClosestEntity(boolean ignoreFriends,
