@@ -11,8 +11,9 @@ package tk.wurst_client.special;
 import tk.wurst_client.navigator.settings.CheckboxSetting;
 import tk.wurst_client.navigator.settings.ColorsSetting;
 
-@SpecialFeature.Info(description = "Controls what entities are targeted by "
-	+ "other features (e.g. Killaura).", name = "Target")
+@SpecialFeature.Info(description = "Controls what entities are targeted by other features (e.g. Killaura). Also allows you to\n"
+	+ "bypass AntiAura plugins by filtering out fake entities.",
+	name = "Target")
 public class TargetFeature extends SpecialFeature
 {
 	public final CheckboxSetting players = new CheckboxSetting("Players", true);
