@@ -347,9 +347,9 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			drawBox(x1, y1, x2, y2);
 			
 			// text
-			drawCenteredString(Fonts.segoe18, buttonData.displayString,
+			drawCenteredString(Fonts.segoe18, buttonData.buttonText,
 				(x1 + x2) / 2 - 1, y1 + (buttonData.height - 12) / 2 - 1,
-				0xffffff);
+				buttonData.textColor);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
@@ -492,14 +492,15 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 	
 	public abstract class ButtonData extends Rectangle
 	{
-		public String displayString = "";
+		public String buttonText;
 		public Color color;
+		public int textColor = 0xffffff;
 		
 		public ButtonData(int x, int y, int width, int height,
-			String displayString, int color)
+			String buttonText, int color)
 		{
 			super(x, y, width, height);
-			this.displayString = displayString;
+			this.buttonText = buttonText;
 			this.color = new Color(color);
 		}
 		
