@@ -190,7 +190,7 @@ public class EntityUtils
 			{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c",
 				"d", "e", "f"};
 		boolean[] teamColors =
-			WurstClient.INSTANCE.options.target.getTeamColorsSafely();
+			WurstClient.INSTANCE.specialFeatures.targetFeature.teamColors.getSelected();
 		boolean hasKnownColor = false;
 		for(int i = 0; i < 16; i++)
 			if(name.contains("§" + colors[i]))

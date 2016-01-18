@@ -49,22 +49,6 @@ public class OptionsManager
 		public int launches = 0;
 	}
 	
-	public OptionsManager.Target target = new OptionsManager.Target();
-	
-	public class Target
-	{
-		public boolean[] team_colors = new boolean[]{true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true,
-			true};
-		
-		public boolean[] getTeamColorsSafely()
-		{
-			if(team_colors == null)
-				team_colors = new Target().team_colors;
-			return team_colors;
-		}
-	}
-	
 	public OptionsManager.Zoom zoom = new OptionsManager.Zoom();
 	
 	public class Zoom
