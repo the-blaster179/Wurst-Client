@@ -27,7 +27,7 @@ public abstract class Cmd implements NavigatorItem
 	private String name = getClass().getAnnotation(Info.class).name();
 	private String help = getClass().getAnnotation(Info.class).help();
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
-	private String[] tags = getClass().getAnnotation(Info.class).tags();
+	private String tags = getClass().getAnnotation(Info.class).tags();
 	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
 	
 	@Retention(RetentionPolicy.RUNTIME)
@@ -39,7 +39,7 @@ public abstract class Cmd implements NavigatorItem
 		
 		String[] syntax();
 		
-		String[] tags() default {};
+		String tags() default "";
 		
 		String tutorial() default "";
 	}
@@ -116,7 +116,7 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
-	public final String[] getTags()
+	public final String getTags()
 	{
 		return tags;
 	}

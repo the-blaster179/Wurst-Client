@@ -27,7 +27,7 @@ public class Mod implements NavigatorItem
 		.description();
 	private final Category category = getClass().getAnnotation(Info.class)
 		.category();
-	private final String[] tags = getClass().getAnnotation(Info.class).tags();
+	private final String tags = getClass().getAnnotation(Info.class).tags();
 	private final String tutorial = getClass().getAnnotation(Info.class)
 		.tutorial();
 	private boolean enabled;
@@ -62,7 +62,7 @@ public class Mod implements NavigatorItem
 		
 		boolean noCheatCompatible() default true;
 		
-		String[] tags() default {};
+		String tags() default "";
 		
 		String tutorial() default "";
 	}
@@ -91,7 +91,7 @@ public class Mod implements NavigatorItem
 	}
 	
 	@Override
-	public final String[] getTags()
+	public final String getTags()
 	{
 		return tags;
 	}
