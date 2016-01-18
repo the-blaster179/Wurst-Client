@@ -108,7 +108,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		// area
 		Rectangle area = new Rectangle(middleX - 154, 60, 308, height - 103);
 		
-		// sliders
+		// settings
 		ArrayList<NavigatorSetting> settings = item.getSettings();
 		if(!settings.isEmpty())
 		{
