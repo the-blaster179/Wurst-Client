@@ -9,6 +9,7 @@
 package tk.wurst_client.special;
 
 import tk.wurst_client.navigator.settings.CheckboxSetting;
+import tk.wurst_client.navigator.settings.ColorsSetting;
 
 @SpecialFeature.Info(description = "Controls what entities are targeted by "
 	+ "other features (e.g. Killaura).", name = "Target")
@@ -16,14 +17,21 @@ public class TargetFeature extends SpecialFeature
 {
 	public final CheckboxSetting players = new CheckboxSetting("Players", true);
 	public final CheckboxSetting animals = new CheckboxSetting("Animals", true);
-	public final CheckboxSetting monsters = new CheckboxSetting("Monsters", true);
+	public final CheckboxSetting monsters = new CheckboxSetting("Monsters",
+		true);
 	public final CheckboxSetting golems = new CheckboxSetting("Golems", true);
 	
-	public final CheckboxSetting sleepingPlayers = new CheckboxSetting("Sleeping players", false);
-	public final CheckboxSetting invisiblePlayers = new CheckboxSetting("Invisible players", false);
-	public final CheckboxSetting invisibleMobs = new CheckboxSetting("Invisible mobs", false);
+	public final CheckboxSetting sleepingPlayers = new CheckboxSetting(
+		"Sleeping players", false);
+	public final CheckboxSetting invisiblePlayers = new CheckboxSetting(
+		"Invisible players", false);
+	public final CheckboxSetting invisibleMobs = new CheckboxSetting(
+		"Invisible mobs", false);
 	
 	public final CheckboxSetting teams = new CheckboxSetting("Teams", false);
+	public final ColorsSetting teamColors = new ColorsSetting("Team Colors",
+		new boolean[]{true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true});
 	
 	public TargetFeature()
 	{
@@ -37,6 +45,7 @@ public class TargetFeature extends SpecialFeature
 		settings.add(invisibleMobs);
 		
 		settings.add(teams);
+		settings.add(teamColors);
 	}
 	
 	@Override
