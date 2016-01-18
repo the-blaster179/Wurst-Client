@@ -95,6 +95,7 @@ public class Navigator
 		// add search results
 		for(NavigatorItem mod : navigatorList)
 			if(mod.getName().toLowerCase().contains(query)
+				|| mod.getTags().toLowerCase().contains(query)
 				|| mod.getDescription().toLowerCase().contains(query))
 				list.add(mod);
 		
@@ -104,10 +105,17 @@ public class Navigator
 			@Override
 			public int compare(NavigatorItem o1, NavigatorItem o2)
 			{
+				// compare names
 				int result = compareNext(o1.getName(), o2.getName());
 				if(result != 0)
 					return result;
 				
+				// compare tags
+				result = compareNext(o1.getTags(), o2.getTags());
+				if(result != 0)
+					return result;
+				
+				// compare descriptions
 				result = compareNext(o1.getDescription(), o2.getDescription());
 				return result;
 			}
