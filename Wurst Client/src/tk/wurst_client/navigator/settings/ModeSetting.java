@@ -45,8 +45,8 @@ public abstract class ModeSetting implements NavigatorSetting
 			{
 				case 0:
 					x -= 132;
-					featureScreen.addText("\n");
-					y = 60 + featureScreen.getTextHeight();
+					featureScreen.addText("\n\n");
+					y = 60 + featureScreen.getTextHeight() - 2;
 					break;
 				case 1:
 					x -= 61;
@@ -60,7 +60,7 @@ public abstract class ModeSetting implements NavigatorSetting
 			}
 			final int iFinal = i;
 			ButtonData button =
-				featureScreen.new ButtonData(x, y, 50, 10, modes[i],
+				featureScreen.new ButtonData(x, y, 50, 16, modes[i],
 					i == selected ? 0x00ff00 : 0x404040)
 				{
 					@Override
