@@ -191,12 +191,12 @@ public final class GuiManager extends AbstractGuiManager
 			@Override
 			public void onComboBoxSelectionChanged(ComboBox comboBox)
 			{
-				WurstClient.INSTANCE.options.autobuildMode =
-					comboBox.getSelectedIndex();
+				WurstClient.INSTANCE.mods.autoBuildMod.setTemplate(comboBox
+					.getSelectedIndex());
 			}
 		});
-		autoBuildBox
-			.setSelectedIndex(WurstClient.INSTANCE.options.autobuildMode);
+		autoBuildBox.setSelectedIndex(WurstClient.INSTANCE.mods.autoBuildMod
+			.getTemplate());
 		autobuild.add(autoBuildBox, HorizontalGridConstraint.CENTER);
 		categoryFrames.remove(Category.AUTOBUILD);
 		
