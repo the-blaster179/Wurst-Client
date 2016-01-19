@@ -47,8 +47,7 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 		return getName() + " [" + names.get(template) + "]";
 	}
 	
-	@Override
-	public void initSettings()
+	public void initTemplateSetting()
 	{
 		settings.add(new ModeSetting("Template", names.toArray(new String[names
 			.size()]), template)

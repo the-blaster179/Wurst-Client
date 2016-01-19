@@ -112,10 +112,12 @@ public class FileManager
 		if(autobuildFiles != null && autobuildFiles.length == 0)
 			createDefaultAutoBuildTemplates();
 		loadAutoBuildTemplates();
-		if(WurstClient.INSTANCE.mods.autoBuildMod.getTemplate() >= AutoBuildMod.names
+		AutoBuildMod autoBuildMod = WurstClient.INSTANCE.mods.autoBuildMod;
+		autoBuildMod.initTemplateSetting();
+		if(autoBuildMod .getTemplate() >= AutoBuildMod.names
 			.size())
 		{
-			WurstClient.INSTANCE.mods.autoBuildMod.setTemplate(0);
+			autoBuildMod.setTemplate(0);
 			saveNavigatorData();
 		}
 	}
