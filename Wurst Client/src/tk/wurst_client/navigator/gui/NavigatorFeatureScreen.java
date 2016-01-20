@@ -186,14 +186,14 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		}
 		
 		// see also
-		NavigatorItem[] seeAlso = item.getSeeAlso();
-		if(seeAlso.length != 0)
+		ArrayList<NavigatorItem> seeAlso = item.getSeeAlso();
+		if(!seeAlso.isEmpty())
 		{
 			text += "\n\nSee also:";
-			for(int i = 0; i < seeAlso.length; i++)
+			for(int i = 0; i < seeAlso.size(); i++)
 			{
 				int y = 60 + getTextHeight() + 4;
-				NavigatorItem seeAlsoItem = seeAlso[i];
+				NavigatorItem seeAlsoItem = seeAlso.get(i);
 				String name = seeAlsoItem.getName();
 				text += "\n- " + name;
 				buttonDatas.add(new ButtonData(middleX - 148, y, Fonts.segoe15

@@ -36,5 +36,5 @@ public interface NavigatorItem
 	
 	public String getTutorialPage();
 	
-	public NavigatorItem[] getSeeAlso();
+	public ArrayList<NavigatorItem> getSeeAlso();
 }
