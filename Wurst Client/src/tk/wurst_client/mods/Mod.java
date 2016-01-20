@@ -33,8 +33,7 @@ public class Mod implements NavigatorItem
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
-	protected final ArrayList<NavigatorSetting> settings = new ArrayList<>();
-	protected final ArrayList<NavigatorItem> seeAlso = new ArrayList<>();
+	protected ArrayList<NavigatorSetting> settings = new ArrayList<>();
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
 	
@@ -132,9 +131,9 @@ public class Mod implements NavigatorItem
 	}
 	
 	@Override
-	public final ArrayList<NavigatorItem> getSeeAlso()
+	public NavigatorItem[] getSeeAlso()
 	{
-		return seeAlso;
+		return new NavigatorItem[0];
 	}
 	
 	public final Category getCategory()

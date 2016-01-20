@@ -29,8 +29,6 @@ public abstract class Cmd implements NavigatorItem
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
 	private String tags = getClass().getAnnotation(Info.class).tags();
 	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
-
-	protected final ArrayList<NavigatorItem> seeAlso = new ArrayList<>();
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
@@ -154,9 +152,9 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
-	public final ArrayList<NavigatorItem> getSeeAlso()
+	public NavigatorItem[] getSeeAlso()
 	{
-		return seeAlso;
+		return new NavigatorItem[0];
 	}
 	
 	public final void printHelp()

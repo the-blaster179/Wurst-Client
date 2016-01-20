@@ -24,8 +24,7 @@ public abstract class SpecialFeature implements NavigatorItem
 	private final String tags = getClass().getAnnotation(Info.class).tags();
 	private final String tutorial = getClass().getAnnotation(Info.class)
 		.tutorial();
-	protected final ArrayList<NavigatorSetting> settings = new ArrayList<>();
-	protected final ArrayList<NavigatorItem> seeAlso = new ArrayList<>();
+	protected ArrayList<NavigatorSetting> settings = new ArrayList<>();
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
@@ -94,8 +93,8 @@ public abstract class SpecialFeature implements NavigatorItem
 	}
 	
 	@Override
-	public final ArrayList<NavigatorItem> getSeeAlso()
+	public NavigatorItem[] getSeeAlso()
 	{
-		return seeAlso;
+		return new NavigatorItem[0];
 	}
 }
