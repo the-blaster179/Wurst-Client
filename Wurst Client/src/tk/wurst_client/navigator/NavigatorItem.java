@@ -35,4 +35,6 @@ public interface NavigatorItem
 	public void doPrimaryAction();
 	
 	public String getTutorialPage();
+	
+	public NavigatorItem[] getSeeAlso();
 }

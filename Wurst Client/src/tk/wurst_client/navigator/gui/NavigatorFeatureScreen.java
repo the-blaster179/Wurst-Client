@@ -185,6 +185,30 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			}
 		}
 		
+		// see also
+		NavigatorItem[] seeAlso = item.getSeeAlso();
+		if(seeAlso.length != 0)
+		{
+			text += "\n\nSee also:";
+			for(int i = 0; i < seeAlso.length; i++)
+			{
+				int y = 60 + getTextHeight() + 4;
+				NavigatorItem seeAlsoItem = seeAlso[i];
+				String name = seeAlsoItem.getName();
+				text += "\n- " + name;
+				buttonDatas.add(new ButtonData(middleX - 148, y, Fonts.segoe15
+					.getStringWidth(name) + 3, 8, "", 0x404040)
+				{
+					@Override
+					public void press()
+					{
+						mc.displayGuiScreen(new NavigatorFeatureScreen(
+							seeAlsoItem, parent));
+					}
+				});
+			}
+		}
+		
 		// text height
 		setContentHeight(Fonts.segoe15.getStringHeight(text));
 	}
@@ -365,7 +389,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			// hovering
 			boolean hovering =
 				mouseX >= x1 && mouseX <= bgx2 - 2 && mouseY >= y1
-				&& mouseY <= y2;
+					&& mouseY <= y2;
 			
 			// box
 			if(hovering)

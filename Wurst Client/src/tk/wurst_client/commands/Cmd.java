@@ -151,6 +151,12 @@ public abstract class Cmd implements NavigatorItem
 		return tutorial;
 	}
 	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[0];
+	}
+	
 	public final void printHelp()
 	{
 		for(String line : help.split("\n"))

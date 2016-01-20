@@ -130,6 +130,12 @@ public class Mod implements NavigatorItem
 		return tutorial;
 	}
 	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[0];
+	}
+	
 	public final Category getCategory()
 	{
 		return category;

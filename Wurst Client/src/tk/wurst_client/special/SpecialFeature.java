@@ -91,4 +91,10 @@ public abstract class SpecialFeature implements NavigatorItem
 	{
 		return tutorial;
 	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[0];
+	}
 }
