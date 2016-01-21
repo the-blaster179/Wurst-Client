@@ -20,6 +20,7 @@ import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.ModeSetting;
 import tk.wurst_client.utils.BuildUtils;
 import tk.wurst_client.utils.RenderUtils;
@@ -58,6 +59,14 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 				template = getSelected();
 			}
 		});
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.buildRandomMod,
+			wurst.mods.fastPlaceMod};
 	}
 	
 	@Override

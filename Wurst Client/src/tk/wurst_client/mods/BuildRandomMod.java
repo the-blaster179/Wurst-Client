@@ -18,6 +18,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 
 @Info(category = Category.BLOCKS,
@@ -26,6 +27,14 @@ import tk.wurst_client.utils.BlockUtils;
 public class BuildRandomMod extends Mod implements UpdateListener
 {
 	private float range = 6;
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.autoBuildMod,
+			wurst.mods.fastPlaceMod};
+	}
 	
 	@Override
 	public void onEnable()
