@@ -26,6 +26,8 @@ public class SpecialFeatureManager
 		});
 	
 	public final BookHackFeature bookHackFeature = new BookHackFeature();
+	public final ServerFinderFeature serverFinderFeature =
+		new ServerFinderFeature();
 	public final TargetFeature targetFeature = new TargetFeature();
 	
 	public SpecialFeatureManager()
