@@ -21,6 +21,7 @@ import tk.wurst_client.events.listeners.LeftClickListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 
 @Info(category = Category.BLOCKS,
@@ -46,6 +47,15 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 			default:
 				return nuker.getModes()[nuker.getMode()] + "SpeedNuker";
 		}
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerMod,
+			wurst.mods.nukerLegitMod, wurst.mods.tunnellerMod,
+			wurst.mods.fastBreakMod, wurst.mods.autoMineMod};
 	}
 	
 	@Override

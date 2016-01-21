@@ -29,6 +29,7 @@ import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.ModeSetting;
 import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.BlockUtils;
@@ -80,6 +81,15 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 				mode = getSelected();
 			}
 		});
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerLegitMod,
+			wurst.mods.speedNukerMod, wurst.mods.tunnellerMod,
+			wurst.mods.fastBreakMod, wurst.mods.autoMineMod};
 	}
 	
 	@Override
@@ -353,17 +363,17 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 					}
 				}
 	}
-
+	
 	public int getMode()
 	{
 		return mode;
 	}
-
+	
 	public void setMode(int mode)
 	{
 		((ModeSetting)settings.get(1)).setSelected(mode);
 	}
-
+	
 	public String[] getModes()
 	{
 		return modes;
