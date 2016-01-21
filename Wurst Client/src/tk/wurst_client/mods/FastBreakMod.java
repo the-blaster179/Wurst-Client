@@ -10,8 +10,10 @@ package tk.wurst_client.mods;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
+import tk.wurst_client.WurstClient;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.BLOCKS,
@@ -27,6 +29,14 @@ public class FastBreakMod extends Mod
 	{
 		settings.add(new SliderSetting("Speed", speed, 1, 5, 0.05,
 			ValueDisplay.DECIMAL));
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.fastPlaceMod,
+			wurst.mods.autoMineMod, wurst.mods.nukerMod};
 	}
 	
 	@Override
