@@ -68,7 +68,7 @@ public class Navigator
 			for(int i = 0; i < specialFields.length; i++)
 			{
 				Field field = specialFields[i];
-				if(field.getName().endsWith("Feature"))
+				if(field.getName().endsWith("Spf"))
 					navigatorList.add((NavigatorItem)field
 						.get(WurstClient.INSTANCE.special));
 			}
