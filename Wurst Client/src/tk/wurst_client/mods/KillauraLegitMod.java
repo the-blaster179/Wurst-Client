@@ -14,6 +14,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.EntityUtils;
 
 @Info(category = Category.COMBAT,
@@ -22,6 +23,15 @@ import tk.wurst_client.utils.EntityUtils;
 	name = "KillauraLegit")
 public class KillauraLegitMod extends Mod implements UpdateListener
 {
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.specialFeatures.targetFeature,
+			wurst.mods.killauraMod, wurst.mods.multiAuraMod,
+			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod};
+	}
+	
 	@Override
 	public void onEnable()
 	{
