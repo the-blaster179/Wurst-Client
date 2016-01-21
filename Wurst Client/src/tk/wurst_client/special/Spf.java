@@ -16,7 +16,7 @@ import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.settings.NavigatorSetting;
 
-public class SpecialFeature implements NavigatorItem
+public class Spf implements NavigatorItem
 {
 	private final String name = getClass().getAnnotation(Info.class).name();
 	private final String description = getClass().getAnnotation(Info.class)
@@ -91,13 +91,13 @@ public class SpecialFeature implements NavigatorItem
 	{
 		return "";
 	}
-
+	
 	@Override
 	public void doPrimaryAction()
 	{	
 		
 	}
-
+	
 	@Override
 	public final String getTutorialPage()
 	{

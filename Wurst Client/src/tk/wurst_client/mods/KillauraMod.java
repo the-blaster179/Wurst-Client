@@ -49,7 +49,7 @@ public class KillauraMod extends Mod implements UpdateListener
 	public NavigatorItem[] getSeeAlso()
 	{
 		WurstClient wurst = WurstClient.INSTANCE;
-		return new NavigatorItem[]{wurst.specialFeatures.targetFeature,
+		return new NavigatorItem[]{wurst.special.targetSpf,
 			wurst.mods.killauraLegitMod, wurst.mods.multiAuraMod,
 			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,
 			wurst.mods.criticalsMod};

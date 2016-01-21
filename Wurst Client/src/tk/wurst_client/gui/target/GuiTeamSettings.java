@@ -73,7 +73,7 @@ public class GuiTeamSettings extends GuiScreen
 				/ 3 + offsetY, "§" + colors[i] + colors[i]));
 		}
 		boolean[] team_colors =
-			WurstClient.INSTANCE.specialFeatures.targetFeature.teamColors
+			WurstClient.INSTANCE.special.targetSpf.teamColors
 				.getSelected();
 		for(int i = 0; i < 16; i++)
 			((TeamColorButton)buttonList.get(i)).setFakeHover(team_colors[i]);
@@ -99,7 +99,7 @@ public class GuiTeamSettings extends GuiScreen
 		}else
 		{
 			ColorsSetting teamColors =
-				WurstClient.INSTANCE.specialFeatures.targetFeature.teamColors;
+				WurstClient.INSTANCE.special.targetSpf.teamColors;
 			switch(button.id)
 			{
 				case 16:

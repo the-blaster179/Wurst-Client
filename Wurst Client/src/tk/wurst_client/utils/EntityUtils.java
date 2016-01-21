@@ -26,7 +26,7 @@ import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import tk.wurst_client.WurstClient;
-import tk.wurst_client.special.TargetFeature;
+import tk.wurst_client.special.TargetSpf;
 
 public class EntityUtils
 {
@@ -139,44 +139,44 @@ public class EntityUtils
 				.getName()))
 				return false;
 		
-		TargetFeature targetFeature =
-			WurstClient.INSTANCE.specialFeatures.targetFeature;
+		TargetSpf targetSpf =
+			WurstClient.INSTANCE.special.targetSpf;
 		
 		// invisible entities
 		if(((Entity)o).isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
-			return targetFeature.invisibleMobs.isChecked()
+			return targetSpf.invisibleMobs.isChecked()
 				&& o instanceof EntityLiving
-				|| targetFeature.invisiblePlayers.isChecked()
+				|| targetSpf.invisiblePlayers.isChecked()
 				&& o instanceof EntityPlayer;
 		
 		// players
 		if(o instanceof EntityPlayer)
 			return (((EntityPlayer)o).isPlayerSleeping()
-				&& targetFeature.sleepingPlayers.isChecked() || !((EntityPlayer)o)
-				.isPlayerSleeping() && targetFeature.players.isChecked())
-				&& (!targetFeature.teams.isChecked() || checkName(((EntityPlayer)o)
+				&& targetSpf.sleepingPlayers.isChecked() || !((EntityPlayer)o)
+				.isPlayerSleeping() && targetSpf.players.isChecked())
+				&& (!targetSpf.teams.isChecked() || checkName(((EntityPlayer)o)
 					.getDisplayName().getFormattedText()));
 		
 		// animals
 		if(o instanceof EntityAgeable || o instanceof EntityAmbientCreature
 			|| o instanceof EntityWaterMob)
-			return targetFeature.animals.isChecked()
-				&& (!targetFeature.teams.isChecked()
+			return targetSpf.animals.isChecked()
+				&& (!targetSpf.teams.isChecked()
 					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
 						.getCustomNameTag()));
 		
 		// monsters
 		if(o instanceof EntityMob || o instanceof EntitySlime
 			|| o instanceof EntityFlying)
-			return targetFeature.monsters.isChecked()
-				&& (!targetFeature.teams.isChecked()
+			return targetSpf.monsters.isChecked()
+				&& (!targetSpf.teams.isChecked()
 					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
 						.getCustomNameTag()));
 		
 		// golems
 		if(o instanceof EntityGolem)
-			return targetFeature.golems.isChecked()
-				&& (!targetFeature.teams.isChecked()
+			return targetSpf.golems.isChecked()
+				&& (!targetSpf.teams.isChecked()
 					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
 						.getCustomNameTag()));
 		
@@ -190,7 +190,7 @@ public class EntityUtils
 			{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c",
 				"d", "e", "f"};
 		boolean[] teamColors =
-			WurstClient.INSTANCE.specialFeatures.targetFeature.teamColors.getSelected();
+			WurstClient.INSTANCE.special.targetSpf.teamColors.getSelected();
 		boolean hasKnownColor = false;
 		for(int i = 0; i < 16; i++)
 			if(name.contains("§" + colors[i]))

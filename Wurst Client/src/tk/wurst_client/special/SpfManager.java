@@ -13,10 +13,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.TreeMap;
 
-public class SpecialFeatureManager
+public class SpfManager
 {
-	private final TreeMap<String, SpecialFeature> features =
-		new TreeMap<String, SpecialFeature>(new Comparator<String>()
+	private final TreeMap<String, Spf> features = new TreeMap<String, Spf>(
+		new Comparator<String>()
 		{
 			@Override
 			public int compare(String o1, String o2)
@@ -25,20 +25,19 @@ public class SpecialFeatureManager
 			}
 		});
 	
-	public final BookHackFeature bookHackFeature = new BookHackFeature();
-	public final ServerFinderFeature serverFinderFeature =
-		new ServerFinderFeature();
-	public final TargetFeature targetFeature = new TargetFeature();
+	public final BookHackSpf bookHackSpf = new BookHackSpf();
+	public final ServerFinderSpf serverFinderSpf = new ServerFinderSpf();
+	public final TargetSpf targetSpf = new TargetSpf();
 	
-	public SpecialFeatureManager()
+	public SpfManager()
 	{
 		try
 		{
-			for(Field field : SpecialFeatureManager.class.getFields())
+			for(Field field : SpfManager.class.getFields())
 			{
 				if(field.getName().endsWith("Feature"))
 				{
-					SpecialFeature cmd = (SpecialFeature)field.get(this);
+					Spf cmd = (Spf)field.get(this);
 					features.put(cmd.getName(), cmd);
 				}
 			}
@@ -48,12 +47,12 @@ public class SpecialFeatureManager
 		}
 	}
 	
-	public SpecialFeature getFeatureByName(String name)
+	public Spf getFeatureByName(String name)
 	{
 		return features.get(name);
 	}
 	
-	public Collection<SpecialFeature> getAllFeatures()
+	public Collection<Spf> getAllFeatures()
 	{
 		return features.values();
 	}

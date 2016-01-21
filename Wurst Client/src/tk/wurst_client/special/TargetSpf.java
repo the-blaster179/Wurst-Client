@@ -13,10 +13,10 @@ import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.CheckboxSetting;
 import tk.wurst_client.navigator.settings.ColorsSetting;
 
-@SpecialFeature.Info(description = "Controls what entities are targeted by other features (e.g. Killaura). Also allows you to\n"
+@Spf.Info(description = "Controls what entities are targeted by other features (e.g. Killaura). Also allows you to\n"
 	+ "bypass AntiAura plugins by filtering out fake entities.",
 	name = "Target")
-public class TargetFeature extends SpecialFeature
+public class TargetSpf extends Spf
 {
 	public final CheckboxSetting players = new CheckboxSetting("Players", true);
 	public final CheckboxSetting animals = new CheckboxSetting("Animals", true);
@@ -36,7 +36,7 @@ public class TargetFeature extends SpecialFeature
 		new boolean[]{true, true, true, true, true, true, true, true, true,
 			true, true, true, true, true, true, true});
 	
-	public TargetFeature()
+	public TargetSpf()
 	{
 		settings.add(players);
 		settings.add(animals);

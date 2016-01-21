@@ -8,12 +8,12 @@
  */
 package tk.wurst_client.special;
 
-@SpecialFeature.Info(description = "ServerFinder is a tool for finding easy-to-grief Minecraft servers quickly and with little effort.\n"
+@Spf.Info(description = "ServerFinder is a tool for finding easy-to-grief Minecraft servers quickly and with little effort.\n"
 	+ "It usually finds around 75 - 200 servers.",
 	name = "ServerFinder",
 	tags = "Server Finder",
 	tutorial = "Special_Features/Server_Finder")
-public class ServerFinderFeature extends SpecialFeature
+public class ServerFinderSpf extends Spf
 {	
 	
 }

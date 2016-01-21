@@ -8,13 +8,13 @@
  */
 package tk.wurst_client.special;
 
-@SpecialFeature.Info(description = "Allows you to insert links that execute commands into writable books. This can be used to\n"
+@Spf.Info(description = "Allows you to insert links that execute commands into writable books. This can be used to\n"
 	+ "trick other people (including admins) into executing commands like \"/op YourName\" or\n"
 	+ "\"/kill\".",
 	name = "BookHack",
 	tags = "Force OP,Book Hack,OP Book,command book",
 	tutorial = "Special_Features/Force_OP_(BookHack)")
-public class BookHackFeature extends SpecialFeature
-{
+public class BookHackSpf extends Spf
+{	
 	
 }

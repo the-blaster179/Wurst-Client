@@ -18,7 +18,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.analytics.AnalyticsManager;
 import tk.wurst_client.commands.CmdManager;
 import tk.wurst_client.mods.ModManager;
-import tk.wurst_client.special.SpecialFeatureManager;
+import tk.wurst_client.special.SpfManager;
 
 public class Navigator
 {
@@ -62,7 +62,7 @@ public class Navigator
 		}
 		
 		// add special features
-		Field[] specialFields = SpecialFeatureManager.class.getFields();
+		Field[] specialFields = SpfManager.class.getFields();
 		try
 		{
 			for(int i = 0; i < specialFields.length; i++)
@@ -70,7 +70,7 @@ public class Navigator
 				Field field = specialFields[i];
 				if(field.getName().endsWith("Feature"))
 					navigatorList.add((NavigatorItem)field
-						.get(WurstClient.INSTANCE.specialFeatures));
+						.get(WurstClient.INSTANCE.special));
 			}
 		}catch(Exception e)
 		{
