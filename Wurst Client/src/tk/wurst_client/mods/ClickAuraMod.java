@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.EntityUtils;
 
 @Mod.Info(category = Mod.Category.COMBAT,
@@ -23,6 +24,15 @@ import tk.wurst_client.utils.EntityUtils;
 	name = "ClickAura")
 public class ClickAuraMod extends Mod implements UpdateListener
 {
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.specialFeatures.targetFeature,
+			wurst.mods.killauraMod, wurst.mods.killauraLegitMod,
+			wurst.mods.multiAuraMod, wurst.mods.triggerBotMod};
+	}
+	
 	@Override
 	public void onEnable()
 	{
