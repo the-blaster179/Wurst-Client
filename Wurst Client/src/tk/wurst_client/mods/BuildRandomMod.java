@@ -33,7 +33,7 @@ public class BuildRandomMod extends Mod implements UpdateListener
 	{
 		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.autoBuildMod,
-			wurst.mods.fastPlaceMod};
+			wurst.mods.fastPlaceMod, wurst.mods.autoSwitchMod};
 	}
 	
 	@Override
