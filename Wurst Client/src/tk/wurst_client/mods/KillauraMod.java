@@ -51,7 +51,8 @@ public class KillauraMod extends Mod implements UpdateListener
 		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.specialFeatures.targetFeature,
 			wurst.mods.killauraLegitMod, wurst.mods.multiAuraMod,
-			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod};
+			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,
+			wurst.mods.criticalsMod};
 	}
 	
 	@Override
