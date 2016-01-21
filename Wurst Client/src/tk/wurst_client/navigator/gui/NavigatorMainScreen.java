@@ -72,7 +72,7 @@ public class NavigatorMainScreen extends NavigatorScreen
 				navigator.copyNavigatorList(navigatorDisplayList);
 			else if(!newText.equals(oldText))
 			{
-				newText = newText.toLowerCase();
+				newText = newText.toLowerCase().trim();
 				navigator.getSearchResults(navigatorDisplayList, newText);
 				WurstClient.INSTANCE.navigator.analytics.trackEvent("search",
 					"query searched", newText);
