@@ -25,6 +25,7 @@ public class SpecialFeatureManager
 			}
 		});
 	
+	public final BookHackFeature bookHackFeature = new BookHackFeature();
 	public final TargetFeature targetFeature = new TargetFeature();
 	
 	public SpecialFeatureManager()
