@@ -16,15 +16,5 @@ package tk.wurst_client.special;
 	tutorial = "Special_Features/Force_OP_(BookHack)")
 public class BookHackFeature extends SpecialFeature
 {
-	@Override
-	public String getPrimaryAction()
-	{
-		return "";
-	}
 	
-	@Override
-	public void doPrimaryAction()
-	{	
-		
-	}
 }

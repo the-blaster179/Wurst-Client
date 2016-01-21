@@ -60,16 +60,4 @@ public class TargetFeature extends SpecialFeature
 			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,
 			wurst.mods.bowAimbotMod};
 	}
-	
-	@Override
-	public String getPrimaryAction()
-	{
-		return "";
-	}
-	
-	@Override
-	public void doPrimaryAction()
-	{	
-		
-	}
 }
