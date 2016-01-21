@@ -21,7 +21,8 @@ import tk.wurst_client.utils.EntityUtils;
 		+ "Warning: ClickAuras generally look more suspicious than Killauras\n"
 		+ "and are easier to detect. It is recommended to use Killaura or\n"
 		+ "TriggerBot instead.",
-	name = "ClickAura")
+	name = "ClickAura",
+	tags = "Click Aura,ClickAimbot,Click Aimbot")
 public class ClickAuraMod extends Mod implements UpdateListener
 {
 	@Override
