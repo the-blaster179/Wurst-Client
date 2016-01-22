@@ -1,13 +1,20 @@
 package org.darkstorm.minecraft.gui.util;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.Map.Entry;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.darkstorm.minecraft.gui.GuiManager;
 import org.darkstorm.minecraft.gui.component.Component;
 import org.darkstorm.minecraft.gui.component.Frame;
+
+import tk.wurst_client.WurstClient;
+import tk.wurst_client.utils.MiscUtils;
 
 public class GuiManagerDisplayScreen extends GuiScreen
 {
@@ -16,6 +23,33 @@ public class GuiManagerDisplayScreen extends GuiScreen
 	public GuiManagerDisplayScreen(GuiManager guiManager)
 	{
 		this.guiManager = guiManager;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void initGui()
+	{
+		buttonList.add(new GuiButton(0, 2, height - 20, 150, 16, "Switch to the new GUI"));
+		buttonList.add(new GuiButton(1, 156, height - 20, 150, 16, "Learn More"));
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException
+	{
+		switch(button.id)
+		{
+			case 0:
+				for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds.entrySet())
+					if(entry.getValue().equalsIgnoreCase(".t clickgui"))
+						entry.setValue(".t navigator");
+				WurstClient.INSTANCE.files.saveKeybinds();
+				mc.displayGuiScreen(null);
+				mc.thePlayer.sendAutomaticChatMessage(".t navigator");
+				break;
+			case 1:
+				MiscUtils.openLink("https://www.wurst-client.tk/navigator/");
+				break;
+		}
 	}
 	
 	@Override
@@ -117,6 +151,26 @@ public class GuiManagerDisplayScreen extends GuiScreen
 	public void drawScreen(int par2, int par3, float par4)
 	{
 		guiManager.render();
+		
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+
+		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+		glBegin(GL_QUADS);
+		{
+			glVertex2i(2, height - 42);
+			glVertex2i(308, height - 42);
+			glVertex2i(308, height - 2);
+			glVertex2i(2, height - 2);
+		}
+		glEnd();
+		RenderUtil.boxShadow(2, height - 42, 308, height - 2);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		drawString(fontRendererObj, "§lNotice:§r You are currently viewing the old GUI.", 4, height - 36,
+			0xffffff);
 		super.drawScreen(par2, par3, par4);
 	}
 }

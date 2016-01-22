@@ -17,6 +17,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.EntityUtils;
 
@@ -36,16 +37,26 @@ public class KillauraMod extends Mod implements UpdateListener
 	@Override
 	public void initSettings()
 	{
-		settings.add(new SliderSetting("Killaura speed", normalSpeed, 2, 20,
-			0.1, ValueDisplay.DECIMAL));
-		settings.add(new SliderSetting("Killaura range", normalRange, 1, 6,
-			0.05, ValueDisplay.DECIMAL));
-		settings.add(new SliderSetting("Killaura FOV", fov, 30, 360, 10,
+		settings.add(new SliderSetting("Speed", normalSpeed, 2, 20, 0.1,
+			ValueDisplay.DECIMAL));
+		settings.add(new SliderSetting("Range", normalRange, 1, 6, 0.05,
+			ValueDisplay.DECIMAL));
+		settings.add(new SliderSetting("FOV", fov, 30, 360, 10,
 			ValueDisplay.DEGREES));
 	}
 	
 	@Override
-	public void updateSettings()
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.special.targetSpf,
+			wurst.mods.killauraLegitMod, wurst.mods.multiAuraMod,
+			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,
+			wurst.mods.criticalsMod};
+	}
+	
+	@Override
+	public void updateSliders()
 	{
 		normalSpeed = (float)((SliderSetting)settings.get(0)).getValue();
 		yesCheatSpeed = Math.min(normalSpeed, 12F);

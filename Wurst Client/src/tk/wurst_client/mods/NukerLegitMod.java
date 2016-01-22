@@ -25,6 +25,7 @@ import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
 
@@ -46,14 +47,16 @@ public class NukerLegitMod extends Mod implements LeftClickListener,
 	@Override
 	public String getRenderName()
 	{
-		if(WurstClient.INSTANCE.options.nukerMode == 1)
-			return "IDNukerLegit [" + NukerMod.id + "]";
-		else if(WurstClient.INSTANCE.options.nukerMode == 2)
-			return "FlatNukerLegit";
-		else if(WurstClient.INSTANCE.options.nukerMode == 3)
-			return "SmashNukerLegit";
-		else
-			return "NukerLegit";
+		return WurstClient.INSTANCE.mods.nukerMod.getRenderName() + "Legit";
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerMod,
+			wurst.mods.speedNukerMod, wurst.mods.tunnellerMod,
+			wurst.mods.fastBreakMod, wurst.mods.autoMineMod};
 	}
 	
 	@Override
@@ -179,7 +182,7 @@ public class NukerLegitMod extends Mod implements LeftClickListener,
 		if(Minecraft.getMinecraft().objectMouseOver == null
 			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
 			return;
-		if(WurstClient.INSTANCE.options.nukerMode == 1
+		if(WurstClient.INSTANCE.mods.nukerMod.getMode() == 1
 			&& Minecraft.getMinecraft().theWorld
 				.getBlockState(
 					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
@@ -211,7 +214,7 @@ public class NukerLegitMod extends Mod implements LeftClickListener,
 				Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
 					.getBlockState(currentPos).getBlock());
 			if(currentID != 0)
-				switch(WurstClient.INSTANCE.options.nukerMode)
+				switch(WurstClient.INSTANCE.mods.nukerMod.getMode())
 				{
 					case 1:
 						if(currentID == NukerMod.id)

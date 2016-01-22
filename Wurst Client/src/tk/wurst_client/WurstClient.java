@@ -23,13 +23,14 @@ import tk.wurst_client.navigator.Navigator;
 import tk.wurst_client.options.FriendsList;
 import tk.wurst_client.options.KeybindManager;
 import tk.wurst_client.options.OptionsManager;
+import tk.wurst_client.special.SpfManager;
 import tk.wurst_client.update.Updater;
 
 public enum WurstClient
 {
 	INSTANCE;
 	
-	public static final String VERSION = "2.13pre2";
+	public static final String VERSION = "2.13";
 	public boolean startupMessageDisabled = false;
 	
 	public AnalyticsManager analytics;
@@ -43,6 +44,7 @@ public enum WurstClient
 	public Navigator navigator;
 	public KeybindManager keybinds;
 	public OptionsManager options;
+	public SpfManager special;
 	public Updater updater;
 	
 	public void startClient()
@@ -51,6 +53,7 @@ public enum WurstClient
 		mods = new ModManager();
 		gui = new GuiManager();
 		commands = new CmdManager();
+		special = new SpfManager();
 		files = new FileManager();
 		updater = new Updater();
 		chat = new ChatManager();

@@ -29,6 +29,8 @@ import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.settings.ModeSetting;
 import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
@@ -49,29 +51,49 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	private BlockPos pos;
 	private boolean shouldRenderESP;
 	private int oldSlot = -1;
+	private int mode = 0;
+	private String[] modes = new String[]{"Normal", "ID", "Flat", "Smash"};
 	
 	@Override
 	public String getRenderName()
 	{
-		if(WurstClient.INSTANCE.options.nukerMode == 1)
-			return "IDNuker [" + id + "]";
-		else if(WurstClient.INSTANCE.options.nukerMode == 2)
-			return "FlatNuker";
-		else if(WurstClient.INSTANCE.options.nukerMode == 3)
-			return "SmashNuker";
-		else
-			return "Nuker";
+		switch(mode)
+		{
+			case 0:
+				return "Nuker";
+			case 1:
+				return "IDNuker [" + id + "]";
+			default:
+				return modes[mode] + "Nuker";
+		}
 	}
 	
 	@Override
 	public void initSettings()
 	{
-		settings.add(new SliderSetting("Nuker range", normalRange, 1, 6, 0.05,
+		settings.add(new SliderSetting("Range", normalRange, 1, 6, 0.05,
 			ValueDisplay.DECIMAL));
+		settings.add(new ModeSetting("Mode", modes, mode)
+		{
+			@Override
+			public void update()
+			{
+				mode = getSelected();
+			}
+		});
 	}
 	
 	@Override
-	public void updateSettings()
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerLegitMod,
+			wurst.mods.speedNukerMod, wurst.mods.tunnellerMod,
+			wurst.mods.fastBreakMod, wurst.mods.autoMineMod};
+	}
+	
+	@Override
+	public void updateSliders()
 	{
 		normalRange = (float)((SliderSetting)settings.get(0)).getValue();
 		yesCheatRange = Math.min(normalRange, 4.25F);
@@ -217,7 +239,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 		if(Minecraft.getMinecraft().objectMouseOver == null
 			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
 			return;
-		if(WurstClient.INSTANCE.options.nukerMode == 1
+		if(mode == 1
 			&& Minecraft.getMinecraft().theWorld
 				.getBlockState(
 					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
@@ -249,7 +271,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 				Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
 					.getBlockState(currentPos).getBlock());
 			if(currentID != 0)
-				switch(WurstClient.INSTANCE.options.nukerMode)
+				switch(mode)
 				{
 					case 1:
 						if(currentID == id)
@@ -288,8 +310,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	
 	private void nukeAll()
 	{
-		for(int y = (int)realRange; y >= (WurstClient.INSTANCE.options.nukerMode == 2
-			? 0 : -realRange); y--)
+		for(int y = (int)realRange; y >= (mode == 2 ? 0 : -realRange); y--)
 			for(int x = (int)realRange; x >= -realRange - 1; x--)
 				for(int z = (int)realRange; z >= -realRange; z--)
 				{
@@ -322,10 +343,9 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 					if(Block.getIdFromBlock(block) != 0 && posY >= 0
 						&& currentDistance <= realRange)
 					{
-						if(WurstClient.INSTANCE.options.nukerMode == 1
-							&& Block.getIdFromBlock(block) != id)
+						if(mode == 1 && Block.getIdFromBlock(block) != id)
 							continue;
-						if(WurstClient.INSTANCE.options.nukerMode == 3
+						if(mode == 3
 							&& block.getPlayerRelativeBlockHardness(
 								Minecraft.getMinecraft().thePlayer,
 								Minecraft.getMinecraft().theWorld, blockPos) < 1)
@@ -342,5 +362,20 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 								.getBlockState(blockPos));
 					}
 				}
+	}
+	
+	public int getMode()
+	{
+		return mode;
+	}
+	
+	public void setMode(int mode)
+	{
+		((ModeSetting)settings.get(1)).setSelected(mode);
+	}
+	
+	public String[] getModes()
+	{
+		return modes;
 	}
 }

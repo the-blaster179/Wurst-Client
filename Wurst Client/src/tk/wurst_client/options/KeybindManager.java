@@ -23,8 +23,9 @@ public class KeybindManager extends TreeMap<String, String>
 		put("J", ".t phase");
 		put("K", ".t multiaura");
 		put("L", ".t nuker");
-		put("LCONTROL", ".t clickgui");
+		put("LCONTROL", ".t navigator");
 		put("R", ".t killaura");
+		put("RSHIFT", ".t navigator");
 		put("U", ".t freecam");
 		put("X", ".t x-ray");
 		put("Z", ".t sneak");

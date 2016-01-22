@@ -21,6 +21,7 @@ import tk.wurst_client.events.listeners.LeftClickListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 
 @Info(category = Category.BLOCKS,
@@ -36,14 +37,25 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 	@Override
 	public String getRenderName()
 	{
-		if(WurstClient.INSTANCE.options.nukerMode == 1)
-			return "IDSpeedNuker [" + NukerMod.id + "]";
-		else if(WurstClient.INSTANCE.options.nukerMode == 2)
-			return "FlatSpeedNuker";
-		else if(WurstClient.INSTANCE.options.nukerMode == 3)
-			return "SmashSpeedNuker";
-		else
-			return "SpeedNuker";
+		NukerMod nuker = WurstClient.INSTANCE.mods.nukerMod;
+		switch(nuker.getMode())
+		{
+			case 0:
+				return "SpeedNuker";
+			case 1:
+				return "IDSpeedNuker [" + NukerMod.id + "]";
+			default:
+				return nuker.getModes()[nuker.getMode()] + "SpeedNuker";
+		}
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerMod,
+			wurst.mods.nukerLegitMod, wurst.mods.tunnellerMod,
+			wurst.mods.fastBreakMod, wurst.mods.autoMineMod};
 	}
 	
 	@Override
@@ -126,7 +138,7 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 		if(Minecraft.getMinecraft().objectMouseOver == null
 			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
 			return;
-		if(WurstClient.INSTANCE.options.nukerMode == 1
+		if(WurstClient.INSTANCE.mods.nukerMod.getMode() == 1
 			&& Minecraft.getMinecraft().theWorld
 				.getBlockState(
 					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
@@ -146,7 +158,8 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 		BlockPos closest = null;
 		float closestDistance =
 			WurstClient.INSTANCE.mods.nukerMod.yesCheatRange + 1;
-		for(int y = (int)WurstClient.INSTANCE.mods.nukerMod.yesCheatRange; y >= (WurstClient.INSTANCE.options.nukerMode == 2
+		int nukerMode = WurstClient.INSTANCE.mods.nukerMod.getMode();
+		for(int y = (int)WurstClient.INSTANCE.mods.nukerMod.yesCheatRange; y >= (nukerMode == 2
 			? 0 : -WurstClient.INSTANCE.mods.nukerMod.yesCheatRange); y--)
 			for(int x = (int)WurstClient.INSTANCE.mods.nukerMod.yesCheatRange; x >= -WurstClient.INSTANCE.mods.nukerMod.yesCheatRange - 1; x--)
 				for(int z =
@@ -186,10 +199,10 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 						&& posY >= 0
 						&& currentDistance <= WurstClient.INSTANCE.mods.nukerMod.yesCheatRange)
 					{
-						if(WurstClient.INSTANCE.options.nukerMode == 1
+						if(nukerMode == 1
 							&& Block.getIdFromBlock(block) != NukerMod.id)
 							continue;
-						if(WurstClient.INSTANCE.options.nukerMode == 3
+						if(nukerMode == 3
 							&& block.getPlayerRelativeBlockHardness(
 								Minecraft.getMinecraft().thePlayer,
 								Minecraft.getMinecraft().theWorld, blockPos) < 1)
@@ -210,7 +223,8 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 	
 	private void nukeAll()
 	{
-		for(int y = (int)WurstClient.INSTANCE.mods.nukerMod.normalRange; y >= (WurstClient.INSTANCE.options.nukerMode == 2
+		int nukerMode = WurstClient.INSTANCE.mods.nukerMod.getMode();
+		for(int y = (int)WurstClient.INSTANCE.mods.nukerMod.normalRange; y >= (nukerMode == 2
 			? 0 : -WurstClient.INSTANCE.mods.nukerMod.normalRange); y--)
 			for(int x = (int)WurstClient.INSTANCE.mods.nukerMod.normalRange; x >= -WurstClient.INSTANCE.mods.nukerMod.normalRange - 1; x--)
 				for(int z = (int)WurstClient.INSTANCE.mods.nukerMod.normalRange; z >= -WurstClient.INSTANCE.mods.nukerMod.normalRange; z--)
@@ -246,10 +260,10 @@ public class SpeedNukerMod extends Mod implements LeftClickListener,
 						&& posY >= 0
 						&& currentDistance <= WurstClient.INSTANCE.mods.nukerMod.normalRange)
 					{
-						if(WurstClient.INSTANCE.options.nukerMode == 1
+						if(nukerMode == 1
 							&& Block.getIdFromBlock(block) != NukerMod.id)
 							continue;
-						if(WurstClient.INSTANCE.options.nukerMode == 3
+						if(nukerMode == 3
 							&& block.getPlayerRelativeBlockHardness(
 								Minecraft.getMinecraft().thePlayer,
 								Minecraft.getMinecraft().theWorld, blockPos) < 1)

@@ -26,12 +26,12 @@ public class TimerMod extends Mod
 	@Override
 	public void initSettings()
 	{
-		settings.add(new SliderSetting("Timer speed", speed, 0.1, 10, 0.1,
+		settings.add(new SliderSetting("Speed", speed, 0.1, 10, 0.1,
 			ValueDisplay.DECIMAL));
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
 		speed = (float)((SliderSetting)settings.get(0)).getValue();
 	}

@@ -13,6 +13,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.BLOCKS,
 	description = "Allows you to place blocks 5 times faster.\n"
@@ -20,6 +21,14 @@ import tk.wurst_client.mods.Mod.Info;
 	name = "FastPlace")
 public class FastPlaceMod extends Mod implements UpdateListener
 {
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.fastBreakMod,
+			wurst.mods.buildRandomMod, wurst.mods.autoBuildMod};
+	}
+	
 	@Override
 	public void onEnable()
 	{

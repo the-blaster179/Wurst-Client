@@ -173,9 +173,10 @@ public final class GuiManager extends AbstractGuiManager
 						@Override
 						public void onSliderValueChanged(Slider slider)
 						{
-							mod.updateSettings();
+							mod.updateSliders();
 						}
 					});
+					slider.setModNamePrefix(mod.getName());
 					settingsFrame.add(slider);
 				}
 		}
@@ -190,22 +191,18 @@ public final class GuiManager extends AbstractGuiManager
 			@Override
 			public void onComboBoxSelectionChanged(ComboBox comboBox)
 			{
-				WurstClient.INSTANCE.options.autobuildMode =
-					comboBox.getSelectedIndex();
+				WurstClient.INSTANCE.mods.autoBuildMod.setTemplate(comboBox
+					.getSelectedIndex());
 			}
 		});
-		autoBuildBox
-			.setSelectedIndex(WurstClient.INSTANCE.options.autobuildMode);
+		autoBuildBox.setSelectedIndex(WurstClient.INSTANCE.mods.autoBuildMod
+			.getTemplate());
 		autobuild.add(autoBuildBox, HorizontalGridConstraint.CENTER);
 		categoryFrames.remove(Category.AUTOBUILD);
 		
 		// Target
 		addFrame(new TargetFrame());
 		
-		if(!WurstClient.INSTANCE.files.sliders.exists())
-			WurstClient.INSTANCE.files.saveSliders();
-		else
-			WurstClient.INSTANCE.files.loadSliders();
 		resizeComponents();
 		Minecraft minecraft = Minecraft.getMinecraft();
 		int offsetX = 5, offsetY = 5;

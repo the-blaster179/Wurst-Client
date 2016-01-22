@@ -42,7 +42,10 @@ import tk.wurst_client.mods.Mod.Info;
 		+ "\"How to use\" button. That will open an online\n"
 		+ "tutorial explaining exactly how to use it.\n"
 		+ "Don't message me on this!",
-	name = "ForceOP")
+	name = "ForceOP",
+	tags = "Force OP,AuthMe Cracker,AuthMeCracker,auth me cracker,admin hack,"
+		+ "AuthMe password cracker",
+	tutorial = "Mods/Force_OP_(AuthMeCracker)")
 public class ForceOpMod extends Mod implements ChatInputListener
 {
 	private String[] defaultList = {"password", "passwort", "password1",

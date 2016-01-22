@@ -8,13 +8,7 @@
  */
 package tk.wurst_client.navigator.gui;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -48,6 +42,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 	private String text;
 	private ArrayList<ButtonData> buttonDatas = new ArrayList<>();
 	private ArrayList<SliderData> sliderDatas = new ArrayList<>();
+	private ArrayList<CheckboxData> checkboxDatas = new ArrayList<>();
 	
 	public NavigatorFeatureScreen(NavigatorItem item, NavigatorMainScreen parent)
 	{
@@ -74,7 +69,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		}
 		
 		WurstClient wurst = WurstClient.INSTANCE;
-		wurst.navigator.addClick(item.getName());
+		wurst.navigator.addPreference(item.getName());
 		wurst.files.saveNavigatorData();
 	}
 	
@@ -113,12 +108,13 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		// area
 		Rectangle area = new Rectangle(middleX - 154, 60, 308, height - 103);
 		
-		// sliders
+		// settings
 		ArrayList<NavigatorSetting> settings = item.getSettings();
 		if(!settings.isEmpty())
 		{
 			text += "\n\nSettings:";
 			sliderDatas.clear();
+			checkboxDatas.clear();
 			for(NavigatorSetting setting : settings)
 				setting.addToFeatureScreen(this);
 		}
@@ -189,6 +185,30 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			}
 		}
 		
+		// see also
+		NavigatorItem[] seeAlso = item.getSeeAlso();
+		if(seeAlso.length != 0)
+		{
+			text += "\n\nSee also:\n";
+			for(int i = 0; i < seeAlso.length; i++)
+			{
+				int y = 60 + getTextHeight() + 2;
+				NavigatorItem seeAlsoItem = seeAlso[i];
+				String name = seeAlsoItem.getName();
+				text += "- " + name + (i == seeAlso.length - 1 ? "" : "\n");
+				buttonDatas.add(new ButtonData(middleX - 148, y, Fonts.segoe15
+					.getStringWidth(name) + 3, 8, "", 0x404040)
+				{
+					@Override
+					public void press()
+					{
+						mc.displayGuiScreen(new NavigatorFeatureScreen(
+							seeAlsoItem, parent));
+					}
+				});
+			}
+		}
+		
 		// text height
 		setContentHeight(Fonts.segoe15.getStringHeight(text));
 	}
@@ -206,6 +226,10 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 	@Override
 	protected void onMouseClick(int x, int y, int button)
 	{
+		Rectangle area = new Rectangle(width / 2 - 154, 60, 308, height - 103);
+		if(!area.contains(x, y))
+			return;
+		
 		// buttons
 		if(activeButton != null)
 		{
@@ -213,22 +237,37 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 				PositionedSoundRecord.createPositionedSoundRecord(
 					new ResourceLocation("gui.button.press"), 1.0F));
 			activeButton.press();
+			WurstClient wurst = WurstClient.INSTANCE;
+			wurst.navigator.addPreference(item.getName());
+			wurst.files.saveNavigatorData();
 			return;
 		}
 		
 		// sliders
-		Rectangle area = new Rectangle(width / 2 - 154, 60, 308, height - 103);
-		if(area.contains(x, y))
+		area.height = 12;
+		for(int i = 0; i < sliderDatas.size(); i++)
 		{
-			area.height = 12;
-			for(int i = 0; i < sliderDatas.size(); i++)
+			area.y = sliderDatas.get(i).y + scroll;
+			if(area.contains(x, y))
 			{
-				area.y = sliderDatas.get(i).y + scroll;
-				if(area.contains(x, y))
-				{
-					sliding = i;
-					return;
-				}
+				sliding = i;
+				return;
+			}
+		}
+		
+		// checkboxes
+		for(int i = 0; i < checkboxDatas.size(); i++)
+		{
+			CheckboxData checkboxData = checkboxDatas.get(i);
+			area.y = checkboxData.y + scroll;
+			if(area.contains(x, y))
+			{
+				checkboxData.checked = !checkboxData.checked;
+				checkboxData.toggle();
+				WurstClient wurst = WurstClient.INSTANCE;
+				wurst.navigator.addPreference(item.getName());
+				wurst.files.saveNavigatorData();
+				return;
 			}
 		}
 	}
@@ -248,10 +287,9 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		if(sliding != -1)
 		{
 			WurstClient wurst = WurstClient.INSTANCE;
-			wurst.files.saveSliders();
 			sliding = -1;
 			
-			wurst.navigator.addClick(item.getName());
+			wurst.navigator.addPreference(item.getName());
 			wurst.files.saveNavigatorData();
 		}
 	}
@@ -333,9 +371,72 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			drawBox(x1, y1, x2, y2);
 			
 			// text
-			drawCenteredString(Fonts.segoe18, buttonData.displayString,
+			drawCenteredString(Fonts.segoe18, buttonData.buttonText,
 				(x1 + x2) / 2 - 1, y1 + (buttonData.height - 12) / 2 - 1,
-				0xffffff);
+				buttonData.textColor);
+			glDisable(GL_TEXTURE_2D);
+		}
+		
+		// checkboxes
+		for(CheckboxData checkboxData : checkboxDatas)
+		{
+			// positions
+			int x1 = bgx1 + 2;
+			int x2 = x1 + 10;
+			int y1 = checkboxData.y + scroll + 2;
+			int y2 = y1 + 10;
+			
+			// hovering
+			boolean hovering =
+				mouseX >= x1 && mouseX <= bgx2 - 2 && mouseY >= y1
+					&& mouseY <= y2;
+			
+			// box
+			if(hovering)
+				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
+			else
+				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+			drawBox(x1, y1, x2, y2);
+			
+			// check
+			if(checkboxData.checked)
+			{
+				// check
+				glColor4f(0F, 1F, 0F, hovering ? 0.75F : 0.375F);
+				glBegin(GL_QUADS);
+				{
+					glVertex2i(x1 + 3, y1 + 5);
+					glVertex2i(x1 + 4, y1 + 6);
+					glVertex2i(x1 + 4, y1 + 8);
+					glVertex2i(x1 + 2, y1 + 6);
+					
+					glVertex2i(x1 + 7, y1 + 2);
+					glVertex2i(x1 + 8, y1 + 3);
+					glVertex2i(x1 + 4, y1 + 6);
+					glVertex2i(x1 + 4, y1 + 8);
+				}
+				glEnd();
+				
+				// shadow
+				glColor4f(0.125F, 0.125F, 0.125F, hovering ? 0.75F : 0.375F);
+				glBegin(GL_LINE_LOOP);
+				{
+					glVertex2i(x1 + 3, y1 + 5);
+					glVertex2i(x1 + 4, y1 + 6);
+					glVertex2i(x1 + 7, y1 + 2);
+					glVertex2i(x1 + 8, y1 + 3);
+					
+					glVertex2i(x1 + 4, y1 + 8);
+					glVertex2i(x1 + 2, y1 + 6);
+				}
+				glEnd();
+				
+			}
+			
+			// name
+			x1 += 12;
+			y1 -= 1;
+			drawString(Fonts.segoe15, checkboxData.name, x1, y1, 0xffffff);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
@@ -414,16 +515,22 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		sliderDatas.add(slider);
 	}
 	
+	public void addCheckbox(CheckboxData checkbox)
+	{
+		checkboxDatas.add(checkbox);
+	}
+	
 	public abstract class ButtonData extends Rectangle
 	{
-		public String displayString = "";
+		public String buttonText;
 		public Color color;
+		public int textColor = 0xffffff;
 		
 		public ButtonData(int x, int y, int width, int height,
-			String displayString, int color)
+			String buttonText, int color)
 		{
 			super(x, y, width, height);
-			this.displayString = displayString;
+			this.buttonText = buttonText;
 			this.color = new Color(color);
 		}
 		
@@ -495,5 +602,21 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			// update slider data
 			update();
 		}
+	}
+	
+	public abstract class CheckboxData
+	{
+		public String name;
+		public boolean checked;
+		public int y;
+		
+		public CheckboxData(String name, boolean checked, int y)
+		{
+			this.name = name;
+			this.checked = checked;
+			this.y = y;
+		}
+		
+		public abstract void toggle();
 	}
 }

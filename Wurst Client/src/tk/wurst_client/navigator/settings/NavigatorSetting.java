@@ -8,9 +8,17 @@
  */
 package tk.wurst_client.navigator.settings;
 
+import com.google.gson.JsonObject;
+
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 public interface NavigatorSetting
 {
 	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen);
+	
+	public void save(JsonObject json);
+	
+	public void load(JsonObject json);
+	
+	public void update();
 }
