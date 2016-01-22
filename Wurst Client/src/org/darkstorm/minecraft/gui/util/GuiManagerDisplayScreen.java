@@ -14,6 +14,7 @@ import org.darkstorm.minecraft.gui.component.Component;
 import org.darkstorm.minecraft.gui.component.Frame;
 
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.utils.MiscUtils;
 
 public class GuiManagerDisplayScreen extends GuiScreen
 {
@@ -29,7 +30,7 @@ public class GuiManagerDisplayScreen extends GuiScreen
 	public void initGui()
 	{
 		buttonList.add(new GuiButton(0, 2, height - 20, 150, 16, "Switch to the new GUI"));
-		//buttonList.add(new GuiButton(1, 156, height - 20, 150, 16, "Learn More"));
+		buttonList.add(new GuiButton(1, 156, height - 20, 150, 16, "Learn More"));
 	}
 	
 	@Override
@@ -44,6 +45,9 @@ public class GuiManagerDisplayScreen extends GuiScreen
 				WurstClient.INSTANCE.files.saveKeybinds();
 				mc.displayGuiScreen(null);
 				mc.thePlayer.sendAutomaticChatMessage(".t navigator");
+				break;
+			case 1:
+				MiscUtils.openLink("https://www.wurst-client.tk/navigator/");
 				break;
 		}
 	}
