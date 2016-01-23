@@ -100,7 +100,12 @@ public abstract class Cmd implements NavigatorItem
 	@Override
 	public final String getDescription()
 	{
-		return help;
+		String description = help;
+		if(syntax.length > 0)
+			description += "\n\nSyntax:";
+		for(int i = 0; i < syntax.length; i++)
+			description += "\n  ." + name + " " + syntax[i];
+		return description;
 	}
 	
 	@Override
