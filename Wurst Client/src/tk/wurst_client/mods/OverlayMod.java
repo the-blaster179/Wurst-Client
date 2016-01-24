@@ -17,6 +17,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.RenderUtils;
 
 @Info(category = Category.RENDER,
@@ -24,6 +25,13 @@ import tk.wurst_client.utils.RenderUtils;
 	name = "Overlay")
 public class OverlayMod extends Mod implements RenderListener
 {
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerMod};
+	}
+	
 	@Override
 	public void onEnable()
 	{
