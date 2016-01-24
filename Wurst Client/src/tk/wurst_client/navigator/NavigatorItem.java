@@ -10,11 +10,13 @@ package tk.wurst_client.navigator;
 
 import java.util.ArrayList;
 
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 public interface NavigatorItem
 {
 	public String getName();
+	
+	public String getType();
 	
 	public String getDescription();
 	
@@ -22,15 +24,17 @@ public interface NavigatorItem
 	
 	public boolean isBlocked();
 	
-	public String[] getTags();
+	public String getTags();
 	
-	public ArrayList<BasicSlider> getSettings();
+	public ArrayList<NavigatorSetting> getSettings();
 	
-	public ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds();
+	public ArrayList<PossibleKeybind> getPossibleKeybinds();
 	
 	public String getPrimaryAction();
 	
 	public void doPrimaryAction();
 	
 	public String getTutorialPage();
+	
+	public NavigatorItem[] getSeeAlso();
 }

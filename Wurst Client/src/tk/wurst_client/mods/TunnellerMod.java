@@ -19,6 +19,7 @@ import net.minecraft.util.MovingObjectPosition;
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
 
@@ -46,6 +47,15 @@ public class TunnellerMod extends Mod implements RenderListener, UpdateListener
 			WurstClient.INSTANCE.mods.speedNukerMod.setEnabled(false);
 		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
 		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.nukerMod,
+			wurst.mods.nukerLegitMod, wurst.mods.speedNukerMod,
+			wurst.mods.fastBreakMod, wurst.mods.autoMineMod};
 	}
 	
 	@Override
@@ -198,7 +208,7 @@ public class TunnellerMod extends Mod implements RenderListener, UpdateListener
 					fakeObjectMouseOver.setBlockPos(blockPos);
 					if(Block.getIdFromBlock(block) != 0 && posY >= 0)
 					{
-						if(WurstClient.INSTANCE.options.nukerMode == 3
+						if(WurstClient.INSTANCE.mods.nukerMod.getMode() == 3
 							&& block.getPlayerRelativeBlockHardness(
 								Minecraft.getMinecraft().thePlayer,
 								Minecraft.getMinecraft().theWorld, blockPos) < 1)
@@ -242,7 +252,7 @@ public class TunnellerMod extends Mod implements RenderListener, UpdateListener
 					fakeObjectMouseOver.setBlockPos(blockPos);
 					if(Block.getIdFromBlock(block) != 0 && posY >= 0)
 					{
-						if(WurstClient.INSTANCE.options.nukerMode == 3
+						if(WurstClient.INSTANCE.mods.nukerMod.getMode() == 3
 							&& block.getPlayerRelativeBlockHardness(
 								Minecraft.getMinecraft().thePlayer,
 								Minecraft.getMinecraft().theWorld, blockPos) < 1)

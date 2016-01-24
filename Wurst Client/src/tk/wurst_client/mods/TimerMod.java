@@ -9,10 +9,10 @@
 package tk.wurst_client.mods;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.MOVEMENT,
 	description = "Changes the speed of almost everything.\n"
@@ -24,15 +24,15 @@ public class TimerMod extends Mod
 	public float speed = 2.0F;// Minimum: 0.1F, maximum: 10.0F
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("Timer speed", speed, 0.1, 10, 0.1,
+		settings.add(new SliderSetting("Speed", speed, 0.1, 10, 0.1,
 			ValueDisplay.DECIMAL));
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
-		speed = (float)sliders.get(0).getValue();
+		speed = (float)((SliderSetting)settings.get(0)).getValue();
 	}
 }

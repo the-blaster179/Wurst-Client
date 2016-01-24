@@ -26,7 +26,7 @@ import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import tk.wurst_client.WurstClient;
-import tk.wurst_client.options.OptionsManager;
+import tk.wurst_client.special.TargetSpf;
 
 public class EntityUtils
 {
@@ -139,41 +139,46 @@ public class EntityUtils
 				.getName()))
 				return false;
 		
-		OptionsManager.Target targetOptions =
-			WurstClient.INSTANCE.options.target;
+		TargetSpf targetSpf =
+			WurstClient.INSTANCE.special.targetSpf;
 		
 		// invisible entities
 		if(((Entity)o).isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
-			return targetOptions.invisible_mobs && o instanceof EntityLiving
-				|| targetOptions.invisible_players && o instanceof EntityPlayer;
+			return targetSpf.invisibleMobs.isChecked()
+				&& o instanceof EntityLiving
+				|| targetSpf.invisiblePlayers.isChecked()
+				&& o instanceof EntityPlayer;
 		
 		// players
 		if(o instanceof EntityPlayer)
 			return (((EntityPlayer)o).isPlayerSleeping()
-				&& targetOptions.sleeping_players || !((EntityPlayer)o)
-				.isPlayerSleeping() && targetOptions.players)
-				&& (!targetOptions.teams || checkName(((EntityPlayer)o)
+				&& targetSpf.sleepingPlayers.isChecked() || !((EntityPlayer)o)
+				.isPlayerSleeping() && targetSpf.players.isChecked())
+				&& (!targetSpf.teams.isChecked() || checkName(((EntityPlayer)o)
 					.getDisplayName().getFormattedText()));
 		
 		// animals
 		if(o instanceof EntityAgeable || o instanceof EntityAmbientCreature
 			|| o instanceof EntityWaterMob)
-			return targetOptions.animals
-				&& (!targetOptions.teams || !((Entity)o).hasCustomName() || checkName(((Entity)o)
-					.getCustomNameTag()));
+			return targetSpf.animals.isChecked()
+				&& (!targetSpf.teams.isChecked()
+					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
+						.getCustomNameTag()));
 		
 		// monsters
 		if(o instanceof EntityMob || o instanceof EntitySlime
 			|| o instanceof EntityFlying)
-			return targetOptions.monsters
-				&& (!targetOptions.teams || !((Entity)o).hasCustomName() || checkName(((Entity)o)
-					.getCustomNameTag()));
+			return targetSpf.monsters.isChecked()
+				&& (!targetSpf.teams.isChecked()
+					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
+						.getCustomNameTag()));
 		
 		// golems
 		if(o instanceof EntityGolem)
-			return targetOptions.golems
-				&& (!targetOptions.teams || !((Entity)o).hasCustomName() || checkName(((Entity)o)
-					.getCustomNameTag()));
+			return targetSpf.golems.isChecked()
+				&& (!targetSpf.teams.isChecked()
+					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
+						.getCustomNameTag()));
 		
 		return false;
 	}
@@ -185,13 +190,18 @@ public class EntityUtils
 			{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c",
 				"d", "e", "f"};
 		boolean[] teamColors =
-			WurstClient.INSTANCE.options.target.getTeamColorsSafely();
+			WurstClient.INSTANCE.special.targetSpf.teamColors.getSelected();
+		boolean hasKnownColor = false;
 		for(int i = 0; i < 16; i++)
-			if(teamColors[i] && name.contains("§" + colors[i]))
-				return true;
+			if(name.contains("§" + colors[i]))
+			{
+				hasKnownColor = true;
+				if(teamColors[i])
+					return true;
+			}
 		
-		// unknown color / no color => white
-		return teamColors[15];
+		// no known color => white
+		return !hasKnownColor && teamColors[15];
 	}
 	
 	public static EntityLivingBase getClosestEntity(boolean ignoreFriends,

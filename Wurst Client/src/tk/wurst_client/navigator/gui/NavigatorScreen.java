@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import net.minecraft.client.gui.GuiScreen;
 
-import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Mouse;
 
 public abstract class NavigatorScreen extends GuiScreen
@@ -28,6 +27,7 @@ public abstract class NavigatorScreen extends GuiScreen
 	protected int middleX;
 	protected boolean hasBackground = true;
 	protected int nonScrollableArea = 26;
+	private boolean showScrollbar;
 	
 	@Override
 	public final void initGui()
@@ -40,7 +40,7 @@ public abstract class NavigatorScreen extends GuiScreen
 	@Override
 	public final void keyTyped(char typedChar, int keyCode) throws IOException
 	{
-		onKeyPress(keyCode);
+		onKeyPress(typedChar, keyCode);
 	}
 	
 	@Override
@@ -93,6 +93,8 @@ public abstract class NavigatorScreen extends GuiScreen
 	@Override
 	public final void updateScreen()
 	{
+		onUpdate();
+		
 		// scrollbar
 		if(!scrollbarLocked)
 		{
@@ -110,8 +112,6 @@ public abstract class NavigatorScreen extends GuiScreen
 					(int)((height - 131) * scroll / (float)maxScroll);
 			scrollKnobPosition += 2;
 		}
-		
-		onUpdate();
 	}
 	
 	@Override
@@ -130,55 +130,27 @@ public abstract class NavigatorScreen extends GuiScreen
 		int bgy1 = 60;
 		int bgy2 = height - 43;
 		if(hasBackground)
-		{
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(bgx1, bgy1);
-				glVertex2i(bgx2, bgy1);
-				glVertex2i(bgx2, bgy2);
-				glVertex2i(bgx1, bgy2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(bgx1, bgy1, bgx2, bgy2);
-		}
+			drawBackgroundBox(bgx1, bgy1, bgx2, bgy2);
 		
 		// scrollbar
+		if(showScrollbar)
 		{
 			// bar
 			int x1 = bgx2 + 16;
 			int x2 = x1 + 12;
 			int y1 = bgy1;
 			int y2 = bgy2;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBackgroundBox(x1, y1, x2, y2);
 			
 			// knob
 			x1 += 2;
 			x2 -= 2;
 			y1 += scrollKnobPosition;
 			y2 = y1 + 24;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawForegroundBox(x1, y1, x2, y2);
 			int i;
 			for(x1++, x2--, y1 += 8, y2 -= 15, i = 0; i < 3; y1 += 4, y2 += 4, i++)
-				RenderUtil.downShadow(x1, y1, x2, y2);
+				drawDownShadow(x1, y1, x2, y2);
 		}
 		
 		onRender(mouseX, mouseY, partialTicks);
@@ -191,7 +163,7 @@ public abstract class NavigatorScreen extends GuiScreen
 	
 	protected abstract void onResize();
 	
-	protected abstract void onKeyPress(int key);
+	protected abstract void onKeyPress(char typedChar, int keyCode);
 	
 	protected abstract void onMouseClick(int x, int y, int button);
 	
@@ -210,10 +182,194 @@ public abstract class NavigatorScreen extends GuiScreen
 		return false;
 	}
 	
-	protected void setContentHeight(int contentHeight)
+	protected final void setContentHeight(int contentHeight)
 	{
 		maxScroll = height - contentHeight - nonScrollableArea - 120;
 		if(maxScroll > 0)
 			maxScroll = 0;
+		showScrollbar = maxScroll != 0;
+	}
+	
+	protected final void drawQuads(int x1, int y1, int x2, int y2)
+	{
+		glBegin(GL_QUADS);
+		{
+			glVertex2i(x1, y1);
+			glVertex2i(x2, y1);
+			glVertex2i(x2, y2);
+			glVertex2i(x1, y2);
+		}
+		glEnd();
+	}
+	
+	protected final void drawBoxShadow(int x1, int y1, int x2, int y2)
+	{
+		// outline positions
+		double xi1 = x1 - 0.1;
+		double xi2 = x2 + 0.1;
+		double yi1 = y1 - 0.1;
+		double yi2 = y2 + 0.1;
+		
+		// outline
+		glColor4f(0F, 0F, 0F, 0.5F);
+		glBegin(GL_LINE_LOOP);
+		{
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
+		}
+		glEnd();
+		
+		// shadow positions
+		xi1 -= 0.9;
+		xi2 += 0.9;
+		yi1 -= 0.9;
+		yi2 += 0.9;
+		
+		// top left
+		glBegin(GL_POLYGON);
+		{
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2d(x1, y1);
+			glVertex2d(x2, y1);
+			glColor4f(0F, 0F, 0F, 0F);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi1, yi2);
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2d(x1, y2);
+		}
+		glEnd();
+		
+		// bottom right
+		glBegin(GL_POLYGON);
+		{
+			glVertex2d(x2, y2);
+			glVertex2d(x2, y1);
+			glColor4f(0F, 0F, 0F, 0F);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2d(x1, y2);
+		}
+		glEnd();
+	}
+	
+	protected final void drawInvertedBoxShadow(int x1, int y1, int x2, int y2)
+	{
+		// outline positions
+		double xi1 = x1 + 0.1;
+		double xi2 = x2 - 0.1;
+		double yi1 = y1 + 0.1;
+		double yi2 = y2 - 0.1;
+		
+		// outline
+		glColor4f(0F, 0F, 0F, 0.5F);
+		glLineWidth(1F);
+		glBegin(GL_LINE_LOOP);
+		{
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
+		}
+		glEnd();
+		
+		// shadow positions
+		xi1 += 0.9;
+		xi2 -= 0.9;
+		yi1 += 0.9;
+		yi2 -= 0.9;
+		
+		// top left
+		glBegin(GL_POLYGON);
+		{
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2d(x1, y1);
+			glVertex2d(x2, y1);
+			glColor4f(0F, 0F, 0F, 0F);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi1, yi1);
+			glVertex2d(xi1, yi2);
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2d(x1, y2);
+		}
+		glEnd();
+		
+		// bottom right
+		glBegin(GL_POLYGON);
+		{
+			glVertex2d(x2, y2);
+			glVertex2d(x2, y1);
+			glColor4f(0F, 0F, 0F, 0F);
+			glVertex2d(xi2, yi1);
+			glVertex2d(xi2, yi2);
+			glVertex2d(xi1, yi2);
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2d(x1, y2);
+		}
+		glEnd();
+	}
+	
+	protected final void drawDownShadow(int x1, int y1, int x2, int y2)
+	{
+		// outline
+		double yi1 = y1 + 0.1;
+		glColor4f(0F, 0F, 0F, 0.5F);
+		glLineWidth(1F);
+		glBegin(GL_LINES);
+		{
+			glVertex2d(x1, yi1);
+			glVertex2d(x2, yi1);
+		}
+		glEnd();
+		
+		// shadow
+		glBegin(GL_POLYGON);
+		{
+			glColor4f(0.125F, 0.125F, 0.125F, 0.75F);
+			glVertex2i(x1, y1);
+			glVertex2i(x2, y1);
+			glColor4f(0F, 0F, 0F, 0F);
+			glVertex2i(x2, y2);
+			glVertex2i(x1, y2);
+		}
+		glEnd();
+	}
+	
+	protected final void drawBox(int x1, int y1, int x2, int y2)
+	{
+		drawQuads(x1, y1, x2, y2);
+		drawBoxShadow(x1, y1, x2, y2);
+	}
+	
+	protected final void drawEngravedBox(int x1, int y1, int x2, int y2)
+	{
+		drawQuads(x1, y1, x2, y2);
+		drawInvertedBoxShadow(x1, y1, x2, y2);
+	}
+	
+	protected final void setColorToBackground()
+	{
+		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
+	}
+	
+	protected final void setColorToForeground()
+	{
+		glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+	}
+	
+	protected final void drawBackgroundBox(int x1, int y1, int x2, int y2)
+	{
+		setColorToBackground();
+		drawBox(x1, y1, x2, y2);
+	}
+	
+	protected final void drawForegroundBox(int x1, int y1, int x2, int y2)
+	{
+		setColorToForeground();
+		drawBox(x1, y1, x2, y2);
 	}
 }

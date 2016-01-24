@@ -12,18 +12,18 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.analytics.AnalyticsManager;
 import tk.wurst_client.commands.CmdManager;
 import tk.wurst_client.mods.ModManager;
+import tk.wurst_client.special.SpfManager;
 
 public class Navigator
 {
 	private ArrayList<NavigatorItem> navigatorList = new ArrayList<>();
-	private final HashMap<String, Long> clicksMap = new HashMap<>();
+	private final HashMap<String, Long> preferences = new HashMap<>();
 	public AnalyticsManager analytics = new AnalyticsManager("UA-52838431-7",
 		"navigator.client.wurst-client.tk");
 	
@@ -60,6 +60,22 @@ public class Navigator
 		{
 			e.printStackTrace();
 		}
+		
+		// add special features
+		Field[] specialFields = SpfManager.class.getFields();
+		try
+		{
+			for(int i = 0; i < specialFields.length; i++)
+			{
+				Field field = specialFields[i];
+				if(field.getName().endsWith("Spf"))
+					navigatorList.add((NavigatorItem)field
+						.get(WurstClient.INSTANCE.special));
+			}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void copyNavigatorList(ArrayList<NavigatorItem> list)
@@ -73,39 +89,79 @@ public class Navigator
 	
 	public void getSearchResults(ArrayList<NavigatorItem> list, String query)
 	{
+		// clear display list
 		list.clear();
+		
+		// add search results
 		for(NavigatorItem mod : navigatorList)
 			if(mod.getName().toLowerCase().contains(query)
+				|| mod.getTags().toLowerCase().contains(query)
 				|| mod.getDescription().toLowerCase().contains(query))
 				list.add(mod);
-		list.sort(new SearchResultsComparator(query));
+		
+		// sort search results
+		list.sort(new Comparator<NavigatorItem>()
+		{
+			@Override
+			public int compare(NavigatorItem o1, NavigatorItem o2)
+			{
+				// compare names
+				int result = compareNext(o1.getName(), o2.getName());
+				if(result != 0)
+					return result;
+				
+				// compare tags
+				result = compareNext(o1.getTags(), o2.getTags());
+				if(result != 0)
+					return result;
+				
+				// compare descriptions
+				result = compareNext(o1.getDescription(), o2.getDescription());
+				return result;
+			}
+			
+			private int compareNext(String o1, String o2)
+			{
+				int index1 = o1.toLowerCase().indexOf(query);
+				int index2 = o2.toLowerCase().indexOf(query);
+				
+				if(index1 == index2)
+					return 0;
+				else if(index1 == -1)
+					return 1;
+				else if(index2 == -1)
+					return -1;
+				else
+					return index1 - index2;
+			}
+		});
 	}
 	
-	public long getClicks(String feature)
+	public long getPreference(String feature)
 	{
-		Long clicks = clicksMap.get(feature);
-		if(clicks == null)
-			clicks = 0L;
-		return clicks;
+		Long preference = preferences.get(feature);
+		if(preference == null)
+			preference = 0L;
+		return preference;
 	}
 	
-	public void addClick(String feature)
+	public void addPreference(String feature)
 	{
-		Long clicks = clicksMap.get(feature);
-		if(clicks == null)
-			clicks = 0L;
-		clicks++;
-		clicksMap.put(feature, clicks);
+		Long preference = preferences.get(feature);
+		if(preference == null)
+			preference = 0L;
+		preference++;
+		preferences.put(feature, preference);
 	}
 	
-	public void setClicks(String feature, long clicks)
+	public void setPreference(String feature, long preference)
 	{
-		clicksMap.put(feature, clicks);
+		preferences.put(feature, preference);
 	}
 	
-	public Iterator<Entry<String, Long>> getClicksIterator()
+	public void forEach(Consumer<NavigatorItem> action)
 	{
-		return clicksMap.entrySet().iterator();
+		navigatorList.forEach(action);
 	}
 	
 	public void sortFeatures()
@@ -115,11 +171,11 @@ public class Navigator
 			@Override
 			public int compare(NavigatorItem o1, NavigatorItem o2)
 			{
-				long clicks1 = getClicks(o1.getName());
-				long clicks2 = getClicks(o2.getName());
-				if(clicks1 < clicks2)
+				long preference1 = getPreference(o1.getName());
+				long preference2 = getPreference(o2.getName());
+				if(preference1 < preference2)
 					return 1;
-				else if(clicks1 > clicks2)
+				else if(preference1 > preference2)
 					return -1;
 				else
 					return 0;

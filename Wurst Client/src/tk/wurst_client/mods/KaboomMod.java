@@ -19,12 +19,12 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.Explosion;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.BlockUtils;
 
 @Info(category = Category.BLOCKS,
@@ -40,16 +40,16 @@ public class KaboomMod extends Mod implements UpdateListener
 	public int power = 128;
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("Kaboom power", power, 32, 512, 32,
+		settings.add(new SliderSetting("Power", power, 32, 512, 32,
 			ValueDisplay.INTEGER));
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
-		power = (int)sliders.get(0).getValue();
+		power = (int)((SliderSetting)settings.get(0)).getValue();
 	}
 	
 	@Override

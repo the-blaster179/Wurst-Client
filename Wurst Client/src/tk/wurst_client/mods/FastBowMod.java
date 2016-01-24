@@ -19,6 +19,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.COMBAT,
 	description = "Turns your bow into a machine gun.\n"
@@ -27,6 +28,13 @@ import tk.wurst_client.mods.Mod.Info;
 	noCheatCompatible = false)
 public class FastBowMod extends Mod implements UpdateListener
 {
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.bowAimbotMod};
+	}
+	
 	@Override
 	public void onEnable()
 	{

@@ -14,13 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.error.GuiError;
 import tk.wurst_client.navigator.NavigatorItem;
-import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.navigator.PossibleKeybind;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 public class Mod implements NavigatorItem
 {
@@ -29,13 +27,13 @@ public class Mod implements NavigatorItem
 		.description();
 	private final Category category = getClass().getAnnotation(Info.class)
 		.category();
-	private final String[] tags = getClass().getAnnotation(Info.class).tags();
+	private final String tags = getClass().getAnnotation(Info.class).tags();
 	private final String tutorial = getClass().getAnnotation(Info.class)
 		.tutorial();
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
-	protected ArrayList<BasicSlider> sliders = new ArrayList<BasicSlider>();
+	protected ArrayList<NavigatorSetting> settings = new ArrayList<>();
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
 	
@@ -64,7 +62,7 @@ public class Mod implements NavigatorItem
 		
 		boolean noCheatCompatible() default true;
 		
-		String[] tags() default {};
+		String tags() default "";
 		
 		String tutorial() default "";
 	}
@@ -73,6 +71,12 @@ public class Mod implements NavigatorItem
 	public final String getName()
 	{
 		return name;
+	}
+	
+	@Override
+	public final String getType()
+	{
+		return "Mod";
 	}
 	
 	public String getRenderName()
@@ -87,25 +91,25 @@ public class Mod implements NavigatorItem
 	}
 	
 	@Override
-	public final String[] getTags()
+	public final String getTags()
 	{
 		return tags;
 	}
 	
 	@Override
-	public final ArrayList<BasicSlider> getSettings()
+	public final ArrayList<NavigatorSetting> getSettings()
 	{
-		return sliders;
+		return settings;
 	}
 	
 	@Override
-	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
+	public final ArrayList<PossibleKeybind> getPossibleKeybinds()
 	{
 		String dotT = ".t " + name.toLowerCase();
-		return new ArrayList<NavigatorPossibleKeybind>(Arrays.asList(
-			new NavigatorPossibleKeybind(dotT, "Toggle " + name),
-			new NavigatorPossibleKeybind(dotT + " on", "Enable " + name),
-			new NavigatorPossibleKeybind(dotT + " off", "Disable " + name)));
+		return new ArrayList<PossibleKeybind>(Arrays.asList(
+			new PossibleKeybind(dotT, "Toggle " + name), new PossibleKeybind(
+				dotT + " on", "Enable " + name), new PossibleKeybind(dotT
+				+ " off", "Disable " + name)));
 	}
 	
 	@Override
@@ -124,6 +128,12 @@ public class Mod implements NavigatorItem
 	public final String getTutorialPage()
 	{
 		return tutorial;
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[0];
 	}
 	
 	public final Category getCategory()
@@ -243,11 +253,6 @@ public class Mod implements NavigatorItem
 		}
 	}
 	
-	public final void setSliders(ArrayList<BasicSlider> newSliders)
-	{
-		sliders = newSliders;
-	}
-	
 	public final void noCheatMessage()
 	{
 		WurstClient.INSTANCE.chat.warning(name + " cannot bypass NoCheat+.");
@@ -282,9 +287,9 @@ public class Mod implements NavigatorItem
 	public void onDisable()
 	{}
 	
-	public void initSliders()
+	public void initSettings()
 	{}
 	
-	public void updateSettings()
+	public void updateSliders()
 	{}
 }

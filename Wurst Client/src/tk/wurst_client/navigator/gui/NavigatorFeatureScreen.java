@@ -20,59 +20,63 @@ import java.util.TreeMap;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
-import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.WurstClient;
-import tk.wurst_client.commands.Cmd;
 import tk.wurst_client.font.Fonts;
-import tk.wurst_client.mods.Mod;
 import tk.wurst_client.navigator.NavigatorItem;
-import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.navigator.PossibleKeybind;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 import tk.wurst_client.utils.MiscUtils;
 
-public class NavigatorFeatureScreen extends GuiScreen
+public class NavigatorFeatureScreen extends NavigatorScreen
 {
-	private int scroll = 0;
 	private NavigatorItem item;
 	private NavigatorMainScreen parent;
-	private String type;
 	private ButtonData activeButton;
 	private GuiButton primaryButton;
-	private int scrollKnobPosition = 2;
-	private boolean scrolling;
 	private int sliding = -1;
-	private int textHeight;
 	private String text;
 	private ArrayList<ButtonData> buttonDatas = new ArrayList<>();
-	private SliderData[] sliderDatas = {};
+	private ArrayList<SliderData> sliderDatas = new ArrayList<>();
+	private ArrayList<CheckboxData> checkboxDatas = new ArrayList<>();
 	
 	public NavigatorFeatureScreen(NavigatorItem item, NavigatorMainScreen parent)
 	{
 		this.item = item;
 		this.parent = parent;
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException
+	{
+		if(!button.enabled)
+			return;
 		
-		if(item instanceof Mod)
-			type = "Mod";
-		else if(item instanceof Cmd)
-			type = "Command";
-		else
-			type = "unknown";
+		switch(button.id)
+		{
+			case 0:
+				item.doPrimaryAction();
+				primaryButton.displayString = item.getPrimaryAction();
+				break;
+			case 1:
+				MiscUtils.openLink("https://www.wurst-client.tk/wiki/"
+					+ item.getTutorialPage());
+				break;
+		}
 		
 		WurstClient wurst = WurstClient.INSTANCE;
-		wurst.navigator.addClick(item.getName());
+		wurst.navigator.addPreference(item.getName());
 		wurst.files.saveNavigatorData();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void initGui()
+	protected void onResize()
 	{
-		buttonList.clear();
 		buttonDatas.clear();
 		
 		// primary button
@@ -94,7 +98,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 				? 149 : 302, 20, "Tutorial"));
 		
 		// type
-		text = "Type: " + type;
+		text = "Type: " + item.getType();
 		
 		// description
 		String description = item.getDescription();
@@ -102,61 +106,21 @@ public class NavigatorFeatureScreen extends GuiScreen
 			text += "\n\nDescription:\n" + description;
 		
 		// area
-		Rectangle area =
-			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
+		Rectangle area = new Rectangle(middleX - 154, 60, 308, height - 103);
 		
-		// sliders
-		ArrayList<BasicSlider> sliders = item.getSettings();
-		if(!sliders.isEmpty())
+		// settings
+		ArrayList<NavigatorSetting> settings = item.getSettings();
+		if(!settings.isEmpty())
 		{
 			text += "\n\nSettings:";
-			sliderDatas = new SliderData[sliders.size()];
-			for(int i = 0; i < sliders.size(); i++)
-			{
-				BasicSlider slider = sliders.get(i);
-				
-				// text
-				text += "\n" + slider.getText() + ":\n";
-				
-				// value
-				String value;
-				switch(slider.getValueDisplay())
-				{
-					case DECIMAL:
-						value = Double.toString(slider.getValue());
-						break;
-					case DEGREES:
-						value = (int)slider.getValue() + "°";
-						break;
-					case INTEGER:
-						value = Integer.toString((int)slider.getValue());
-						break;
-					case PERCENTAGE:
-						value = (slider.getValue() * 100D) + "%";
-						break;
-					default:
-					case NONE:
-						value = "";
-						break;
-				}
-				
-				// percentage
-				float percentage =
-					(float)((slider.getValue() - slider.getMinimumValue()) / (slider
-						.getMaximumValue() - slider.getMinimumValue()));
-				
-				// x
-				int x = area.x + (int)((area.width - 10) * percentage);
-				
-				// y
-				int y = area.y + Fonts.segoe15.getStringHeight(text);
-				
-				sliderDatas[i] = new SliderData(x, y, percentage, value);
-			}
+			sliderDatas.clear();
+			checkboxDatas.clear();
+			for(NavigatorSetting setting : settings)
+				setting.addToFeatureScreen(this);
 		}
 		
 		// keybinds
-		ArrayList<NavigatorPossibleKeybind> possibleKeybinds =
+		ArrayList<PossibleKeybind> possibleKeybinds =
 			item.getPossibleKeybinds();
 		if(!possibleKeybinds.isEmpty())
 		{
@@ -181,11 +145,10 @@ public class NavigatorFeatureScreen extends GuiScreen
 			
 			// keybind list
 			HashMap<String, String> possibleKeybindsMap = new HashMap<>();
-			for(NavigatorPossibleKeybind possibleKeybind : possibleKeybinds)
+			for(PossibleKeybind possibleKeybind : possibleKeybinds)
 				possibleKeybindsMap.put(possibleKeybind.getCommand(),
 					possibleKeybind.getDescription());
-			TreeMap<String, NavigatorPossibleKeybind> existingKeybinds =
-				new TreeMap<>();
+			TreeMap<String, PossibleKeybind> existingKeybinds = new TreeMap<>();
 			boolean noKeybindsSet = true;
 			for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
 				.entrySet())
@@ -197,9 +160,8 @@ public class NavigatorFeatureScreen extends GuiScreen
 					if(noKeybindsSet)
 						noKeybindsSet = false;
 					text += "\n" + entry.getKey() + ": " + keybindDescription;
-					existingKeybinds.put(entry.getKey(),
-						new NavigatorPossibleKeybind(entry.getValue(),
-							keybindDescription));
+					existingKeybinds.put(entry.getKey(), new PossibleKeybind(
+						entry.getValue(), keybindDescription));
 				}
 			}
 			if(noKeybindsSet)
@@ -223,130 +185,36 @@ public class NavigatorFeatureScreen extends GuiScreen
 			}
 		}
 		
-		// text height
-		textHeight = Fonts.segoe15.getStringHeight(text);
-	}
-	
-	@Override
-	protected void actionPerformed(GuiButton button) throws IOException
-	{
-		if(!button.enabled)
-			return;
-		
-		switch(button.id)
+		// see also
+		NavigatorItem[] seeAlso = item.getSeeAlso();
+		if(seeAlso.length != 0)
 		{
-			case 0:
-				item.doPrimaryAction();
-				primaryButton.displayString = item.getPrimaryAction();
-				break;
-			case 1:
-				MiscUtils.openLink("https://www.wurst-client.tk/wiki/"
-					+ item.getTutorialPage());
-				break;
-		}
-	}
-	
-	@Override
-	public boolean doesGuiPauseGame()
-	{
-		return false;
-	}
-	
-	@Override
-	protected void mouseClicked(int x, int y, int button) throws IOException
-	{
-		super.mouseClicked(x, y, button);
-		
-		// scrollbar
-		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
-		{
-			scrolling = true;
-			return;
-		}
-		
-		// buttons
-		if(activeButton != null)
-		{
-			mc.getSoundHandler().playSound(
-				PositionedSoundRecord.createPositionedSoundRecord(
-					new ResourceLocation("gui.button.press"), 1.0F));
-			activeButton.press();
-			return;
-		}
-		
-		// sliders
-		Rectangle area =
-			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
-		if(area.contains(x, y))
-		{
-			area.height = 12;
-			for(int i = 0; i < sliderDatas.length; i++)
+			text += "\n\nSee also:\n";
+			for(int i = 0; i < seeAlso.length; i++)
 			{
-				SliderData sliderData = sliderDatas[i];
-				area.y = sliderData.y + scroll;
-				if(area.contains(x, y))
+				int y = 60 + getTextHeight() + 2;
+				NavigatorItem seeAlsoItem = seeAlso[i];
+				String name = seeAlsoItem.getName();
+				text += "- " + name + (i == seeAlso.length - 1 ? "" : "\n");
+				buttonDatas.add(new ButtonData(middleX - 148, y, Fonts.segoe15
+					.getStringWidth(name) + 3, 8, "", 0x404040)
 				{
-					sliding = i;
-					return;
-				}
+					@Override
+					public void press()
+					{
+						mc.displayGuiScreen(new NavigatorFeatureScreen(
+							seeAlsoItem, parent));
+					}
+				});
 			}
 		}
-	}
-	
-	@Override
-	protected void mouseClickMove(int mouseX, int mouseY,
-		int clickedMouseButton, long timeSinceLastClick)
-	{
-		if(clickedMouseButton != 0)
-			return;
-		if(scrolling)
-		{
-			int maxScroll = -textHeight + height - 146;
-			if(maxScroll > 0)
-				maxScroll = 0;
-			
-			if(maxScroll == 0)
-				scroll = 0;
-			else
-				scroll =
-					(int)((mouseY - 72) * (float)maxScroll / (height - 131));
-			
-			if(scroll > 0)
-				scroll = 0;
-			else if(scroll < maxScroll)
-				scroll = maxScroll;
-		}else if(sliding != -1)
-		{
-			BasicSlider slider = item.getSettings().get(sliding);
-			float percentage = (mouseX - (width / 2 - 154)) / 298F;
-			
-			if(percentage > 1F)
-				percentage = 1F;
-			else if(percentage < 0F)
-				percentage = 0F;
-			
-			slider.setValue((long)((slider.getMaximumValue() - slider
-				.getMinimumValue()) * percentage / slider.getIncrement())
-				* 1e6 * slider.getIncrement() / 1e6 + slider.getMinimumValue());
-		}
-	}
-	
-	@Override
-	public void mouseReleased(int x, int y, int button)
-	{
-		super.mouseReleased(x, y, button);
 		
-		scrolling = false;
-		
-		if(sliding != -1)
-		{
-			WurstClient.INSTANCE.files.saveSliders();
-			sliding = -1;
-		}
+		// text height
+		setContentHeight(Fonts.segoe15.getStringHeight(text));
 	}
 	
 	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException
+	protected void onKeyPress(char typedChar, int keyCode)
 	{
 		if(keyCode == 1)
 		{
@@ -356,83 +224,85 @@ public class NavigatorFeatureScreen extends GuiScreen
 	}
 	
 	@Override
-	public void updateScreen()
+	protected void onMouseClick(int x, int y, int button)
 	{
-		// scroll
-		scroll += Mouse.getDWheel() / 10;
+		Rectangle area = new Rectangle(width / 2 - 154, 60, 308, height - 103);
+		if(!area.contains(x, y))
+			return;
 		
-		int maxScroll = -textHeight + height - 146;
-		if(maxScroll > 0)
-			maxScroll = 0;
-		
-		if(scroll > 0)
-			scroll = 0;
-		else if(scroll < maxScroll)
-			scroll = maxScroll;
-		
-		if(maxScroll == 0)
-			scrollKnobPosition = 0;
-		else
-			scrollKnobPosition =
-				(int)((height - 131) * scroll / (float)maxScroll);
-		scrollKnobPosition += 2;
-		
-		// area
-		Rectangle area =
-			new Rectangle((width / 2 - 154), 60, 308, (height - 103));
-		
-		// slider data
-		ArrayList<BasicSlider> sliders = item.getSettings();
-		for(int i = 0; i < sliders.size(); i++)
+		// buttons
+		if(activeButton != null)
 		{
-			BasicSlider slider = sliders.get(i);
-			SliderData sliderData = sliderDatas[i];
-			
-			// value
-			String value;
-			switch(slider.getValueDisplay())
+			mc.getSoundHandler().playSound(
+				PositionedSoundRecord.createPositionedSoundRecord(
+					new ResourceLocation("gui.button.press"), 1.0F));
+			activeButton.press();
+			WurstClient wurst = WurstClient.INSTANCE;
+			wurst.navigator.addPreference(item.getName());
+			wurst.files.saveNavigatorData();
+			return;
+		}
+		
+		// sliders
+		area.height = 12;
+		for(int i = 0; i < sliderDatas.size(); i++)
+		{
+			area.y = sliderDatas.get(i).y + scroll;
+			if(area.contains(x, y))
 			{
-				case DECIMAL:
-					value = Double.toString(slider.getValue());
-					break;
-				case DEGREES:
-					value = (int)slider.getValue() + "°";
-					break;
-				case INTEGER:
-					value = Integer.toString((int)slider.getValue());
-					break;
-				case PERCENTAGE:
-					value = (slider.getValue() * 100D) + "%";
-					break;
-				default:
-				case NONE:
-					value = "";
-					break;
+				sliding = i;
+				return;
 			}
-			sliderData.value = value;
-			
-			// percentage
-			sliderData.percentage =
-				(float)((slider.getValue() - slider.getMinimumValue()) / (slider
-					.getMaximumValue() - slider.getMinimumValue()));
-			
-			// x
-			sliderData.x =
-				area.x + (int)((area.width - 10) * sliderData.percentage);
+		}
+		
+		// checkboxes
+		for(int i = 0; i < checkboxDatas.size(); i++)
+		{
+			CheckboxData checkboxData = checkboxDatas.get(i);
+			area.y = checkboxData.y + scroll;
+			if(area.contains(x, y))
+			{
+				checkboxData.checked = !checkboxData.checked;
+				checkboxData.toggle();
+				WurstClient wurst = WurstClient.INSTANCE;
+				wurst.navigator.addPreference(item.getName());
+				wurst.files.saveNavigatorData();
+				return;
+			}
 		}
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks)
+	protected void onMouseDrag(int x, int y, int button, long timeDragged)
 	{
-		int middleX = width / 2;
+		if(button != 0)
+			return;
+		if(sliding != -1)
+			sliderDatas.get(sliding).slideTo(x);
+	}
+	
+	@Override
+	protected void onMouseRelease(int x, int y, int button)
+	{
+		if(sliding != -1)
+		{
+			WurstClient wurst = WurstClient.INSTANCE;
+			sliding = -1;
+			
+			wurst.navigator.addPreference(item.getName());
+			wurst.files.saveNavigatorData();
+		}
+	}
+	
+	@Override
+	protected void onUpdate()
+	{	
 		
-		// GL settings
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_CULL_FACE);
-		glShadeModel(GL_SMOOTH);
-		
+	}
+	
+	@Override
+	protected void onRender(int mouseX, int mouseY, float partialTicks)
+	{
 		// title bar
 		drawCenteredString(Fonts.segoe22, item.getName(), middleX, 32, 0xffffff);
 		glDisable(GL_TEXTURE_2D);
@@ -442,54 +312,6 @@ public class NavigatorFeatureScreen extends GuiScreen
 		int bgx2 = middleX + 154;
 		int bgy1 = 60;
 		int bgy2 = height - 43;
-		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-		glBegin(GL_QUADS);
-		{
-			glVertex2i(bgx1, bgy1);
-			glVertex2i(bgx2, bgy1);
-			glVertex2i(bgx2, bgy2);
-			glVertex2i(bgx1, bgy2);
-		}
-		glEnd();
-		RenderUtil.boxShadow(bgx1, bgy1, bgx2, bgy2);
-		
-		// scroll bar
-		{
-			// bar
-			int x1 = bgx2 + 16;
-			int x2 = x1 + 12;
-			int y1 = bgy1;
-			int y2 = bgy2;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
-			
-			// knob
-			x1 += 2;
-			x2 -= 2;
-			y1 += scrollKnobPosition;
-			y2 = y1 + 24;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
-			int i;
-			for(x1++, x2--, y1 += 8, y2 -= 15, i = 0; i < 3; y1 += 4, y2 += 4, i++)
-				RenderUtil.downShadow(x1, y1, x2, y2);
-		}
 		
 		// scissor box
 		RenderUtil.scissorBox(bgx1, bgy1, bgx2, bgy2
@@ -504,33 +326,17 @@ public class NavigatorFeatureScreen extends GuiScreen
 			int x2 = bgx2 - 2;
 			int y1 = sliderData.y + scroll + 4;
 			int y2 = y1 + 4;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.invertedBoxShadow(x1, y1, x2, y2);
+			setColorToForeground();
+			drawEngravedBox(x1, y1, x2, y2);
 			
 			// knob
-			x1 = sliderData.x + 1;
+			x1 = sliderData.x;
 			x2 = x1 + 8;
 			y1 -= 2;
 			y2 += 2;
 			float percentage = sliderData.percentage;
 			glColor4f(percentage, 1F - percentage, 0F, 0.75F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// value
 			String value = sliderData.value;
@@ -562,20 +368,75 @@ public class NavigatorFeatureScreen extends GuiScreen
 			glColor4f(rgb[0], rgb[1], rgb[2], alpha);
 			
 			// button
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// text
-			drawCenteredString(Fonts.segoe18, buttonData.displayString,
+			drawCenteredString(Fonts.segoe18, buttonData.buttonText,
 				(x1 + x2) / 2 - 1, y1 + (buttonData.height - 12) / 2 - 1,
-				0xffffff);
+				buttonData.textColor);
+			glDisable(GL_TEXTURE_2D);
+		}
+		
+		// checkboxes
+		for(CheckboxData checkboxData : checkboxDatas)
+		{
+			// positions
+			int x1 = bgx1 + 2;
+			int x2 = x1 + 10;
+			int y1 = checkboxData.y + scroll + 2;
+			int y2 = y1 + 10;
+			
+			// hovering
+			boolean hovering =
+				mouseX >= x1 && mouseX <= bgx2 - 2 && mouseY >= y1
+					&& mouseY <= y2;
+			
+			// box
+			if(hovering)
+				glColor4f(0.375F, 0.375F, 0.375F, 0.25F);
+			else
+				glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
+			drawBox(x1, y1, x2, y2);
+			
+			// check
+			if(checkboxData.checked)
+			{
+				// check
+				glColor4f(0F, 1F, 0F, hovering ? 0.75F : 0.375F);
+				glBegin(GL_QUADS);
+				{
+					glVertex2i(x1 + 3, y1 + 5);
+					glVertex2i(x1 + 4, y1 + 6);
+					glVertex2i(x1 + 4, y1 + 8);
+					glVertex2i(x1 + 2, y1 + 6);
+					
+					glVertex2i(x1 + 7, y1 + 2);
+					glVertex2i(x1 + 8, y1 + 3);
+					glVertex2i(x1 + 4, y1 + 6);
+					glVertex2i(x1 + 4, y1 + 8);
+				}
+				glEnd();
+				
+				// shadow
+				glColor4f(0.125F, 0.125F, 0.125F, hovering ? 0.75F : 0.375F);
+				glBegin(GL_LINE_LOOP);
+				{
+					glVertex2i(x1 + 3, y1 + 5);
+					glVertex2i(x1 + 4, y1 + 6);
+					glVertex2i(x1 + 7, y1 + 2);
+					glVertex2i(x1 + 8, y1 + 3);
+					
+					glVertex2i(x1 + 4, y1 + 8);
+					glVertex2i(x1 + 2, y1 + 6);
+				}
+				glEnd();
+				
+			}
+			
+			// name
+			x1 += 12;
+			y1 -= 1;
+			drawString(Fonts.segoe15, checkboxData.name, x1, y1, 0xffffff);
 			glDisable(GL_TEXTURE_2D);
 		}
 		
@@ -611,15 +472,7 @@ public class NavigatorFeatureScreen extends GuiScreen
 			
 			// button
 			glDisable(GL_TEXTURE_2D);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// text
 			drawCenteredString(Fonts.segoe18, button.displayString,
@@ -632,35 +485,138 @@ public class NavigatorFeatureScreen extends GuiScreen
 		glDisable(GL_BLEND);
 	}
 	
-	private class SliderData
+	public NavigatorItem getItem()
 	{
+		return item;
+	}
+	
+	public int getMiddleX()
+	{
+		return middleX;
+	}
+	
+	public void addText(String text)
+	{
+		this.text += text;
+	}
+	
+	public int getTextHeight()
+	{
+		return Fonts.segoe15.getStringHeight(text);
+	}
+	
+	public void addButton(ButtonData button)
+	{
+		buttonDatas.add(button);
+	}
+	
+	public void addSlider(SliderData slider)
+	{
+		sliderDatas.add(slider);
+	}
+	
+	public void addCheckbox(CheckboxData checkbox)
+	{
+		checkboxDatas.add(checkbox);
+	}
+	
+	public abstract class ButtonData extends Rectangle
+	{
+		public String buttonText;
+		public Color color;
+		public int textColor = 0xffffff;
+		
+		public ButtonData(int x, int y, int width, int height,
+			String buttonText, int color)
+		{
+			super(x, y, width, height);
+			this.buttonText = buttonText;
+			this.color = new Color(color);
+		}
+		
+		public abstract void press();
+	}
+	
+	public class SliderData
+	{
+		public BasicSlider slider;
 		public int x;
 		public int y;
 		public float percentage;
 		public String value;
 		
-		public SliderData(int x, int y, float percentage, String value)
+		public SliderData(BasicSlider slider, int y)
 		{
-			this.x = x;
+			this.slider = slider;
 			this.y = y;
-			this.percentage = percentage;
-			this.value = value;
+			
+			update();
+		}
+		
+		private void update()
+		{
+			// display value
+			switch(slider.getValueDisplay())
+			{
+				case DECIMAL:
+					value = Double.toString(slider.getValue());
+					break;
+				case DEGREES:
+					value = (int)slider.getValue() + "°";
+					break;
+				case INTEGER:
+					value = Integer.toString((int)slider.getValue());
+					break;
+				case PERCENTAGE:
+					value = slider.getValue() * 100D + "%";
+					break;
+				case NONE:
+				default:
+					value = "";
+					break;
+			}
+			
+			// percentage
+			percentage =
+				(float)((slider.getValue() - slider.getMinimumValue()) / (slider
+					.getMaximumValue() - slider.getMinimumValue()));
+			
+			// x
+			x = middleX - 154 + (int)(percentage * 298) + 1;
+		}
+		
+		public void slideTo(int mouseX)
+		{
+			// percentage from mouse location (not the actual percentage!)
+			float mousePercentage = (mouseX - (middleX - 150)) / 298F;
+			if(mousePercentage > 1F)
+				mousePercentage = 1F;
+			else if(mousePercentage < 0F)
+				mousePercentage = 0F;
+			
+			// update slider value
+			slider.setValue((long)((slider.getMaximumValue() - slider
+				.getMinimumValue()) * mousePercentage / slider.getIncrement())
+				* 1e6 * slider.getIncrement() / 1e6 + slider.getMinimumValue());
+			
+			// update slider data
+			update();
 		}
 	}
 	
-	private abstract class ButtonData extends Rectangle
+	public abstract class CheckboxData
 	{
-		public String displayString = "";
-		public Color color;
+		public String name;
+		public boolean checked;
+		public int y;
 		
-		public ButtonData(int x, int y, int width, int height,
-			String displayString, int color)
+		public CheckboxData(String name, boolean checked, int y)
 		{
-			super(x, y, width, height);
-			this.displayString = displayString;
-			this.color = new Color(color);
+			this.name = name;
+			this.checked = checked;
+			this.y = y;
 		}
 		
-		public abstract void press();
+		public abstract void toggle();
 	}
 }

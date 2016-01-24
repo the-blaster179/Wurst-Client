@@ -10,58 +10,36 @@ package tk.wurst_client.navigator.gui;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
-import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.options.KeybindManager;
 
-public class NavigatorNewKeybindScreen extends GuiScreen
+public class NavigatorNewKeybindScreen extends NavigatorScreen
 {
-	private int scroll = 0;
-	private ArrayList<NavigatorPossibleKeybind> possibleKeybinds;
+	private ArrayList<PossibleKeybind> possibleKeybinds;
 	private NavigatorFeatureScreen parent;
 	private int hoveredCommand = -1;
 	private int selectedCommand = -1;
 	private String selectedKey = "NONE";
-	private int scrollKnobPosition = 2;
-	private boolean scrolling;
-	private int contentHeight;
 	private String text;
 	private GuiButton okButton;
 	private boolean choosingKey;
 	
 	public NavigatorNewKeybindScreen(
-		ArrayList<NavigatorPossibleKeybind> possibleKeybinds,
+		ArrayList<PossibleKeybind> possibleKeybinds,
 		NavigatorFeatureScreen parent)
 	{
 		this.possibleKeybinds = possibleKeybinds;
 		this.parent = parent;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void initGui()
-	{
-		// OK button
-		okButton =
-			new GuiButton(0, width / 2 - 151, height - 65, 149, 18, "OK");
-		okButton.enabled = selectedCommand != -1;
-		buttonList.add(okButton);
-		
-		// cancel button
-		buttonList.add(new GuiButton(1, width / 2 + 2, height - 65, 149, 18,
-			"Cancel"));
 	}
 	
 	@Override
@@ -80,6 +58,8 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 						possibleKeybinds.get(selectedCommand).getCommand());
 					wurst.files.saveKeybinds();
 					mc.displayGuiScreen(parent);
+					wurst.navigator.addPreference(parent.getItem().getName());
+					wurst.files.saveNavigatorData();
 				}else
 				{
 					choosingKey = true;
@@ -92,67 +72,23 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean doesGuiPauseGame()
+	protected void onResize()
 	{
-		return false;
-	}
-	
-	@Override
-	protected void mouseClicked(int x, int y, int button) throws IOException
-	{
-		super.mouseClicked(x, y, button);
+		// OK button
+		okButton =
+			new GuiButton(0, width / 2 - 151, height - 65, 149, 18, "OK");
+		okButton.enabled = selectedCommand != -1;
+		buttonList.add(okButton);
 		
-		// scrollbar
-		if(new Rectangle(width / 2 + 170, 60, 12, height - 103).contains(x, y))
-		{
-			scrolling = true;
-			return;
-		}
-		
-		// commands
-		if(hoveredCommand != -1)
-		{
-			selectedCommand = hoveredCommand;
-			okButton.enabled = true;
-		}
+		// cancel button
+		buttonList.add(new GuiButton(1, width / 2 + 2, height - 65, 149, 18,
+			"Cancel"));
 	}
 	
 	@Override
-	protected void mouseClickMove(int mouseX, int mouseY,
-		int clickedMouseButton, long timeSinceLastClick)
-	{
-		if(clickedMouseButton != 0)
-			return;
-		if(scrolling)
-		{
-			int maxScroll = -contentHeight + height - 146;
-			if(maxScroll > 0)
-				maxScroll = 0;
-			
-			if(maxScroll == 0)
-				scroll = 0;
-			else
-				scroll =
-					(int)((mouseY - 72) * (float)maxScroll / (height - 131));
-			
-			if(scroll > 0)
-				scroll = 0;
-			else if(scroll < maxScroll)
-				scroll = maxScroll;
-		}
-	}
-	
-	@Override
-	public void mouseReleased(int x, int y, int button)
-	{
-		super.mouseReleased(x, y, button);
-		
-		scrolling = false;
-	}
-	
-	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException
+	protected void onKeyPress(char typedChar, int keyCode)
 	{
 		if(choosingKey)
 		{
@@ -163,7 +99,30 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 	}
 	
 	@Override
-	public void updateScreen()
+	protected void onMouseClick(int x, int y, int button)
+	{
+		// commands
+		if(hoveredCommand != -1)
+		{
+			selectedCommand = hoveredCommand;
+			okButton.enabled = true;
+		}
+	}
+	
+	@Override
+	protected void onMouseDrag(int x, int y, int button, long timeDragged)
+	{
+		
+	}
+	
+	@Override
+	protected void onMouseRelease(int x, int y, int button)
+	{
+		
+	}
+	
+	@Override
+	protected void onUpdate()
 	{
 		// text
 		if(choosingKey)
@@ -183,41 +142,14 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		
 		// content height
 		if(choosingKey)
-			contentHeight = Fonts.segoe15.getStringHeight(text);
+			setContentHeight(Fonts.segoe15.getStringHeight(text));
 		else
-			contentHeight = possibleKeybinds.size() * 24 - 10;
-		
-		// scroll
-		scroll += Mouse.getDWheel() / 10;
-		
-		int maxScroll = -contentHeight + height - 146;
-		if(maxScroll > 0)
-			maxScroll = 0;
-		
-		if(scroll > 0)
-			scroll = 0;
-		else if(scroll < maxScroll)
-			scroll = maxScroll;
-		
-		if(maxScroll == 0)
-			scrollKnobPosition = 0;
-		else
-			scrollKnobPosition =
-				(int)((height - 131) * scroll / (float)maxScroll);
-		scrollKnobPosition += 2;
+			setContentHeight(possibleKeybinds.size() * 24 - 10);
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks)
+	protected void onRender(int mouseX, int mouseY, float partialTicks)
 	{
-		int middleX = width / 2;
-		
-		// GL settings
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_CULL_FACE);
-		glShadeModel(GL_SMOOTH);
-		
 		// title bar
 		drawCenteredString(Fonts.segoe22, "New Keybind", middleX, 32, 0xffffff);
 		glDisable(GL_TEXTURE_2D);
@@ -227,54 +159,6 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 		int bgx2 = middleX + 154;
 		int bgy1 = 60;
 		int bgy2 = height - 43;
-		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-		glBegin(GL_QUADS);
-		{
-			glVertex2i(bgx1, bgy1);
-			glVertex2i(bgx2, bgy1);
-			glVertex2i(bgx2, bgy2);
-			glVertex2i(bgx1, bgy2);
-		}
-		glEnd();
-		RenderUtil.boxShadow(bgx1, bgy1, bgx2, bgy2);
-		
-		// scroll bar
-		{
-			// bar
-			int x1 = bgx2 + 16;
-			int x2 = x1 + 12;
-			int y1 = bgy1;
-			int y2 = bgy2;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
-			
-			// knob
-			x1 += 2;
-			x2 -= 2;
-			y1 += scrollKnobPosition;
-			y2 = y1 + 24;
-			glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
-			int i;
-			for(x1++, x2--, y1 += 8, y2 -= 15, i = 0; i < 3; y1 += 4, y2 += 4, i++)
-				RenderUtil.downShadow(x1, y1, x2, y2);
-		}
 		
 		// scissor box
 		RenderUtil.scissorBox(bgx1, bgy1, bgx2, bgy2
@@ -289,7 +173,7 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 			for(int i = 0; i < possibleKeybinds.size(); i++)
 			{
 				yi += 24;
-				NavigatorPossibleKeybind possibleKeybind =
+				PossibleKeybind possibleKeybind =
 					possibleKeybinds.get(i);
 				
 				// positions
@@ -312,15 +196,7 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 					glColor4f(0.25F, 0.25F, 0.25F, 0.25F);
 				
 				// button
-				glBegin(GL_QUADS);
-				{
-					glVertex2i(x1, y1);
-					glVertex2i(x2, y1);
-					glVertex2i(x2, y2);
-					glVertex2i(x1, y2);
-				}
-				glEnd();
-				RenderUtil.boxShadow(x1, y1, x2, y2);
+				drawBox(x1, y1, x2, y2);
 				
 				// text
 				drawString(Fonts.segoe15, possibleKeybind.getDescription()
@@ -358,24 +234,11 @@ public class NavigatorNewKeybindScreen extends GuiScreen
 			
 			// button
 			glDisable(GL_TEXTURE_2D);
-			glBegin(GL_QUADS);
-			{
-				glVertex2i(x1, y1);
-				glVertex2i(x2, y1);
-				glVertex2i(x2, y2);
-				glVertex2i(x1, y2);
-			}
-			glEnd();
-			RenderUtil.boxShadow(x1, y1, x2, y2);
+			drawBox(x1, y1, x2, y2);
 			
 			// text
 			drawCenteredString(Fonts.segoe18, button.displayString,
 				(x1 + x2) / 2, y1 + 2, 0xffffff);
 		}
-		
-		// GL resets
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
 	}
 }

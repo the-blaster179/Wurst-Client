@@ -12,12 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.MOVEMENT, description = "Allows you to you fly.\n"
 	+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
@@ -28,16 +28,16 @@ public class FlightMod extends Mod implements UpdateListener
 	private double startY;
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("Flight speed", speed, 0.05, 5, 0.05,
+		settings.add(new SliderSetting("Speed", speed, 0.05, 5, 0.05,
 			ValueDisplay.DECIMAL));
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
-		speed = (float)sliders.get(0).getValue();
+		speed = (float)((SliderSetting)settings.get(0)).getValue();
 	}
 	
 	@Override

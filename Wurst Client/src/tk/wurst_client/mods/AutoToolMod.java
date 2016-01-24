@@ -18,6 +18,7 @@ import tk.wurst_client.events.listeners.LeftClickListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.BLOCKS,
 	description = "Automatically uses the best tool in your hotbar to\n"
@@ -28,6 +29,13 @@ public class AutoToolMod extends Mod implements LeftClickListener,
 {
 	private boolean isActive = false;
 	private int oldSlot;
+
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.autoSwordMod};
+	}
 	
 	@Override
 	public void onEnable()

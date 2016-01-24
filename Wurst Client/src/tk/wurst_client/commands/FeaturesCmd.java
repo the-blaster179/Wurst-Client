@@ -8,10 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import java.util.ArrayList;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.mods.Mod;
@@ -40,11 +36,9 @@ public class FeaturesCmd extends Cmd
 		WurstClient.INSTANCE.chat.message(">"
 			+ WurstClient.INSTANCE.keybinds.size()
 			+ " keybinds in your current configuration");
-		ArrayList<BasicSlider> sliders = new ArrayList<BasicSlider>();
+		int settings = 0;
 		for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
-			for(BasicSlider slider : mod.getSettings())
-				sliders.add(slider);
-		WurstClient.INSTANCE.chat.message(">" + sliders.size()
-			+ " sliders in the Settings frame");
+			settings += mod.getSettings().size();
+		WurstClient.INSTANCE.chat.message(">" + settings + " settings");
 	}
 }

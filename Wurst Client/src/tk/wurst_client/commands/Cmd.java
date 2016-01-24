@@ -15,12 +15,10 @@ import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.navigator.NavigatorItem;
-import tk.wurst_client.navigator.NavigatorPossibleKeybind;
+import tk.wurst_client.navigator.PossibleKeybind;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 import tk.wurst_client.utils.EntityUtils;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -29,7 +27,7 @@ public abstract class Cmd implements NavigatorItem
 	private String name = getClass().getAnnotation(Info.class).name();
 	private String help = getClass().getAnnotation(Info.class).help();
 	private String[] syntax = getClass().getAnnotation(Info.class).syntax();
-	private String[] tags = getClass().getAnnotation(Info.class).tags();
+	private String tags = getClass().getAnnotation(Info.class).tags();
 	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
 	
 	@Retention(RetentionPolicy.RUNTIME)
@@ -41,7 +39,7 @@ public abstract class Cmd implements NavigatorItem
 		
 		String[] syntax();
 		
-		String[] tags() default {};
+		String tags() default "";
 		
 		String tutorial() default "";
 	}
@@ -94,9 +92,20 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
+	public final String getType()
+	{
+		return "Command";
+	}
+	
+	@Override
 	public final String getDescription()
 	{
-		return help;
+		String description = help;
+		if(syntax.length > 0)
+			description += "\n\nSyntax:";
+		for(int i = 0; i < syntax.length; i++)
+			description += "\n  ." + name + " " + syntax[i];
+		return description;
 	}
 	
 	@Override
@@ -112,19 +121,19 @@ public abstract class Cmd implements NavigatorItem
 	}
 	
 	@Override
-	public final String[] getTags()
+	public final String getTags()
 	{
 		return tags;
 	}
 	
 	@Override
-	public final ArrayList<BasicSlider> getSettings()
+	public final ArrayList<NavigatorSetting> getSettings()
 	{
-		return new ArrayList<BasicSlider>();
+		return new ArrayList<NavigatorSetting>();
 	}
 	
 	@Override
-	public final ArrayList<NavigatorPossibleKeybind> getPossibleKeybinds()
+	public final ArrayList<PossibleKeybind> getPossibleKeybinds()
 	{
 		return new ArrayList<>();
 	}
@@ -145,6 +154,12 @@ public abstract class Cmd implements NavigatorItem
 	public final String getTutorialPage()
 	{
 		return tutorial;
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[0];
 	}
 	
 	public final void printHelp()

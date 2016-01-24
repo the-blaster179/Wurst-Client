@@ -12,12 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.EntityUtils;
 
 @Info(category = Category.COMBAT,
@@ -34,24 +35,34 @@ public class KillauraMod extends Mod implements UpdateListener
 	public float realRange;
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("Killaura speed", normalSpeed, 2, 20, 0.1,
+		settings.add(new SliderSetting("Speed", normalSpeed, 2, 20, 0.1,
 			ValueDisplay.DECIMAL));
-		sliders.add(new BasicSlider("Killaura range", normalRange, 1, 6, 0.05,
+		settings.add(new SliderSetting("Range", normalRange, 1, 6, 0.05,
 			ValueDisplay.DECIMAL));
-		sliders.add(new BasicSlider("Killaura FOV", fov, 30, 360, 10,
+		settings.add(new SliderSetting("FOV", fov, 30, 360, 10,
 			ValueDisplay.DEGREES));
 	}
 	
 	@Override
-	public void updateSettings()
+	public NavigatorItem[] getSeeAlso()
 	{
-		normalSpeed = (float)sliders.get(0).getValue();
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.special.targetSpf,
+			wurst.mods.killauraLegitMod, wurst.mods.multiAuraMod,
+			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,
+			wurst.mods.criticalsMod};
+	}
+	
+	@Override
+	public void updateSliders()
+	{
+		normalSpeed = (float)((SliderSetting)settings.get(0)).getValue();
 		yesCheatSpeed = Math.min(normalSpeed, 12F);
-		normalRange = (float)sliders.get(1).getValue();
+		normalRange = (float)((SliderSetting)settings.get(1)).getValue();
 		yesCheatRange = Math.min(normalRange, 4.25F);
-		fov = (int)sliders.get(2).getValue();
+		fov = (int)((SliderSetting)settings.get(2)).getValue();
 	}
 	
 	@Override

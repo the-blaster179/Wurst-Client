@@ -26,7 +26,6 @@ import org.darkstorm.minecraft.gui.component.Label;
 import org.darkstorm.minecraft.gui.component.Label.TextAlignment;
 import org.darkstorm.minecraft.gui.component.basic.BasicFrame;
 import org.darkstorm.minecraft.gui.component.basic.BasicLabel;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 import org.darkstorm.minecraft.gui.layout.GridLayoutManager;
 import org.darkstorm.minecraft.gui.layout.GridLayoutManager.HorizontalGridConstraint;
 import org.darkstorm.minecraft.gui.theme.wurst.WurstTheme;
@@ -39,6 +38,7 @@ import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.EntityUtils;
 import tk.wurst_client.utils.MiscUtils;
@@ -78,16 +78,16 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	}
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("ArenaBrawl level", level, 20, 100, 10,
+		settings.add(new SliderSetting("Level", level, 20, 100, 10,
 			ValueDisplay.INTEGER));
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
-		level = (int)sliders.get(0).getValue();
+		level = (int)((SliderSetting)settings.get(0)).getValue();
 	}
 	
 	@Override
