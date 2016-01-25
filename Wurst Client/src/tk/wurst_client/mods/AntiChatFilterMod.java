@@ -12,7 +12,7 @@ import tk.wurst_client.mods.Mod.Info;
 	name = "AntiChatFilter")
 public class AntiChatFilterMod extends Mod implements ChatOutputListener
 {
-	private final String blacklist = "({[|]})";
+	private final String blacklist = "(){}[]|";
 	
 	@Override
 	public void onEnable()
