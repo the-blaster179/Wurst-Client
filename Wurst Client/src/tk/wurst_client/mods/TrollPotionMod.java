@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,12 +23,12 @@ public class TrollPotionMod extends Mod
 	@Override
 	public void onEnable()
 	{
-		if(Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(0) != null)
+		if(mc.thePlayer.inventory.getStackInSlot(0) != null)
 		{
 			wurst.chat.error("Please clear the first slot in your hotbar.");
 			setEnabled(false);
 			return;
-		}else if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+		}else if(!mc.thePlayer.capabilities.isCreativeMode)
 		{
 			wurst.chat.error("Creative mode only.");
 			setEnabled(false);
@@ -48,7 +47,7 @@ public class TrollPotionMod extends Mod
 		}
 		stack.setTagInfo("CustomPotionEffects", effects);
 		stack.setStackDisplayName("§c§lTroll§6§lPotion");
-		Minecraft.getMinecraft().thePlayer.sendQueue
+		mc.thePlayer.sendQueue
 			.addToSendQueue(new C10PacketCreativeInventoryAction(36, stack));
 		wurst.chat.message("Potion created. Trololo!");
 		setEnabled(false);

@@ -9,7 +9,6 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -29,15 +28,12 @@ public class GlideMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.motionY < 0
-			&& Minecraft.getMinecraft().thePlayer.isAirBorne
-			&& !Minecraft.getMinecraft().thePlayer.isInWater()
-			&& !Minecraft.getMinecraft().thePlayer.isOnLadder()
-			&& !Minecraft.getMinecraft().thePlayer
-				.isInsideOfMaterial(Material.lava))
+		if(mc.thePlayer.motionY < 0 && mc.thePlayer.isAirBorne
+			&& !mc.thePlayer.isInWater() && !mc.thePlayer.isOnLadder()
+			&& !mc.thePlayer.isInsideOfMaterial(Material.lava))
 		{
-			Minecraft.getMinecraft().thePlayer.motionY = -0.125f;
-			Minecraft.getMinecraft().thePlayer.jumpMovementFactor *= 1.21337f;
+			mc.thePlayer.motionY = -0.125f;
+			mc.thePlayer.jumpMovementFactor *= 1.21337f;
 		}
 	}
 	

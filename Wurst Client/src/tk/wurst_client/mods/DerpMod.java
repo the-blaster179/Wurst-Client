@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -31,12 +30,11 @@ public class DerpMod extends Mod implements UpdateListener
 	public void onUpdate()
 	{
 		float yaw =
-			Minecraft.getMinecraft().thePlayer.rotationYaw
-				+ (float)(Math.random() * 360 - 180);
+			mc.thePlayer.rotationYaw + (float)(Math.random() * 360 - 180);
 		float pitch = (float)(Math.random() * 180 - 90);
-		Minecraft.getMinecraft().thePlayer.sendQueue
+		mc.thePlayer.sendQueue
 			.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(yaw, pitch,
-				Minecraft.getMinecraft().thePlayer.onGround));
+				mc.thePlayer.onGround));
 	}
 	
 	@Override

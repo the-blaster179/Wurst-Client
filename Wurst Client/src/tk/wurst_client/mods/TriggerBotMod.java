@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -50,9 +49,9 @@ public class TriggerBotMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver != null
-			&& Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectType.ENTITY
-			&& Minecraft.getMinecraft().objectMouseOver.entityHit instanceof EntityLivingBase)
+		if(mc.objectMouseOver != null
+			&& mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY
+			&& mc.objectMouseOver.entityHit instanceof EntityLivingBase)
 		{
 			updateMS();
 			boolean yesCheatMode = wurst.mods.yesCheatMod.isActive();
@@ -62,21 +61,18 @@ public class TriggerBotMod extends Mod implements UpdateListener
 				&& hasTimePassedS(wurst.mods.killauraMod.normalSpeed))
 			{
 				EntityLivingBase en =
-					(EntityLivingBase)Minecraft.getMinecraft().objectMouseOver.entityHit;
+					(EntityLivingBase)mc.objectMouseOver.entityHit;
 				if((yesCheatMode
-					&& Minecraft.getMinecraft().thePlayer
-						.getDistanceToEntity(en) <= wurst.mods.killauraMod.yesCheatRange || !yesCheatMode
-					&& Minecraft.getMinecraft().thePlayer
-						.getDistanceToEntity(en) <= wurst.mods.killauraMod.normalRange)
+					&& mc.thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.yesCheatRange || !yesCheatMode
+					&& mc.thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.normalRange)
 					&& EntityUtils.isCorrectEntity(en, true))
 				{
 					if(wurst.mods.autoSwordMod.isActive())
 						AutoSwordMod.setSlot();
 					CriticalsMod.doCritical();
 					wurst.mods.blockHitMod.doBlock();
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController.attackEntity(
-						Minecraft.getMinecraft().thePlayer, en);
+					mc.thePlayer.swingItem();
+					mc.playerController.attackEntity(mc.thePlayer, en);
 					updateLastMS();
 				}
 			}

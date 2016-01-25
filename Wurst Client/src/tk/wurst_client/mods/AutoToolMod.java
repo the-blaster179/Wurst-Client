@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import tk.wurst_client.events.listeners.LeftClickListener;
@@ -45,19 +44,16 @@ public class AutoToolMod extends Mod implements LeftClickListener,
 	@Override
 	public void onUpdate()
 	{
-		if(!Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed
-			&& isActive)
+		if(!mc.gameSettings.keyBindAttack.pressed && isActive)
 		{
 			isActive = false;
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem = oldSlot;
+			mc.thePlayer.inventory.currentItem = oldSlot;
 		}else if(isActive
-			&& Minecraft.getMinecraft().objectMouseOver != null
-			&& Minecraft.getMinecraft().objectMouseOver.getBlockPos() != null
-			&& Minecraft.getMinecraft().theWorld
-				.getBlockState(
-					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+			&& mc.objectMouseOver != null
+			&& mc.objectMouseOver.getBlockPos() != null
+			&& mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 				.getBlock().getMaterial() != Material.air)
-			setSlot(Minecraft.getMinecraft().objectMouseOver.getBlockPos());
+			setSlot(mc.objectMouseOver.getBlockPos());
 	}
 	
 	@Override
@@ -66,23 +62,21 @@ public class AutoToolMod extends Mod implements LeftClickListener,
 		wurst.events.remove(LeftClickListener.class, this);
 		wurst.events.remove(UpdateListener.class, this);
 		isActive = false;
-		Minecraft.getMinecraft().thePlayer.inventory.currentItem = oldSlot;
+		mc.thePlayer.inventory.currentItem = oldSlot;
 	}
 	
 	@Override
 	public void onLeftClick()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver == null
-			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
+		if(mc.objectMouseOver == null
+			|| mc.objectMouseOver.getBlockPos() == null)
 			return;
-		if(Minecraft.getMinecraft().theWorld
-			.getBlockState(
-				Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+		if(mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 			.getBlock().getMaterial() != Material.air)
 		{
 			isActive = true;
-			oldSlot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-			setSlot(Minecraft.getMinecraft().objectMouseOver.getBlockPos());
+			oldSlot = mc.thePlayer.inventory.currentItem;
+			setSlot(mc.objectMouseOver.getBlockPos());
 		}
 	}
 	
@@ -90,13 +84,10 @@ public class AutoToolMod extends Mod implements LeftClickListener,
 	{
 		float bestSpeed = 1F;
 		int bestSlot = -1;
-		Block block =
-			Minecraft.getMinecraft().theWorld.getBlockState(blockPos)
-				.getBlock();
+		Block block = mc.theWorld.getBlockState(blockPos).getBlock();
 		for(int i = 0; i < 9; i++)
 		{
-			ItemStack item =
-				Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(i);
+			ItemStack item = mc.thePlayer.inventory.getStackInSlot(i);
 			if(item == null)
 				continue;
 			float speed = item.getStrVsBlock(block);
@@ -107,6 +98,6 @@ public class AutoToolMod extends Mod implements LeftClickListener,
 			}
 		}
 		if(bestSlot != -1)
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem = bestSlot;
+			mc.thePlayer.inventory.currentItem = bestSlot;
 	}
 }

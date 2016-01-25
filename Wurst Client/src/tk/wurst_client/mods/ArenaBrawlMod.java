@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.settings.KeyBinding;
@@ -206,23 +205,18 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 			scanTotems();
 			getTarget();
 			updateFrame();
-			if(!Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-				&& Minecraft.getMinecraft().thePlayer.moveForward > 0
-				&& !Minecraft.getMinecraft().thePlayer.isSneaking())
+			if(!mc.thePlayer.isCollidedHorizontally
+				&& mc.thePlayer.moveForward > 0 && !mc.thePlayer.isSneaking())
 			{// Built-in AutoSprint and BunnyHop:
-				Minecraft.getMinecraft().thePlayer.setSprinting(true);
-				if(Minecraft.getMinecraft().thePlayer.onGround
-					&& Minecraft.getMinecraft().thePlayer.isSprinting())
-					Minecraft.getMinecraft().thePlayer.jump();
+				mc.thePlayer.setSprinting(true);
+				if(mc.thePlayer.onGround && mc.thePlayer.isSprinting())
+					mc.thePlayer.jump();
 			}
 			if(targetType == TargetType.BLOCK_E)
 			{
-				float distX =
-					(float)(blockTarget[0] - Minecraft.getMinecraft().thePlayer.posX);
-				float distY =
-					(float)(blockTarget[1] - Minecraft.getMinecraft().thePlayer.posY);
-				float distZ =
-					(float)(blockTarget[2] - Minecraft.getMinecraft().thePlayer.posZ);
+				float distX = (float)(blockTarget[0] - mc.thePlayer.posX);
+				float distY = (float)(blockTarget[1] - mc.thePlayer.posY);
+				float distZ = (float)(blockTarget[2] - mc.thePlayer.posZ);
 				if(BlockUtils.getBlockDistance(distX, distY, distZ) <= 4.25)
 				{// If the target is an enemy totem in range:
 					faceTarget();
@@ -230,36 +224,29 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 				}else
 				{
 					KeyBinding.setKeyBindState(
-						Minecraft.getMinecraft().gameSettings.keyBindAttack
-							.getKeyCode(), false);
+						mc.gameSettings.keyBindAttack.getKeyCode(), false);
 					KeyBinding.setKeyBindState(
-						Minecraft.getMinecraft().gameSettings.keyBindUseItem
-							.getKeyCode(), false);
+						mc.gameSettings.keyBindUseItem.getKeyCode(), false);
 				}
 			}else if(targetType == TargetType.ENTITY_E)
 			{
-				if(Minecraft.getMinecraft().thePlayer
-					.getDistanceToEntity(entityTarget) <= 4.25)
+				if(mc.thePlayer.getDistanceToEntity(entityTarget) <= 4.25)
 				{// If the target is an enemy in range:
 					faceTarget();
 					attackTarget();
 				}else
 				{
 					KeyBinding.setKeyBindState(
-						Minecraft.getMinecraft().gameSettings.keyBindAttack
-							.getKeyCode(), false);
+						mc.gameSettings.keyBindAttack.getKeyCode(), false);
 					KeyBinding.setKeyBindState(
-						Minecraft.getMinecraft().gameSettings.keyBindUseItem
-							.getKeyCode(), false);
+						mc.gameSettings.keyBindUseItem.getKeyCode(), false);
 				}
 			}else
 			{
 				KeyBinding.setKeyBindState(
-					Minecraft.getMinecraft().gameSettings.keyBindAttack
-						.getKeyCode(), false);
+					mc.gameSettings.keyBindAttack.getKeyCode(), false);
 				KeyBinding.setKeyBindState(
-					Minecraft.getMinecraft().gameSettings.keyBindUseItem
-						.getKeyCode(), false);
+					mc.gameSettings.keyBindUseItem.getKeyCode(), false);
 			}
 		}catch(Exception e)
 		{
@@ -274,7 +261,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 		wurst.events.remove(DeathListener.class, this);
 		wurst.events.remove(RenderListener.class, this);
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
+		mc.gameSettings.keyBindForward.pressed = false;
 		if(friendsName != null)
 			wurst.chat.message("No longer playing ArenaBrawl with "
 				+ friendsName + ".");
@@ -297,7 +284,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	@Override
 	public void onDeath()
 	{
-		Minecraft.getMinecraft().thePlayer.respawnPlayer();
+		mc.thePlayer.respawnPlayer();
 		GuiScreen.mc.displayGuiScreen((GuiScreen)null);
 		wurst.chat.message("You died.");
 		setEnabled(false);
@@ -350,9 +337,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	private void updateFrame()
 	{
 		ScaledResolution sr =
-			new ScaledResolution(Minecraft.getMinecraft(),
-				Minecraft.getMinecraft().displayWidth,
-				Minecraft.getMinecraft().displayHeight);
+			new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		int width = sr.getScaledWidth();
 		int height = sr.getScaledHeight();
 		frame.setX(width - frame.getWidth() - 1);
@@ -442,23 +427,19 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 			for(int x = 50; x >= -50; x--)
 				for(int z = 50; z >= -50; z--)
 				{
-					int posX =
-						(int)(Minecraft.getMinecraft().thePlayer.posX + x);
-					int posY =
-						(int)(Minecraft.getMinecraft().thePlayer.posY + y);
-					int posZ =
-						(int)(Minecraft.getMinecraft().thePlayer.posZ + z);
-					if(Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
-						.getBlockState(new BlockPos(posX, posY, posZ))
-						.getBlock()) == Block.getIdFromBlock(Block
-						.getBlockFromName("wool")))
+					int posX = (int)(mc.thePlayer.posX + x);
+					int posY = (int)(mc.thePlayer.posY + y);
+					int posZ = (int)(mc.thePlayer.posZ + z);
+					if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+						new BlockPos(posX, posY, posZ)).getBlock()) == Block
+						.getIdFromBlock(Block.getBlockFromName("wool")))
 						matchingBlocks.add(new int[]{posX, posY, posZ});
 				}
 		enemyTotems.clear();
 		for(int i = 0; i < matchingBlocks.size(); i++)
 		{
 			IBlockState blockState =
-				Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(
+				mc.theWorld.getBlockState(new BlockPos(
 					matchingBlocks.get(i)[0], matchingBlocks.get(i)[1] + 1,
 					matchingBlocks.get(i)[2]));
 			if(blockState.getBlock().getMetaFromState(blockState) == 14// red
@@ -470,7 +451,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 		for(int i = 0; i < matchingBlocks.size(); i++)
 		{
 			IBlockState blockState =
-				Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(
+				mc.theWorld.getBlockState(new BlockPos(
 					matchingBlocks.get(i)[0], matchingBlocks.get(i)[1] + 1,
 					matchingBlocks.get(i)[2]));
 			if(blockState.getBlock().getMetaFromState(blockState) == 5// lime
@@ -492,23 +473,17 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 			float dist = 999999999;
 			for(int[] totem : enemyTotems)
 			{
-				float distX =
-					(float)(totem[0] - Minecraft.getMinecraft().thePlayer.posX);
-				float distY =
-					(float)(totem[1] - Minecraft.getMinecraft().thePlayer.posY);
-				float distZ =
-					(float)(totem[2] - Minecraft.getMinecraft().thePlayer.posZ);
+				float distX = (float)(totem[0] - mc.thePlayer.posX);
+				float distY = (float)(totem[1] - mc.thePlayer.posY);
+				float distZ = (float)(totem[2] - mc.thePlayer.posZ);
 				dist = BlockUtils.getBlockDistance(distX, distY, distZ);
 				if(closestTotem == null)
 					closestTotem = totem;
 				else
 				{
-					float distXC =
-						(float)(closestTotem[0] - Minecraft.getMinecraft().thePlayer.posX);
-					float distYC =
-						(float)(closestTotem[1] - Minecraft.getMinecraft().thePlayer.posY);
-					float distZC =
-						(float)(closestTotem[2] - Minecraft.getMinecraft().thePlayer.posZ);
+					float distXC = (float)(closestTotem[0] - mc.thePlayer.posX);
+					float distYC = (float)(closestTotem[1] - mc.thePlayer.posY);
+					float distZC = (float)(closestTotem[2] - mc.thePlayer.posZ);
 					float distC =
 						BlockUtils.getBlockDistance(distXC, distYC, distZC);
 					if(dist < distC)
@@ -537,8 +512,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 			{
 				entityTarget = enemy2;
 				target = 8;
-			}else if(Minecraft.getMinecraft().thePlayer
-				.getDistanceToEntity(enemy1) <= Minecraft.getMinecraft().thePlayer
+			}else if(mc.thePlayer.getDistanceToEntity(enemy1) <= mc.thePlayer
 				.getDistanceToEntity(enemy2))
 			{
 				entityTarget = enemy1;
@@ -549,8 +523,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 				target = 8;
 			}
 			targetType = TargetType.ENTITY_E;
-			if(Minecraft.getMinecraft().thePlayer
-				.getDistanceToEntity(entityTarget) <= 4.25)
+			if(mc.thePlayer.getDistanceToEntity(entityTarget) <= 4.25)
 				return;
 		}// Enemies have a lower priority than enemy totems.
 		if(!friendTotems.isEmpty())
@@ -559,23 +532,17 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 			float dist = 999999999;
 			for(int[] totem : friendTotems)
 			{
-				float distX =
-					(float)(totem[0] - Minecraft.getMinecraft().thePlayer.posX);
-				float distY =
-					(float)(totem[1] - Minecraft.getMinecraft().thePlayer.posY);
-				float distZ =
-					(float)(totem[2] - Minecraft.getMinecraft().thePlayer.posZ);
+				float distX = (float)(totem[0] - mc.thePlayer.posX);
+				float distY = (float)(totem[1] - mc.thePlayer.posY);
+				float distZ = (float)(totem[2] - mc.thePlayer.posZ);
 				dist = BlockUtils.getBlockDistance(distX, distY, distZ);
 				if(closestTotem == null)
 					closestTotem = totem;
 				else
 				{
-					float distXC =
-						(float)(closestTotem[0] - Minecraft.getMinecraft().thePlayer.posX);
-					float distYC =
-						(float)(closestTotem[1] - Minecraft.getMinecraft().thePlayer.posY);
-					float distZC =
-						(float)(closestTotem[2] - Minecraft.getMinecraft().thePlayer.posZ);
+					float distXC = (float)(closestTotem[0] - mc.thePlayer.posX);
+					float distYC = (float)(closestTotem[1] - mc.thePlayer.posY);
+					float distZC = (float)(closestTotem[2] - mc.thePlayer.posZ);
 					float distC =
 						BlockUtils.getBlockDistance(distXC, distYC, distZC);
 					if(dist < distC)
@@ -621,25 +588,23 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 		{// Attacks the totem with the sword:
 			if(System.currentTimeMillis() >= lastAttack + 50)
 			{
-				Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed =
-					!Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed;
+				mc.gameSettings.keyBindAttack.pressed =
+					!mc.gameSettings.keyBindAttack.pressed;
 				lastAttack = System.currentTimeMillis();
-				Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed =
-					false;
+				mc.gameSettings.keyBindUseItem.pressed = false;
 			}
 		}else if(targetType == TargetType.ENTITY_E)
 			if(System.currentTimeMillis() >= lastAttack + 100)
 			{
-				if(Minecraft.getMinecraft().thePlayer.experienceLevel >= level)
-					Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed =
-						!Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed;
+				if(mc.thePlayer.experienceLevel >= level)
+					mc.gameSettings.keyBindUseItem.pressed =
+						!mc.gameSettings.keyBindUseItem.pressed;
 				else
 				{
-					Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed =
-						false;
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController.attackEntity(
-						Minecraft.getMinecraft().thePlayer, entityTarget);
+					mc.gameSettings.keyBindUseItem.pressed = false;
+					mc.thePlayer.swingItem();
+					mc.playerController
+						.attackEntity(mc.thePlayer, entityTarget);
 				}
 				lastAttack = System.currentTimeMillis();
 			}
@@ -647,7 +612,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	
 	private void reset()
 	{
-		Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed = false;
+		mc.gameSettings.keyBindUseItem.pressed = false;
 		matchingBlocks.clear();
 		enemyTotems.clear();
 		friendTotems.clear();

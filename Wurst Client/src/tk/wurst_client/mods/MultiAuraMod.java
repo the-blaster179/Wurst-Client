@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import java.util.ArrayList;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -65,9 +64,8 @@ public class MultiAuraMod extends Mod implements UpdateListener
 			{
 				EntityLivingBase en = entities.get(i);
 				EntityUtils.faceEntityPacket(en);
-				Minecraft.getMinecraft().thePlayer.swingItem();
-				Minecraft.getMinecraft().playerController.attackEntity(
-					Minecraft.getMinecraft().thePlayer, en);
+				mc.thePlayer.swingItem();
+				mc.playerController.attackEntity(mc.thePlayer, en);
 			}
 			updateLastMS();
 		}

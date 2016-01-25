@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -39,36 +38,30 @@ public class FightBotMod extends Mod implements UpdateListener
 		if(entity == null)
 			return;
 		if(entity.getHealth() <= 0 || entity.isDead
-			|| Minecraft.getMinecraft().thePlayer.getHealth() <= 0)
+			|| mc.thePlayer.getHealth() <= 0)
 		{
 			entity = null;
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
+			mc.gameSettings.keyBindForward.pressed = false;
 			return;
 		}
-		double xDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posX - entity.posX);
-		double zDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posZ - entity.posZ);
+		double xDist = Math.abs(mc.thePlayer.posX - entity.posX);
+		double zDist = Math.abs(mc.thePlayer.posZ - entity.posZ);
 		EntityUtils.faceEntityClient(entity);
 		if(xDist > distance || zDist > distance)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			mc.gameSettings.keyBindForward.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
-		if(Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-			&& Minecraft.getMinecraft().thePlayer.onGround)
-			Minecraft.getMinecraft().thePlayer.jump();
-		if(Minecraft.getMinecraft().thePlayer.isInWater()
-			&& Minecraft.getMinecraft().thePlayer.posY < entity.posY)
-			Minecraft.getMinecraft().thePlayer.motionY += 0.04;
+			mc.gameSettings.keyBindForward.pressed = false;
+		if(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)
+			mc.thePlayer.jump();
+		if(mc.thePlayer.isInWater() && mc.thePlayer.posY < entity.posY)
+			mc.thePlayer.motionY += 0.04;
 		if(wurst.mods.yesCheatMod.isActive())
 			speed = wurst.mods.killauraMod.yesCheatSpeed;
 		else
 			speed = wurst.mods.killauraMod.normalSpeed;
 		updateMS();
 		if(hasTimePassedS(speed))
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(entity) <= range)
+			if(mc.thePlayer.getDistanceToEntity(entity) <= range)
 			{
 				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
@@ -79,9 +72,8 @@ public class FightBotMod extends Mod implements UpdateListener
 				else
 				{
 					EntityUtils.faceEntityClient(entity);
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController.attackEntity(
-						Minecraft.getMinecraft().thePlayer, entity);
+					mc.thePlayer.swingItem();
+					mc.playerController.attackEntity(mc.thePlayer, entity);
 				}
 				updateLastMS();
 			}
@@ -91,6 +83,6 @@ public class FightBotMod extends Mod implements UpdateListener
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
+		mc.gameSettings.keyBindForward.pressed = false;
 	}
 }

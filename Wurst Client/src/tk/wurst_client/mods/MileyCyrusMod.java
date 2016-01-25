@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -33,8 +32,8 @@ public class MileyCyrusMod extends Mod implements UpdateListener
 		timer++;
 		if(timer >= 6)
 		{
-			Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed =
-				!Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed;
+			mc.gameSettings.keyBindSneak.pressed =
+				!mc.gameSettings.keyBindSneak.pressed;
 			timer = 0;
 		}
 	}
@@ -43,6 +42,6 @@ public class MileyCyrusMod extends Mod implements UpdateListener
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed = false;
+		mc.gameSettings.keyBindSneak.pressed = false;
 	}
 }

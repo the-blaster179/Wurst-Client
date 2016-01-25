@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -73,9 +72,7 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		RenderUtil.setColor(new Color(8, 8, 8, 128));
 		ScaledResolution sr =
-			new ScaledResolution(Minecraft.getMinecraft(),
-				Minecraft.getMinecraft().displayWidth,
-				Minecraft.getMinecraft().displayHeight);
+			new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		int width = sr.getScaledWidth();
 		int height = sr.getScaledHeight();
 		String targetLocked = "Target locked";
@@ -113,10 +110,9 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	public void onUpdate()
 	{
 		target = null;
-		if(Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem() != null
-			&& Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem()
-				.getItem() instanceof ItemBow
-			&& Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed)
+		if(mc.thePlayer.inventory.getCurrentItem() != null
+			&& mc.thePlayer.inventory.getCurrentItem().getItem() instanceof ItemBow
+			&& mc.gameSettings.keyBindUseItem.pressed)
 		{
 			target = EntityUtils.getClosestEntity(true, true);
 			aimAtTarget();
@@ -135,8 +131,7 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	{
 		if(target == null)
 			return;
-		int bowCharge =
-			Minecraft.getMinecraft().thePlayer.getItemInUseDuration();
+		int bowCharge = mc.thePlayer.getItemInUseDuration();
 		velocity = bowCharge / 20;
 		velocity = (velocity * velocity + velocity * 2) / 3;
 		if(wurst.mods.fastBowMod.isActive())
@@ -151,15 +146,14 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 			velocity = 1;
 		double posX =
 			target.posX + (target.posX - target.prevPosX) * 5
-				- Minecraft.getMinecraft().thePlayer.posX;
+				- mc.thePlayer.posX;
 		double posY =
 			target.posY + (target.posY - target.prevPosY) * 5
-				+ target.getEyeHeight() - 0.15
-				- Minecraft.getMinecraft().thePlayer.posY
-				- Minecraft.getMinecraft().thePlayer.getEyeHeight();
+				+ target.getEyeHeight() - 0.15 - mc.thePlayer.posY
+				- mc.thePlayer.getEyeHeight();
 		double posZ =
 			target.posZ + (target.posZ - target.prevPosZ) * 5
-				- Minecraft.getMinecraft().thePlayer.posZ;
+				- mc.thePlayer.posZ;
 		float yaw = (float)(Math.atan2(posZ, posX) * 180 / Math.PI) - 90;
 		double y2 = Math.sqrt(posX * posX + posZ * posZ);
 		float g = 0.006F;
@@ -169,7 +163,7 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 		float pitch =
 			(float)-Math.toDegrees(Math.atan((velocity * velocity - Math
 				.sqrt(tmp)) / (g * y2)));
-		Minecraft.getMinecraft().thePlayer.rotationYaw = yaw;
-		Minecraft.getMinecraft().thePlayer.rotationPitch = pitch;
+		mc.thePlayer.rotationYaw = yaw;
+		mc.thePlayer.rotationPitch = pitch;
 	}
 }

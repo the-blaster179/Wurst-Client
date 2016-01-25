@@ -9,7 +9,6 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -39,13 +38,12 @@ public class OverlayMod extends Mod implements RenderListener
 	@Override
 	public void onRender()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver == null
-			|| Minecraft.getMinecraft().objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
+		if(mc.objectMouseOver == null
+			|| mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
 			return;
-		BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
+		BlockPos pos = mc.objectMouseOver.getBlockPos();
 		Block mouseOverBlock =
-			Minecraft.getMinecraft().theWorld.getBlockState(
-				Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+			mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 				.getBlock();
 		if(Block.getIdFromBlock(mouseOverBlock) != 0)
 			RenderUtils.nukerBox(pos, PlayerControllerMP.curBlockDamageMP);

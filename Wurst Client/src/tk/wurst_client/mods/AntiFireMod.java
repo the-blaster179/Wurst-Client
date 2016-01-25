@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -31,12 +30,10 @@ public class AntiFireMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-			&& Minecraft.getMinecraft().thePlayer.onGround
-			&& Minecraft.getMinecraft().thePlayer.isBurning())
+		if(!mc.thePlayer.capabilities.isCreativeMode && mc.thePlayer.onGround
+			&& mc.thePlayer.isBurning())
 			for(int i = 0; i < 100; i++)
-				Minecraft.getMinecraft().thePlayer.sendQueue
-					.addToSendQueue(new C03PacketPlayer());
+				mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer());
 	}
 	
 	@Override

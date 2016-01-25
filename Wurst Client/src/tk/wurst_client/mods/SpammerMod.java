@@ -29,7 +29,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.hooks.FrameHook;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -441,7 +440,7 @@ public class SpammerMod extends Mod
 									for(int i = 0; i < spam.split("\n").length; i++)
 									{
 										String message = spam.split("\n")[i];
-										Minecraft.getMinecraft().thePlayer
+										mc.thePlayer
 											.sendAutomaticChatMessage(message);
 										Thread.sleep(wurst.options.spamDelay);
 									}
@@ -460,7 +459,7 @@ public class SpammerMod extends Mod
 				dialog.pack();
 				dialog.setLocationRelativeTo(FrameHook.getFrame());
 				dialog.setAlwaysOnTop(true);
-				Minecraft.getMinecraft().setIngameNotInFocus();
+				mc.setIngameNotInFocus();
 				dialog.setVisible(true);
 			}
 		}.start();

@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.projectile.EntityFishHook;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -30,12 +29,11 @@ public class AutoFishMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.fishEntity != null
-			&& isHooked(Minecraft.getMinecraft().thePlayer.fishEntity)
+		if(mc.thePlayer.fishEntity != null && isHooked(mc.thePlayer.fishEntity)
 			&& !catching)
 		{
 			catching = true;
-			Minecraft.getMinecraft().rightClickMouse();
+			mc.rightClickMouse();
 			new Thread("AutoFish")
 			{
 				@Override
@@ -48,7 +46,7 @@ public class AutoFishMod extends Mod implements UpdateListener
 					{
 						e.printStackTrace();
 					}
-					Minecraft.getMinecraft().rightClickMouse();
+					mc.rightClickMouse();
 					catching = false;
 				}
 			}.start();

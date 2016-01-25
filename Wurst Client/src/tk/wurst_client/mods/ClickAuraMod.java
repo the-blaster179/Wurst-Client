@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.navigator.NavigatorItem;
@@ -53,17 +52,16 @@ public class ClickAuraMod extends Mod implements UpdateListener
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
 		if(hasTimePassedS(wurst.mods.killauraMod.realSpeed) && en != null
-			&& Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed)
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.realRange)
+			&& mc.gameSettings.keyBindAttack.pressed)
+			if(mc.thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.realRange)
 			{
 				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
 				CriticalsMod.doCritical();
 				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityPacket(en);
-				Minecraft.getMinecraft().thePlayer.swingItem();
-				Minecraft.getMinecraft().playerController.attackEntity(
-					Minecraft.getMinecraft().thePlayer, en);
+				mc.thePlayer.swingItem();
+				mc.playerController.attackEntity(mc.thePlayer, en);
 				updateLastMS();
 			}
 	}

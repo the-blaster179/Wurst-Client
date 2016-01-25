@@ -32,25 +32,22 @@ public class SneakMod extends Mod implements UpdateListener
 	{
 		if(wurst.mods.yesCheatMod.isActive())
 		{
-			NetHandlerPlayClient sendQueue =
-				Minecraft.getMinecraft().thePlayer.sendQueue;
+			NetHandlerPlayClient sendQueue = mc.thePlayer.sendQueue;
 			sendQueue.addToSendQueue(new C0BPacketEntityAction(Minecraft
 				.getMinecraft().thePlayer, Action.START_SNEAKING));
 			sendQueue.addToSendQueue(new C0BPacketEntityAction(Minecraft
 				.getMinecraft().thePlayer, Action.STOP_SNEAKING));
 		}else
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C0BPacketEntityAction(Minecraft
-					.getMinecraft().thePlayer, Action.START_SNEAKING));
+			mc.thePlayer.sendQueue.addToSendQueue(new C0BPacketEntityAction(
+				Minecraft.getMinecraft().thePlayer, Action.START_SNEAKING));
 	}
 	
 	@Override
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed = false;
-		Minecraft.getMinecraft().thePlayer.sendQueue
-			.addToSendQueue(new C0BPacketEntityAction(
-				Minecraft.getMinecraft().thePlayer, Action.STOP_SNEAKING));
+		mc.gameSettings.keyBindSneak.pressed = false;
+		mc.thePlayer.sendQueue.addToSendQueue(new C0BPacketEntityAction(
+			mc.thePlayer, Action.STOP_SNEAKING));
 	}
 }

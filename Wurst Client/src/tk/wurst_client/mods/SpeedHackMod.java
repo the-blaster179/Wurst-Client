@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 
 @Mod.Info(category = Mod.Category.MOVEMENT,
@@ -30,26 +29,23 @@ public class SpeedHackMod extends Mod implements UpdateListener
 	public void onUpdate()
 	{
 		// return if sneaking or not walking
-		if(Minecraft.getMinecraft().thePlayer.isSneaking()
-			|| Minecraft.getMinecraft().thePlayer.moveForward == 0
-			&& Minecraft.getMinecraft().thePlayer.moveStrafing == 0)
+		if(mc.thePlayer.isSneaking() || mc.thePlayer.moveForward == 0
+			&& mc.thePlayer.moveStrafing == 0)
 			return;
 		
 		// activate sprint if walking forward
-		if(Minecraft.getMinecraft().thePlayer.moveForward > 0
-			&& !Minecraft.getMinecraft().thePlayer.isCollidedHorizontally)
-			Minecraft.getMinecraft().thePlayer.setSprinting(true);
+		if(mc.thePlayer.moveForward > 0 && !mc.thePlayer.isCollidedHorizontally)
+			mc.thePlayer.setSprinting(true);
 		
 		// activate mini jump if on ground
-		if(Minecraft.getMinecraft().thePlayer.onGround)
+		if(mc.thePlayer.onGround)
 		{
-			Minecraft.getMinecraft().thePlayer.motionY += 0.1;
-			Minecraft.getMinecraft().thePlayer.motionX *= 1.8;
-			Minecraft.getMinecraft().thePlayer.motionZ *= 1.8;
+			mc.thePlayer.motionY += 0.1;
+			mc.thePlayer.motionX *= 1.8;
+			mc.thePlayer.motionZ *= 1.8;
 			double currentSpeed =
-				Math.sqrt(Math.pow(Minecraft.getMinecraft().thePlayer.motionX,
-					2)
-					+ Math.pow(Minecraft.getMinecraft().thePlayer.motionZ, 2));
+				Math.sqrt(Math.pow(mc.thePlayer.motionX, 2)
+					+ Math.pow(mc.thePlayer.motionZ, 2));
 			
 			// limit speed to highest value that works on NoCheat+ version
 			// 3.13.0-BETA-sMD5NET-b878
@@ -57,12 +53,10 @@ public class SpeedHackMod extends Mod implements UpdateListener
 			double maxSpeed = 0.66F;
 			if(currentSpeed > maxSpeed)
 			{
-				Minecraft.getMinecraft().thePlayer.motionX =
-					Minecraft.getMinecraft().thePlayer.motionX / currentSpeed
-						* maxSpeed;
-				Minecraft.getMinecraft().thePlayer.motionZ =
-					Minecraft.getMinecraft().thePlayer.motionZ / currentSpeed
-						* maxSpeed;
+				mc.thePlayer.motionX =
+					mc.thePlayer.motionX / currentSpeed * maxSpeed;
+				mc.thePlayer.motionZ =
+					mc.thePlayer.motionZ / currentSpeed * maxSpeed;
 			}
 		}
 	}

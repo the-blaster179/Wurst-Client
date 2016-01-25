@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
-
 import org.darkstorm.minecraft.gui.util.GuiManagerDisplayScreen;
 
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -27,9 +25,8 @@ public class ClickGuiMod extends Mod implements UpdateListener
 	@Override
 	public void onToggle()
 	{
-		if(!(Minecraft.getMinecraft().currentScreen instanceof GuiManagerDisplayScreen))
-			Minecraft.getMinecraft().displayGuiScreen(
-				new GuiManagerDisplayScreen(wurst.gui));
+		if(!(mc.currentScreen instanceof GuiManagerDisplayScreen))
+			mc.displayGuiScreen(new GuiManagerDisplayScreen(wurst.gui));
 	}
 	
 	@Override

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
@@ -54,7 +53,7 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 	public void onRender()
 	{
 		int i = 0;
-		for(Object o : Minecraft.getMinecraft().theWorld.loadedTileEntityList)
+		for(Object o : mc.theWorld.loadedTileEntityList)
 		{
 			if(i >= maxChests)
 				break;
@@ -68,7 +67,7 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 				RenderUtils.blockESPBox(((TileEntityEnderChest)o).getPos());
 			}
 		}
-		for(Object o : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object o : mc.theWorld.loadedEntityList)
 		{
 			if(i >= maxChests)
 				break;
@@ -106,16 +105,11 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 				for(int x = range; x >= -range; x--)
 					for(int z = range; z >= -range; z--)
 					{
-						int posX =
-							(int)(Minecraft.getMinecraft().thePlayer.posX + x);
-						int posY =
-							(int)(Minecraft.getMinecraft().thePlayer.posY + y);
-						int posZ =
-							(int)(Minecraft.getMinecraft().thePlayer.posZ + z);
+						int posX = (int)(mc.thePlayer.posX + x);
+						int posY = (int)(mc.thePlayer.posY + y);
+						int posZ = (int)(mc.thePlayer.posZ + z);
 						BlockPos pos = new BlockPos(posX, posY, posZ);
-						IBlockState state =
-							Minecraft.getMinecraft().theWorld
-								.getBlockState(pos);
+						IBlockState state = mc.theWorld.getBlockState(pos);
 						Block block = state.getBlock();
 						int metadata = block.getMetaFromState(state);
 						if(Block.getIdFromBlock(block) == 33

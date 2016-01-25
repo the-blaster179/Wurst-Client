@@ -11,7 +11,6 @@ package tk.wurst_client.mods;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -65,16 +64,12 @@ public class SearchMod extends Mod implements UpdateListener, RenderListener
 				{
 					for(int z = range; z >= -range; z--)
 					{
-						int posX =
-							(int)(Minecraft.getMinecraft().thePlayer.posX + x);
-						int posY =
-							(int)(Minecraft.getMinecraft().thePlayer.posY + y);
-						int posZ =
-							(int)(Minecraft.getMinecraft().thePlayer.posZ + z);
+						int posX = (int)(mc.thePlayer.posX + x);
+						int posY = (int)(mc.thePlayer.posY + y);
+						int posZ = (int)(mc.thePlayer.posZ + z);
 						BlockPos pos = new BlockPos(posX, posY, posZ);
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(pos).getBlock()) == wurst.options.searchID)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(pos)
+							.getBlock()) == wurst.options.searchID)
 							matchingBlocks.add(pos);
 						if(matchingBlocks.size() >= maxBlocks)
 							break;

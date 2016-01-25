@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import tk.wurst_client.events.listeners.RenderListener;
@@ -41,10 +40,10 @@ public class PlayerEspMod extends Mod implements RenderListener
 	{
 		if(wurst.mods.arenaBrawlMod.isActive())
 			return;
-		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object entity : mc.theWorld.loadedEntityList)
 			if(entity instanceof EntityPlayer
 				&& !((Entity)entity).getName().equals(
-					Minecraft.getMinecraft().getSession().getUsername()))
+					mc.getSession().getUsername()))
 				RenderUtils.entityESPBox((Entity)entity, wurst.friends
 					.contains(((EntityPlayer)entity).getName()) ? 1 : 0);
 	}

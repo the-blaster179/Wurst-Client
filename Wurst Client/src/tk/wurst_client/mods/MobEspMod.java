@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import tk.wurst_client.events.listeners.RenderListener;
@@ -38,7 +37,7 @@ public class MobEspMod extends Mod implements RenderListener
 	@Override
 	public void onRender()
 	{
-		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object entity : mc.theWorld.loadedEntityList)
 			if(entity instanceof EntityLiving)
 				RenderUtils.entityESPBox((Entity)entity, 0);
 	}

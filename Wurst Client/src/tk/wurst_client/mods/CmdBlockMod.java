@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,19 +24,18 @@ public class CmdBlockMod extends Mod
 	@Override
 	public void onEnable()
 	{
-		if(Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(0) != null)
+		if(mc.thePlayer.inventory.getStackInSlot(0) != null)
 		{
 			wurst.chat.error("Please clear the first slot in your hotbar.");
 			setEnabled(false);
 			return;
-		}else if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+		}else if(!mc.thePlayer.capabilities.isCreativeMode)
 		{
 			wurst.chat.error("Creative mode only.");
 			setEnabled(false);
 			return;
 		}
-		Minecraft.getMinecraft().displayGuiScreen(
-			new GuiCmdBlock(this, Minecraft.getMinecraft().currentScreen));
+		mc.displayGuiScreen(new GuiCmdBlock(this, mc.currentScreen));
 		setEnabled(false);
 	}
 	
@@ -48,7 +46,7 @@ public class CmdBlockMod extends Mod
 		nbtTagCompound.setTag("Command", new NBTTagString(cmd));
 		stack.writeToNBT(nbtTagCompound);
 		stack.setTagInfo("BlockEntityTag", nbtTagCompound);
-		Minecraft.getMinecraft().thePlayer.sendQueue
+		mc.thePlayer.sendQueue
 			.addToSendQueue(new C10PacketCreativeInventoryAction(36, stack));
 		wurst.chat.message("Command Block created.");
 	}

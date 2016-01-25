@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -29,19 +28,17 @@ public class StepMod extends Mod implements UpdateListener
 	{
 		if(wurst.mods.yesCheatMod.isActive())
 		{
-			Minecraft.getMinecraft().thePlayer.stepHeight = 0.5F;
-			if(Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-				&& Minecraft.getMinecraft().thePlayer.onGround)
-				Minecraft.getMinecraft().thePlayer.jump();
+			mc.thePlayer.stepHeight = 0.5F;
+			if(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)
+				mc.thePlayer.jump();
 		}else
-			Minecraft.getMinecraft().thePlayer.stepHeight =
-				isEnabled() ? 1.0F : 0.5F;
+			mc.thePlayer.stepHeight = isEnabled() ? 1.0F : 0.5F;
 	}
 	
 	@Override
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().thePlayer.stepHeight = 0.5F;
+		mc.thePlayer.stepHeight = 0.5F;
 	}
 }

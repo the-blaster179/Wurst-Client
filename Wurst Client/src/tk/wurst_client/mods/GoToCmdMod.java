@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import java.util.ArrayList;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import tk.wurst_client.ai.PathUtils;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -50,32 +49,29 @@ public class GoToCmdMod extends Mod implements UpdateListener
 			setEnabled(false);
 			return;
 		}
-		BlockPos currentPos = new BlockPos(Minecraft.getMinecraft().thePlayer);
+		BlockPos currentPos = new BlockPos(mc.thePlayer);
 		BlockPos nextPos = path.get(index);
 		float dist = BlockUtils.getPlayerBlockDistance(nextPos);
 		float hDist = BlockUtils.getHorizontalPlayerBlockDistance(nextPos);
-		double vDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posY - nextPos.getY());
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindBack.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindRight.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindLeft.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindJump.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed = false;
-		Minecraft.getMinecraft().thePlayer.rotationPitch = 10;
+		double vDist = Math.abs(mc.thePlayer.posY - nextPos.getY());
+		mc.gameSettings.keyBindForward.pressed = false;
+		mc.gameSettings.keyBindBack.pressed = false;
+		mc.gameSettings.keyBindRight.pressed = false;
+		mc.gameSettings.keyBindLeft.pressed = false;
+		mc.gameSettings.keyBindJump.pressed = false;
+		mc.gameSettings.keyBindSneak.pressed = false;
+		mc.thePlayer.rotationPitch = 10;
 		BlockUtils.faceBlockClientHorizontally(nextPos);
 		
 		if(hDist > 0.25)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			mc.gameSettings.keyBindForward.pressed = true;
 		if(vDist > 0.75)
 			if(PathUtils.isFlyable(currentPos))
 			{
 				if(currentPos.getY() > nextPos.getY())
-					Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed =
-						true;
+					mc.gameSettings.keyBindSneak.pressed = true;
 				else
-					Minecraft.getMinecraft().gameSettings.keyBindJump.pressed =
-						true;
+					mc.gameSettings.keyBindJump.pressed = true;
 			}else if(PathUtils.isClimbable(currentPos)
 				&& currentPos.getY() < nextPos.getY())
 			{
@@ -88,8 +84,7 @@ public class GoToCmdMod extends Mod implements UpdateListener
 					if(!PathUtils.isSolid(neigbor))
 						continue;
 					BlockUtils.faceBlockClientHorizontally(neigbor);
-					Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-						true;
+					mc.gameSettings.keyBindForward.pressed = true;
 					break;
 				}
 			}
@@ -106,12 +101,12 @@ public class GoToCmdMod extends Mod implements UpdateListener
 		wurst.events.remove(UpdateListener.class, this);
 		path = null;
 		goal = null;
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindBack.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindRight.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindLeft.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindJump.pressed = false;
-		Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed = false;
+		mc.gameSettings.keyBindForward.pressed = false;
+		mc.gameSettings.keyBindBack.pressed = false;
+		mc.gameSettings.keyBindRight.pressed = false;
+		mc.gameSettings.keyBindLeft.pressed = false;
+		mc.gameSettings.keyBindJump.pressed = false;
+		mc.gameSettings.keyBindSneak.pressed = false;
 	}
 	
 	public static void setPath(ArrayList<BlockPos> path)

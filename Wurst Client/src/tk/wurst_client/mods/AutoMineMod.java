@@ -9,7 +9,6 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -22,23 +21,21 @@ public class AutoMineMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = false;
+		mc.gameSettings.keyBindAttack.pressed = false;
 		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver == null
-			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
+		if(mc.objectMouseOver == null
+			|| mc.objectMouseOver.getBlockPos() == null)
 			return;
-		if(Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
-			.getBlockState(
-				Minecraft.getMinecraft().objectMouseOver.getBlockPos())
-			.getBlock()) != 0)
-			Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = true;
+		if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+			mc.objectMouseOver.getBlockPos()).getBlock()) != 0)
+			mc.gameSettings.keyBindAttack.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = false;
+			mc.gameSettings.keyBindAttack.pressed = false;
 		
 	}
 	
@@ -46,6 +43,6 @@ public class AutoMineMod extends Mod implements UpdateListener
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = false;
+		mc.gameSettings.keyBindAttack.pressed = false;
 	}
 }

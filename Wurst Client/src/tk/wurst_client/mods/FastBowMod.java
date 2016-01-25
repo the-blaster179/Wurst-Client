@@ -42,28 +42,21 @@ public class FastBowMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.getHealth() > 0
-			&& (Minecraft.getMinecraft().thePlayer.onGround || Minecraft
-				.getMinecraft().thePlayer.capabilities.isCreativeMode)
-			&& Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem() != null
-			&& Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem()
-				.getItem() instanceof ItemBow
-			&& Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed)
+		if(mc.thePlayer.getHealth() > 0
+			&& (mc.thePlayer.onGround || Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+			&& mc.thePlayer.inventory.getCurrentItem() != null
+			&& mc.thePlayer.inventory.getCurrentItem().getItem() instanceof ItemBow
+			&& mc.gameSettings.keyBindUseItem.pressed)
 		{
-			Minecraft.getMinecraft().playerController.sendUseItem(
-				Minecraft.getMinecraft().thePlayer,
-				Minecraft.getMinecraft().theWorld,
-				Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem());
-			Minecraft.getMinecraft().thePlayer.inventory
+			mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld,
+				mc.thePlayer.inventory.getCurrentItem());
+			mc.thePlayer.inventory
 				.getCurrentItem()
 				.getItem()
-				.onItemRightClick(
-					Minecraft.getMinecraft().thePlayer.inventory
-						.getCurrentItem(),
-					Minecraft.getMinecraft().theWorld,
-					Minecraft.getMinecraft().thePlayer);
+				.onItemRightClick(mc.thePlayer.inventory.getCurrentItem(),
+					mc.theWorld, mc.thePlayer);
 			for(int i = 0; i < 20; i++)
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer(false));
 			Minecraft
 				.getMinecraft()
@@ -71,14 +64,11 @@ public class FastBowMod extends Mod implements UpdateListener
 				.addToSendQueue(
 					new C07PacketPlayerDigging(Action.RELEASE_USE_ITEM,
 						new BlockPos(0, 0, 0), EnumFacing.DOWN));
-			Minecraft.getMinecraft().thePlayer.inventory
+			mc.thePlayer.inventory
 				.getCurrentItem()
 				.getItem()
-				.onPlayerStoppedUsing(
-					Minecraft.getMinecraft().thePlayer.inventory
-						.getCurrentItem(),
-					Minecraft.getMinecraft().theWorld,
-					Minecraft.getMinecraft().thePlayer, 10);
+				.onPlayerStoppedUsing(mc.thePlayer.inventory.getCurrentItem(),
+					mc.theWorld, mc.thePlayer, 10);
 		}
 	}
 	

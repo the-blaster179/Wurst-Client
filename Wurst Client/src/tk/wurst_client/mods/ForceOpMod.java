@@ -29,7 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -289,9 +288,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 				sepSpeedStart.setSize(498, 4);
 				dialog.add(sepSpeedStart);
 				
-				lName =
-					new JLabel("Username: "
-						+ Minecraft.getMinecraft().session.getUsername());
+				lName = new JLabel("Username: " + mc.session.getUsername());
 				lName.setLocation(4, 140);
 				lName.setSize(lName.getPreferredSize());
 				dialog.add(lName);
@@ -341,10 +338,8 @@ public class ForceOpMod extends Mod implements ChatInputListener
 							@Override
 							public void run()
 							{
-								Minecraft.getMinecraft().thePlayer
-									.sendChatMessage("/login "
-										+ Minecraft.getMinecraft().session
-											.getUsername());
+								mc.thePlayer.sendChatMessage("/login "
+									+ mc.session.getUsername());
 								lastPW = 0;
 								loadPWList();
 								update();
@@ -356,7 +351,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 										gotWrongPWMSG = false;
 									while(!cbDontWait.isSelected()
 										&& !hasGotWrongPWMSG()
-										|| Minecraft.getMinecraft().thePlayer == null)
+										|| mc.thePlayer == null)
 									{
 										if(!wurst.mods.forceOpMod.isActive())
 											return;
@@ -367,7 +362,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 										{
 											e.printStackTrace();
 										}
-										if(Minecraft.getMinecraft().thePlayer == null)
+										if(mc.thePlayer == null)
 											gotWrongPWMSG = true;// If you get
 										// kicked,
 										// it won't
@@ -386,7 +381,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 									while(!sent)
 										try
 										{
-											Minecraft.getMinecraft().thePlayer
+											mc.thePlayer
 												.sendChatMessage("/login "
 													+ passwords[i]);
 											sent = true;
@@ -413,7 +408,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 				
 				loadPWList();
 				update();
-				Minecraft.getMinecraft().setIngameNotInFocus();
+				mc.setIngameNotInFocus();
 				dialog.setVisible(true);
 				dialog.toFront();
 			}
@@ -499,7 +494,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 			if(lastPW == -1)
 				return;
 			else if(lastPW == 0)
-				password = Minecraft.getMinecraft().session.getUsername();
+				password = mc.session.getUsername();
 			else
 				password = passwords[lastPW - 1];
 			wurst.chat.success("The password \"" + password + "\" worked.");

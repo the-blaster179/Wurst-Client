@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import java.util.Set;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import tk.wurst_client.events.listeners.UpdateListener;
 
@@ -33,11 +32,10 @@ public class SkinBlinkerMod extends Mod implements UpdateListener
 		if(hasTimePassedS(5f))
 		{
 			updateLastMS();
-			Set activeParts =
-				Minecraft.getMinecraft().gameSettings.func_178876_d();
+			Set activeParts = mc.gameSettings.func_178876_d();
 			for(EnumPlayerModelParts part : EnumPlayerModelParts.values())
-				Minecraft.getMinecraft().gameSettings.func_178878_a(part,
-					!activeParts.contains(part));
+				mc.gameSettings
+					.func_178878_a(part, !activeParts.contains(part));
 		}
 	}
 	
@@ -46,6 +44,6 @@ public class SkinBlinkerMod extends Mod implements UpdateListener
 	{
 		wurst.events.remove(UpdateListener.class, this);
 		for(EnumPlayerModelParts part : EnumPlayerModelParts.values())
-			Minecraft.getMinecraft().gameSettings.func_178878_a(part, true);
+			mc.gameSettings.func_178878_a(part, true);
 	}
 }

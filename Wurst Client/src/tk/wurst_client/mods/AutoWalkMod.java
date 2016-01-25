@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -27,14 +26,14 @@ public class AutoWalkMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(!Minecraft.getMinecraft().gameSettings.keyBindForward.pressed)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+		if(!mc.gameSettings.keyBindForward.pressed)
+			mc.gameSettings.keyBindForward.pressed = true;
 	}
 	
 	@Override
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
+		mc.gameSettings.keyBindForward.pressed = false;
 	}
 }

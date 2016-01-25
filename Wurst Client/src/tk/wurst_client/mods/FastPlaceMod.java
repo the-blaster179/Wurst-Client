@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -36,7 +35,7 @@ public class FastPlaceMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		Minecraft.getMinecraft().rightClickDelayTimer = 0;
+		mc.rightClickDelayTimer = 0;
 	}
 	
 	@Override

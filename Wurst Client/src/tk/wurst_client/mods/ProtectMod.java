@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -41,8 +40,7 @@ public class ProtectMod extends Mod implements UpdateListener
 	{
 		friend = null;
 		EntityLivingBase en = EntityUtils.getClosestEntity(false, true);
-		if(en != null
-			&& Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= range)
+		if(en != null && mc.thePlayer.getDistanceToEntity(en) <= range)
 			friend = en;
 		wurst.events.add(UpdateListener.class, this);
 	}
@@ -51,7 +49,7 @@ public class ProtectMod extends Mod implements UpdateListener
 	public void onUpdate()
 	{
 		if(friend == null || friend.isDead || friend.getHealth() <= 0
-			|| Minecraft.getMinecraft().thePlayer.getHealth() <= 0)
+			|| mc.thePlayer.getHealth() <= 0)
 		{
 			friend = null;
 			enemy = null;
@@ -60,35 +58,26 @@ public class ProtectMod extends Mod implements UpdateListener
 		}
 		if(enemy != null && (enemy.getHealth() <= 0 || enemy.isDead))
 			enemy = null;
-		double xDistF =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posX - friend.posX);
-		double zDistF =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posZ - friend.posZ);
+		double xDistF = Math.abs(mc.thePlayer.posX - friend.posX);
+		double zDistF = Math.abs(mc.thePlayer.posZ - friend.posZ);
 		double xDistE = distanceE;
 		double zDistE = distanceE;
-		if(enemy != null
-			&& Minecraft.getMinecraft().thePlayer.getDistanceToEntity(enemy) <= range)
+		if(enemy != null && mc.thePlayer.getDistanceToEntity(enemy) <= range)
 		{
-			xDistE =
-				Math.abs(Minecraft.getMinecraft().thePlayer.posX - enemy.posX);
-			zDistE =
-				Math.abs(Minecraft.getMinecraft().thePlayer.posZ - enemy.posZ);
+			xDistE = Math.abs(mc.thePlayer.posX - enemy.posX);
+			zDistE = Math.abs(mc.thePlayer.posZ - enemy.posZ);
 		}else
 			EntityUtils.faceEntityClient(friend);
 		if((xDistF > distanceF || zDistF > distanceF)
-			&& (enemy == null || Minecraft.getMinecraft().thePlayer
-				.getDistanceToEntity(enemy) > range) || xDistE > distanceE
-			|| zDistE > distanceE)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			&& (enemy == null || mc.thePlayer.getDistanceToEntity(enemy) > range)
+			|| xDistE > distanceE || zDistE > distanceE)
+			mc.gameSettings.keyBindForward.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
-		if(Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-			&& Minecraft.getMinecraft().thePlayer.onGround)
-			Minecraft.getMinecraft().thePlayer.jump();
-		if(Minecraft.getMinecraft().thePlayer.isInWater()
-			&& Minecraft.getMinecraft().thePlayer.posY < friend.posY)
-			Minecraft.getMinecraft().thePlayer.motionY += 0.04;
+			mc.gameSettings.keyBindForward.pressed = false;
+		if(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)
+			mc.thePlayer.jump();
+		if(mc.thePlayer.isInWater() && mc.thePlayer.posY < friend.posY)
+			mc.thePlayer.motionY += 0.04;
 		if(wurst.mods.yesCheatMod.isActive())
 			speed = wurst.mods.killauraMod.yesCheatSpeed;
 		else
@@ -97,16 +86,15 @@ public class ProtectMod extends Mod implements UpdateListener
 		if(hasTimePassedS(speed) && EntityUtils.getClosestEnemy(friend) != null)
 		{
 			enemy = EntityUtils.getClosestEnemy(friend);
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(enemy) <= range)
+			if(mc.thePlayer.getDistanceToEntity(enemy) <= range)
 			{
 				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
 				CriticalsMod.doCritical();
 				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityClient(enemy);
-				Minecraft.getMinecraft().thePlayer.swingItem();
-				Minecraft.getMinecraft().playerController.attackEntity(
-					Minecraft.getMinecraft().thePlayer, enemy);
+				mc.thePlayer.swingItem();
+				mc.playerController.attackEntity(mc.thePlayer, enemy);
 				updateLastMS();
 			}
 		}
@@ -117,8 +105,7 @@ public class ProtectMod extends Mod implements UpdateListener
 	{
 		wurst.events.remove(UpdateListener.class, this);
 		if(friend != null)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
+			mc.gameSettings.keyBindForward.pressed = false;
 	}
 	
 	public void setFriend(EntityLivingBase friend)

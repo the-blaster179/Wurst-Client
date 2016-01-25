@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -51,19 +50,17 @@ public class KillauraLegitMod extends Mod implements UpdateListener
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
 		if(hasTimePassedS(wurst.mods.killauraMod.yesCheatSpeed) && en != null)
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.yesCheatRange)
+			if(mc.thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.yesCheatRange)
 			{
-				if(wurst.mods.criticalsMod.isActive()
-					&& Minecraft.getMinecraft().thePlayer.onGround)
-					Minecraft.getMinecraft().thePlayer.jump();
+				if(wurst.mods.criticalsMod.isActive() && mc.thePlayer.onGround)
+					mc.thePlayer.jump();
 				if(EntityUtils.getDistanceFromMouse(en) > 55)
 					EntityUtils.faceEntityClient(en);
 				else
 				{
 					EntityUtils.faceEntityClient(en);
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController.attackEntity(
-						Minecraft.getMinecraft().thePlayer, en);
+					mc.thePlayer.swingItem();
+					mc.playerController.attackEntity(mc.thePlayer, en);
 				}
 				updateLastMS();
 			}

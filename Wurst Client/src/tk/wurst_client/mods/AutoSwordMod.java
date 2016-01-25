@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -51,7 +50,7 @@ public class AutoSwordMod extends Mod implements LeftClickListener,
 			timer--;
 			return;
 		}
-		Minecraft.getMinecraft().thePlayer.inventory.currentItem = oldSlot;
+		mc.thePlayer.inventory.currentItem = oldSlot;
 		wurst.events.remove(UpdateListener.class, this);
 	}
 	
@@ -70,8 +69,8 @@ public class AutoSwordMod extends Mod implements LeftClickListener,
 			setEnabled(false);
 			return;
 		}
-		if(Minecraft.getMinecraft().objectMouseOver != null
-			&& Minecraft.getMinecraft().objectMouseOver.entityHit instanceof EntityLivingBase)
+		if(mc.objectMouseOver != null
+			&& mc.objectMouseOver.entityHit instanceof EntityLivingBase)
 			setSlot();
 	}
 	
@@ -83,8 +82,7 @@ public class AutoSwordMod extends Mod implements LeftClickListener,
 		int bestSlot = -1;
 		for(int i = 0; i < 9; i++)
 		{
-			ItemStack item =
-				Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(i);
+			ItemStack item = mc.thePlayer.inventory.getStackInSlot(i);
 			if(item == null)
 				continue;
 			float speed = 0;
@@ -100,12 +98,11 @@ public class AutoSwordMod extends Mod implements LeftClickListener,
 				bestSlot = i;
 			}
 		}
-		if(bestSlot != -1
-			&& bestSlot != Minecraft.getMinecraft().thePlayer.inventory.currentItem)
+		if(bestSlot != -1 && bestSlot != mc.thePlayer.inventory.currentItem)
 		{
 			wurst.mods.autoSwordMod.oldSlot =
-				Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem = bestSlot;
+				mc.thePlayer.inventory.currentItem;
+			mc.thePlayer.inventory.currentItem = bestSlot;
 			wurst.mods.autoSwordMod.timer = 4;
 			wurst.events.add(UpdateListener.class, wurst.mods.autoSwordMod);
 		}

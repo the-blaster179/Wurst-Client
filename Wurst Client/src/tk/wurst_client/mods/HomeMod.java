@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -36,7 +35,7 @@ public class HomeMod extends Mod implements UpdateListener, ChatInputListener
 		if(disableTimer == 4)
 			setEnabled(false);
 		else if(disableTimer == 0)
-			Minecraft.getMinecraft().thePlayer.sendChatMessage("/home");
+			mc.thePlayer.sendChatMessage("/home");
 		disableTimer++;
 	}
 	

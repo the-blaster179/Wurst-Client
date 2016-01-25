@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -38,8 +37,7 @@ public class BlockHitMod extends Mod implements LeftClickListener
 	@Override
 	public void onLeftClick()
 	{
-		ItemStack stack =
-			Minecraft.getMinecraft().thePlayer.getCurrentEquippedItem();
+		ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
 		
 		if(stack != null && stack.getItem() instanceof ItemSword)
 			doBlock();
@@ -54,8 +52,7 @@ public class BlockHitMod extends Mod implements LeftClickListener
 			@Override
 			public void run()
 			{
-				KeyBinding keybindUseItem =
-					Minecraft.getMinecraft().gameSettings.keyBindUseItem;
+				KeyBinding keybindUseItem = mc.gameSettings.keyBindUseItem;
 				keybindUseItem.pressed = false;
 				try
 				{

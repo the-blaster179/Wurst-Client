@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
@@ -48,19 +47,19 @@ public class FlightMod extends Mod implements UpdateListener
 		if(wurst.mods.yesCheatMod.isActive()
 			|| wurst.mods.antiMacMod.isActive())
 		{
-			double startX = Minecraft.getMinecraft().thePlayer.posX;
-			startY = Minecraft.getMinecraft().thePlayer.posY;
-			double startZ = Minecraft.getMinecraft().thePlayer.posZ;
+			double startX = mc.thePlayer.posX;
+			startY = mc.thePlayer.posY;
+			double startZ = mc.thePlayer.posZ;
 			for(int i = 0; i < 4; i++)
 			{
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
 						startX, startY + 1.01, startZ, false));
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
 						startX, startY, startZ, false));
 			}
-			Minecraft.getMinecraft().thePlayer.jump();
+			mc.thePlayer.jump();
 		}
 		wurst.events.add(UpdateListener.class, this);
 	}
@@ -70,40 +69,37 @@ public class FlightMod extends Mod implements UpdateListener
 	{
 		if(wurst.mods.yesCheatMod.isActive())
 		{
-			if(!Minecraft.getMinecraft().thePlayer.onGround)
-				if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed
-					&& Minecraft.getMinecraft().thePlayer.posY < startY - 1)
-					Minecraft.getMinecraft().thePlayer.motionY = 0.2;
+			if(!mc.thePlayer.onGround)
+				if(mc.gameSettings.keyBindJump.pressed
+					&& mc.thePlayer.posY < startY - 1)
+					mc.thePlayer.motionY = 0.2;
 				else
-					Minecraft.getMinecraft().thePlayer.motionY = -0.02;
+					mc.thePlayer.motionY = -0.02;
 		}else if(wurst.mods.antiMacMod.isActive())
 		{
 			updateMS();
-			if(!Minecraft.getMinecraft().thePlayer.onGround)
-				if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed
-					&& hasTimePassedS(2))
+			if(!mc.thePlayer.onGround)
+				if(mc.gameSettings.keyBindJump.pressed && hasTimePassedS(2))
 				{
-					Minecraft.getMinecraft().thePlayer.setPosition(
-						Minecraft.getMinecraft().thePlayer.posX,
-						Minecraft.getMinecraft().thePlayer.posY + 8,
-						Minecraft.getMinecraft().thePlayer.posZ);
+					mc.thePlayer.setPosition(mc.thePlayer.posX,
+						mc.thePlayer.posY + 8, mc.thePlayer.posZ);
 					updateLastMS();
-				}else if(Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed)
-					Minecraft.getMinecraft().thePlayer.motionY = -0.4;
+				}else if(mc.gameSettings.keyBindSneak.pressed)
+					mc.thePlayer.motionY = -0.4;
 				else
-					Minecraft.getMinecraft().thePlayer.motionY = -0.02;
-			Minecraft.getMinecraft().thePlayer.jumpMovementFactor = 0.04F;
+					mc.thePlayer.motionY = -0.02;
+			mc.thePlayer.jumpMovementFactor = 0.04F;
 		}else
 		{
-			Minecraft.getMinecraft().thePlayer.capabilities.isFlying = false;
-			Minecraft.getMinecraft().thePlayer.motionX = 0;
-			Minecraft.getMinecraft().thePlayer.motionY = 0;
-			Minecraft.getMinecraft().thePlayer.motionZ = 0;
-			Minecraft.getMinecraft().thePlayer.jumpMovementFactor = speed;
-			if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed)
-				Minecraft.getMinecraft().thePlayer.motionY += speed;
-			if(Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed)
-				Minecraft.getMinecraft().thePlayer.motionY -= speed;
+			mc.thePlayer.capabilities.isFlying = false;
+			mc.thePlayer.motionX = 0;
+			mc.thePlayer.motionY = 0;
+			mc.thePlayer.motionZ = 0;
+			mc.thePlayer.jumpMovementFactor = speed;
+			if(mc.gameSettings.keyBindJump.pressed)
+				mc.thePlayer.motionY += speed;
+			if(mc.gameSettings.keyBindSneak.pressed)
+				mc.thePlayer.motionY -= speed;
 		}
 	}
 	

@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.StringUtils;
 import tk.wurst_client.events.ChatInputEvent;
@@ -38,8 +37,7 @@ public class MassTpaMod extends Mod implements UpdateListener,
 	public void onEnable()
 	{
 		i = 0;
-		Iterator itr =
-			Minecraft.getMinecraft().getNetHandler().getPlayerInfo().iterator();
+		Iterator itr = mc.getNetHandler().getPlayerInfo().iterator();
 		players = new ArrayList<String>();
 		while(itr.hasNext())
 			players.add(StringUtils.stripControlCodes(((NetworkPlayerInfo)itr
@@ -56,9 +54,8 @@ public class MassTpaMod extends Mod implements UpdateListener,
 		if(hasTimePassedS(speed))
 		{
 			String name = players.get(i);
-			if(!name.equals(Minecraft.getMinecraft().thePlayer.getName()))
-				Minecraft.getMinecraft().thePlayer.sendChatMessage("/tpa "
-					+ name);
+			if(!name.equals(mc.thePlayer.getName()))
+				mc.thePlayer.sendChatMessage("/tpa " + name);
 			updateLastMS();
 			i++;
 			if(i == players.size())

@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -32,7 +31,7 @@ public class AntiAfkMod extends Mod implements UpdateListener
 	{
 		try
 		{
-			block = new BlockPos(Minecraft.getMinecraft().thePlayer);
+			block = new BlockPos(mc.thePlayer);
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -55,16 +54,15 @@ public class AntiAfkMod extends Mod implements UpdateListener
 		}
 		BlockUtils.faceBlockClientHorizontally(nextBlock);
 		if(BlockUtils.getHorizontalPlayerBlockDistance(nextBlock) > 0.75)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			mc.gameSettings.keyBindForward.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
+			mc.gameSettings.keyBindForward.pressed = false;
 	}
 	
 	@Override
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
+		mc.gameSettings.keyBindForward.pressed = false;
 	}
 }

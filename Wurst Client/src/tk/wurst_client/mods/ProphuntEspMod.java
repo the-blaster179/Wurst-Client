@@ -41,15 +41,14 @@ public class ProphuntEspMod extends Mod implements RenderListener
 	@Override
 	public void onRender()
 	{
-		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object entity : mc.theWorld.loadedEntityList)
 			if(entity instanceof EntityLiving && ((Entity)entity).isInvisible())
 			{
 				double x = ((Entity)entity).posX;
 				double y = ((Entity)entity).posY;
 				double z = ((Entity)entity).posZ;
 				Color color;
-				if(Minecraft.getMinecraft().thePlayer
-					.getDistanceToEntity((Entity)entity) >= 0.5)
+				if(mc.thePlayer.getDistanceToEntity((Entity)entity) >= 0.5)
 					color =
 						new Color(1F, 0F, 0F, 0.5F - MathHelper.abs(MathHelper
 							.sin(Minecraft.getSystemTime() % 1000L / 1000.0F

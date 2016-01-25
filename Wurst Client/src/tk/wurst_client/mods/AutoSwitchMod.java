@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -36,10 +35,10 @@ public class AutoSwitchMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.inventory.currentItem == 8)
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem = 0;
+		if(mc.thePlayer.inventory.currentItem == 8)
+			mc.thePlayer.inventory.currentItem = 0;
 		else
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem++;
+			mc.thePlayer.inventory.currentItem++;
 	}
 	
 	@Override

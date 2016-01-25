@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngameMenu;
 
@@ -29,7 +28,6 @@ public class MenuWalkMod extends Mod
 			return false;
 		
 		// check if there is a player to move
-		Minecraft mc = Minecraft.getMinecraft();
 		if(mc.thePlayer == null)
 			return false;
 		

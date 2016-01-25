@@ -45,11 +45,10 @@ public class BuildRandomMod extends Mod implements UpdateListener
 	{
 		if(wurst.mods.freecamMod.isActive()
 			|| wurst.mods.remoteViewMod.isActive()
-			|| Minecraft.getMinecraft().objectMouseOver == null
-			|| Minecraft.getMinecraft().objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
+			|| mc.objectMouseOver == null
+			|| mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
 			return;
-		if(Minecraft.getMinecraft().rightClickDelayTimer > 0
-			&& !wurst.mods.fastPlaceMod.isActive())
+		if(mc.rightClickDelayTimer > 0 && !wurst.mods.fastPlaceMod.isActive())
 			return;
 		float xDiff = 0;
 		float yDiff = 0;
@@ -61,14 +60,10 @@ public class BuildRandomMod extends Mod implements UpdateListener
 			for(int x = (int)range; x >= -range - 1; x--)
 			{
 				for(int z = (int)range; z >= -range; z--)
-					if(Block
-						.getIdFromBlock(Minecraft.getMinecraft().theWorld
-							.getBlockState(
-								new BlockPos(
-									(int)(x + Minecraft.getMinecraft().thePlayer.posX),
-									(int)(y + Minecraft.getMinecraft().thePlayer.posY),
-									(int)(z + Minecraft.getMinecraft().thePlayer.posZ)))
-							.getBlock()) != 0
+					if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+						new BlockPos((int)(x + mc.thePlayer.posX),
+							(int)(y + mc.thePlayer.posY),
+							(int)(z + mc.thePlayer.posZ))).getBlock()) != 0
 						&& BlockUtils.getBlockDistance(x, y, z) <= range)
 					{
 						hasBlocks = true;
@@ -86,29 +81,25 @@ public class BuildRandomMod extends Mod implements UpdateListener
 		while(distance > range
 			|| distance < -range
 			|| randomPos == null
-			|| Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
-				.getBlockState(randomPos).getBlock()) == 0)
+			|| Block.getIdFromBlock(mc.theWorld.getBlockState(randomPos)
+				.getBlock()) == 0)
 		{
 			xDiff = (int)(Math.random() * range * 2 - range - 1);
 			yDiff = (int)(Math.random() * range * 2 - range);
 			zDiff = (int)(Math.random() * range * 2 - range);
 			distance = BlockUtils.getBlockDistance(xDiff, yDiff, zDiff);
-			int randomPosX =
-				(int)(xDiff + Minecraft.getMinecraft().thePlayer.posX);
-			int randomPosY =
-				(int)(yDiff + Minecraft.getMinecraft().thePlayer.posY);
-			int randomPosZ =
-				(int)(zDiff + Minecraft.getMinecraft().thePlayer.posZ);
+			int randomPosX = (int)(xDiff + mc.thePlayer.posX);
+			int randomPosY = (int)(yDiff + mc.thePlayer.posY);
+			int randomPosZ = (int)(zDiff + mc.thePlayer.posZ);
 			randomPos = new BlockPos(randomPosX, randomPosY, randomPosZ);
 		}
-		MovingObjectPosition fakeObjectMouseOver =
-			Minecraft.getMinecraft().objectMouseOver;
+		MovingObjectPosition fakeObjectMouseOver = mc.objectMouseOver;
 		if(fakeObjectMouseOver == null || randomPos == null)
 			return;
 		fakeObjectMouseOver.setBlockPos(randomPos);
 		BlockUtils.faceBlockPacket(randomPos);
-		Minecraft.getMinecraft().thePlayer.swingItem();
-		Minecraft.getMinecraft().thePlayer.sendQueue
+		mc.thePlayer.swingItem();
+		mc.thePlayer.sendQueue
 			.addToSendQueue(new C08PacketPlayerBlockPlacement(randomPos,
 				fakeObjectMouseOver.sideHit.getIndex(), Minecraft
 					.getMinecraft().thePlayer.inventory.getCurrentItem(),

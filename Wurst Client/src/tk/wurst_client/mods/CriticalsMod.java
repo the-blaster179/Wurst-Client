@@ -9,7 +9,6 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.LeftClickListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -43,8 +42,8 @@ public class CriticalsMod extends Mod implements LeftClickListener
 	@Override
 	public void onLeftClick()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver != null
-			&& Minecraft.getMinecraft().objectMouseOver.entityHit instanceof EntityLivingBase)
+		if(mc.objectMouseOver != null
+			&& mc.objectMouseOver.entityHit instanceof EntityLivingBase)
 			doCritical();
 	}
 	
@@ -52,14 +51,13 @@ public class CriticalsMod extends Mod implements LeftClickListener
 	{
 		if(!wurst.mods.criticalsMod.isActive())
 			return;
-		if(!Minecraft.getMinecraft().thePlayer.isInWater()
-			&& !Minecraft.getMinecraft().thePlayer
-				.isInsideOfMaterial(Material.lava)
-			&& Minecraft.getMinecraft().thePlayer.onGround)
+		if(!mc.thePlayer.isInWater()
+			&& !mc.thePlayer.isInsideOfMaterial(Material.lava)
+			&& mc.thePlayer.onGround)
 		{
-			Minecraft.getMinecraft().thePlayer.motionY = 0.1F;
-			Minecraft.getMinecraft().thePlayer.fallDistance = 0.1F;
-			Minecraft.getMinecraft().thePlayer.onGround = false;
+			mc.thePlayer.motionY = 0.1F;
+			mc.thePlayer.fallDistance = 0.1F;
+			mc.thePlayer.onGround = false;
 		}
 	}
 }

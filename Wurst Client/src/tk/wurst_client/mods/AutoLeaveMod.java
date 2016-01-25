@@ -48,19 +48,18 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.getHealth() <= 8.0
-			&& !Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-			&& (!Minecraft.getMinecraft().isIntegratedServerRunning() || Minecraft
-				.getMinecraft().thePlayer.sendQueue.getPlayerInfo().size() > 1))
+		if(mc.thePlayer.getHealth() <= 8.0
+			&& !mc.thePlayer.capabilities.isCreativeMode
+			&& (!mc.isIntegratedServerRunning() || Minecraft.getMinecraft().thePlayer.sendQueue
+				.getPlayerInfo().size() > 1))
 		{
 			switch(wurst.options.autoLeaveMode)
 			{
 				case 0:
-					Minecraft.getMinecraft().theWorld
-						.sendQuittingDisconnectingPacket();
+					mc.theWorld.sendQuittingDisconnectingPacket();
 					break;
 				case 1:
-					Minecraft.getMinecraft().thePlayer.sendQueue
+					mc.thePlayer.sendQueue
 						.addToSendQueue(new C01PacketChatMessage("§"));
 					break;
 				default:

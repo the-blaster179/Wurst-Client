@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C07PacketPlayerDigging.Action;
 import net.minecraft.network.play.client.C0APacketAnimation;
@@ -116,10 +115,9 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	public void onRender()
 	{
 		if(blockHitDelay == 0 && shouldRenderESP)
-			if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-				&& currentBlock.getPlayerRelativeBlockHardness(
-					Minecraft.getMinecraft().thePlayer,
-					Minecraft.getMinecraft().theWorld, pos) < 1)
+			if(!mc.thePlayer.capabilities.isCreativeMode
+				&& currentBlock.getPlayerRelativeBlockHardness(mc.thePlayer,
+					mc.theWorld, pos) < 1)
 				RenderUtils.nukerBox(pos, currentDamage);
 			else
 				RenderUtils.nukerBox(pos, 1);
@@ -138,8 +136,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 		{
 			if(oldSlot != -1)
 			{
-				Minecraft.getMinecraft().thePlayer.inventory.currentItem =
-					oldSlot;
+				mc.thePlayer.inventory.currentItem = oldSlot;
 				oldSlot = -1;
 			}
 			return;
@@ -147,8 +144,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 		if(pos == null || !pos.equals(newPos))
 			currentDamage = 0;
 		pos = newPos;
-		currentBlock =
-			Minecraft.getMinecraft().theWorld.getBlockState(pos).getBlock();
+		currentBlock = mc.theWorld.getBlockState(pos).getBlock();
 		if(blockHitDelay > 0)
 		{
 			blockHitDelay--;
@@ -157,61 +153,51 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 		BlockUtils.faceBlockPacket(pos);
 		if(currentDamage == 0)
 		{
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C07PacketPlayerDigging(
-					Action.START_DESTROY_BLOCK, pos, side));
+			mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(
+				Action.START_DESTROY_BLOCK, pos, side));
 			if(wurst.mods.autoToolMod.isActive() && oldSlot == -1)
-				oldSlot =
-					Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-			if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-				|| currentBlock.getPlayerRelativeBlockHardness(
-					Minecraft.getMinecraft().thePlayer,
-					Minecraft.getMinecraft().theWorld, pos) >= 1)
+				oldSlot = mc.thePlayer.inventory.currentItem;
+			if(mc.thePlayer.capabilities.isCreativeMode
+				|| currentBlock.getPlayerRelativeBlockHardness(mc.thePlayer,
+					mc.theWorld, pos) >= 1)
 			{
 				currentDamage = 0;
-				if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
+				if(mc.thePlayer.capabilities.isCreativeMode
 					&& !wurst.mods.yesCheatMod.isActive())
 					nukeAll();
 				else
 				{
 					shouldRenderESP = true;
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController
-						.onPlayerDestroyBlock(pos, side);
+					mc.thePlayer.swingItem();
+					mc.playerController.onPlayerDestroyBlock(pos, side);
 				}
 				return;
 			}
 		}
 		if(wurst.mods.autoToolMod.isActive())
 			AutoToolMod.setSlot(pos);
-		Minecraft.getMinecraft().thePlayer.sendQueue
-			.addToSendQueue(new C0APacketAnimation());
+		mc.thePlayer.sendQueue.addToSendQueue(new C0APacketAnimation());
 		shouldRenderESP = true;
 		BlockUtils.faceBlockPacket(pos);
 		currentDamage +=
-			currentBlock.getPlayerRelativeBlockHardness(
-				Minecraft.getMinecraft().thePlayer,
-				Minecraft.getMinecraft().theWorld, pos)
+			currentBlock.getPlayerRelativeBlockHardness(mc.thePlayer,
+				mc.theWorld, pos)
 				* (wurst.mods.fastBreakMod.isActive()
 					&& wurst.options.fastbreakMode == 0
 					? wurst.mods.fastBreakMod.speed : 1);
-		Minecraft.getMinecraft().theWorld.sendBlockBreakProgress(
-			Minecraft.getMinecraft().thePlayer.getEntityId(), pos,
+		mc.theWorld.sendBlockBreakProgress(mc.thePlayer.getEntityId(), pos,
 			(int)(currentDamage * 10.0F) - 1);
 		if(currentDamage >= 1)
 		{
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C07PacketPlayerDigging(
-					Action.STOP_DESTROY_BLOCK, pos, side));
-			Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(pos,
-				side);
+			mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(
+				Action.STOP_DESTROY_BLOCK, pos, side));
+			mc.playerController.onPlayerDestroyBlock(pos, side);
 			blockHitDelay = (byte)4;
 			currentDamage = 0;
 		}else if(wurst.mods.fastBreakMod.isActive()
 			&& wurst.options.fastbreakMode == 1)
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C07PacketPlayerDigging(
-					Action.STOP_DESTROY_BLOCK, pos, side));
+			mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(
+				Action.STOP_DESTROY_BLOCK, pos, side));
 	}
 	
 	@Override
@@ -222,7 +208,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 		wurst.events.remove(RenderListener.class, this);
 		if(oldSlot != -1)
 		{
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem = oldSlot;
+			mc.thePlayer.inventory.currentItem = oldSlot;
 			oldSlot = -1;
 		}
 		currentDamage = 0;
@@ -234,20 +220,16 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	@Override
 	public void onLeftClick()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver == null
-			|| Minecraft.getMinecraft().objectMouseOver.getBlockPos() == null)
+		if(mc.objectMouseOver == null
+			|| mc.objectMouseOver.getBlockPos() == null)
 			return;
 		if(mode == 1
-			&& Minecraft.getMinecraft().theWorld
-				.getBlockState(
-					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+			&& mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 				.getBlock().getMaterial() != Material.air)
 		{
 			id =
-				Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
-					.getBlockState(
-						Minecraft.getMinecraft().objectMouseOver.getBlockPos())
-					.getBlock());
+				Block.getIdFromBlock(mc.theWorld.getBlockState(
+					mc.objectMouseOver.getBlockPos()).getBlock());
 			wurst.files.saveOptions();
 		}
 	}
@@ -256,7 +238,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	{
 		LinkedList<BlockPos> queue = new LinkedList<BlockPos>();
 		HashSet<BlockPos> alreadyProcessed = new HashSet<BlockPos>();
-		queue.add(new BlockPos(Minecraft.getMinecraft().thePlayer));
+		queue.add(new BlockPos(mc.thePlayer));
 		while(!queue.isEmpty())
 		{
 			BlockPos currentPos = queue.poll();
@@ -266,8 +248,8 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 			if(BlockUtils.getPlayerBlockDistance(currentPos) > realRange)
 				continue;
 			int currentID =
-				Block.getIdFromBlock(Minecraft.getMinecraft().theWorld
-					.getBlockState(currentPos).getBlock());
+				Block.getIdFromBlock(mc.theWorld.getBlockState(currentPos)
+					.getBlock());
 			if(currentID != 0)
 				switch(mode)
 				{
@@ -276,24 +258,23 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 							return currentPos;
 						break;
 					case 2:
-						if(currentPos.getY() >= Minecraft.getMinecraft().thePlayer.posY)
+						if(currentPos.getY() >= mc.thePlayer.posY)
 							return currentPos;
 						break;
 					case 3:
-						if(Minecraft.getMinecraft().theWorld
+						if(mc.theWorld
 							.getBlockState(currentPos)
 							.getBlock()
-							.getPlayerRelativeBlockHardness(
-								Minecraft.getMinecraft().thePlayer,
-								Minecraft.getMinecraft().theWorld, currentPos) >= 1)
+							.getPlayerRelativeBlockHardness(mc.thePlayer,
+								mc.theWorld, currentPos) >= 1)
 							return currentPos;
 						break;
 					default:
 						return currentPos;
 				}
 			if(!wurst.mods.yesCheatMod.isActive()
-				|| !Minecraft.getMinecraft().theWorld.getBlockState(currentPos)
-					.getBlock().getMaterial().blocksMovement())
+				|| !mc.theWorld.getBlockState(currentPos).getBlock()
+					.getMaterial().blocksMovement())
 			{
 				queue.add(currentPos.add(0, 0, -1));// north
 				queue.add(currentPos.add(0, 0, 1));// south
@@ -312,29 +293,19 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 			for(int x = (int)realRange; x >= -realRange - 1; x--)
 				for(int z = (int)realRange; z >= -realRange; z--)
 				{
-					int posX =
-						(int)(Math
-							.floor(Minecraft.getMinecraft().thePlayer.posX) + x);
-					int posY =
-						(int)(Math
-							.floor(Minecraft.getMinecraft().thePlayer.posY) + y);
-					int posZ =
-						(int)(Math
-							.floor(Minecraft.getMinecraft().thePlayer.posZ) + z);
+					int posX = (int)(Math.floor(mc.thePlayer.posX) + x);
+					int posY = (int)(Math.floor(mc.thePlayer.posY) + y);
+					int posZ = (int)(Math.floor(mc.thePlayer.posZ) + z);
 					BlockPos blockPos = new BlockPos(posX, posY, posZ);
 					Block block =
-						Minecraft.getMinecraft().theWorld.getBlockState(
-							blockPos).getBlock();
-					float xDiff =
-						(float)(Minecraft.getMinecraft().thePlayer.posX - posX);
-					float yDiff =
-						(float)(Minecraft.getMinecraft().thePlayer.posY - posY);
-					float zDiff =
-						(float)(Minecraft.getMinecraft().thePlayer.posZ - posZ);
+						mc.theWorld.getBlockState(blockPos).getBlock();
+					float xDiff = (float)(mc.thePlayer.posX - posX);
+					float yDiff = (float)(mc.thePlayer.posY - posY);
+					float zDiff = (float)(mc.thePlayer.posZ - posZ);
 					float currentDistance =
 						BlockUtils.getBlockDistance(xDiff, yDiff, zDiff);
 					MovingObjectPosition fakeObjectMouseOver =
-						Minecraft.getMinecraft().objectMouseOver;
+						mc.objectMouseOver;
 					if(fakeObjectMouseOver == null)
 						return;
 					fakeObjectMouseOver.setBlockPos(blockPos);
@@ -345,19 +316,16 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 							continue;
 						if(mode == 3
 							&& block.getPlayerRelativeBlockHardness(
-								Minecraft.getMinecraft().thePlayer,
-								Minecraft.getMinecraft().theWorld, blockPos) < 1)
+								mc.thePlayer, mc.theWorld, blockPos) < 1)
 							continue;
 						side = fakeObjectMouseOver.sideHit;
 						shouldRenderESP = true;
 						BlockUtils.faceBlockPacket(pos);
-						Minecraft.getMinecraft().thePlayer.sendQueue
+						mc.thePlayer.sendQueue
 							.addToSendQueue(new C07PacketPlayerDigging(
 								Action.START_DESTROY_BLOCK, blockPos, side));
-						block.onBlockDestroyedByPlayer(
-							Minecraft.getMinecraft().theWorld, blockPos,
-							Minecraft.getMinecraft().theWorld
-								.getBlockState(blockPos));
+						block.onBlockDestroyedByPlayer(mc.theWorld, blockPos,
+							mc.theWorld.getBlockState(blockPos));
 					}
 				}
 	}

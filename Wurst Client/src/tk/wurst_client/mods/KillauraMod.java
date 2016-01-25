@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
@@ -93,16 +92,15 @@ public class KillauraMod extends Mod implements UpdateListener
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
 		if(hasTimePassedS(realSpeed) && en != null)
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= realRange)
+			if(mc.thePlayer.getDistanceToEntity(en) <= realRange)
 			{
 				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
 				CriticalsMod.doCritical();
 				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityPacket(en);
-				Minecraft.getMinecraft().thePlayer.swingItem();
-				Minecraft.getMinecraft().playerController.attackEntity(
-					Minecraft.getMinecraft().thePlayer, en);
+				mc.thePlayer.swingItem();
+				mc.playerController.attackEntity(mc.thePlayer, en);
 				updateLastMS();
 			}
 	}
