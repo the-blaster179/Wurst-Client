@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.commands.Cmd.Info;
 
 @Info(help = "Types \"/gamemode <args>\".\nUseful for servers that don't support /gm.",
@@ -21,7 +20,6 @@ public class GmCmd extends Cmd
 	{
 		if(args.length != 1)
 			syntaxError();
-		Minecraft.getMinecraft().thePlayer.sendChatMessage("/gamemode "
-			+ args[0]);
+		mc.thePlayer.sendChatMessage("/gamemode " + args[0]);
 	}
 }

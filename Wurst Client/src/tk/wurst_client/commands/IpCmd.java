@@ -11,7 +11,6 @@ package tk.wurst_client.commands;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.hooks.ServerHook;
 
@@ -24,8 +23,7 @@ public class IpCmd extends Cmd
 	public void execute(String[] args) throws Error
 	{
 		if(args.length == 0)
-			WurstClient.INSTANCE.chat.message("IP: "
-				+ ServerHook.getCurrentServerIP());
+			wurst.chat.message("IP: " + ServerHook.getCurrentServerIP());
 		else if(args[0].toLowerCase().equals("copy"))
 		{
 			Toolkit
@@ -33,7 +31,7 @@ public class IpCmd extends Cmd
 				.getSystemClipboard()
 				.setContents(
 					new StringSelection(ServerHook.getCurrentServerIP()), null);
-			WurstClient.INSTANCE.chat.message("IP copied to clipboard.");
+			wurst.chat.message("IP copied to clipboard.");
 		}else
 			syntaxError();
 	}

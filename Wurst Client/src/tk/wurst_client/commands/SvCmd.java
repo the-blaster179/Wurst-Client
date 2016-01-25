@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.hooks.ServerHook;
 
@@ -23,9 +21,9 @@ public class SvCmd extends Cmd
 	{
 		if(args.length != 0)
 			syntaxError();
-		if(Minecraft.getMinecraft().isSingleplayer())
+		if(mc.isSingleplayer())
 			error("Can't check server version in singleplayer.");
-		WurstClient.INSTANCE.chat.message("Server version: "
+		wurst.chat.message("Server version: "
 			+ ServerHook.getLastServerData().gameVersion);
 	}
 }

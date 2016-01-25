@@ -11,9 +11,7 @@ package tk.wurst_client.commands;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 
 @Cmd.Info(help = "Shows your current position or copies it to the clipboard.",
 	name = "getpos",
@@ -25,16 +23,16 @@ public class GetPosCmd extends Cmd
 	{
 		if(args.length > 1)
 			syntaxError();
-		BlockPos blockpos = new BlockPos(Minecraft.getMinecraft().thePlayer);
+		BlockPos blockpos = new BlockPos(mc.thePlayer);
 		String pos =
 			blockpos.getX() + " " + blockpos.getY() + " " + blockpos.getZ();
 		if(args.length == 0)
-			WurstClient.INSTANCE.chat.message("Position: " + pos);
+			wurst.chat.message("Position: " + pos);
 		else if(args.length == 1 && args[0].equalsIgnoreCase("copy"))
 		{
 			Toolkit.getDefaultToolkit().getSystemClipboard()
 				.setContents(new StringSelection(pos), null);
-			WurstClient.INSTANCE.chat.message("Position copied to clipboard.");
+			wurst.chat.message("Position copied to clipboard.");
 		}
 	}
 }

@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -23,11 +22,8 @@ public class VClipCmd extends Cmd
 		if(args.length != 1)
 			syntaxError();
 		if(MiscUtils.isInteger(args[0]))
-			Minecraft.getMinecraft().thePlayer.setPosition(
-				Minecraft.getMinecraft().thePlayer.posX,
-				Minecraft.getMinecraft().thePlayer.posY
-					+ Integer.valueOf(args[0]),
-				Minecraft.getMinecraft().thePlayer.posZ);
+			mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY
+				+ Integer.valueOf(args[0]), mc.thePlayer.posZ);
 		else
 			syntaxError();
 	}

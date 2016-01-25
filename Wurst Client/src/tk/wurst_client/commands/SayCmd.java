@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import tk.wurst_client.commands.Cmd.Info;
 
@@ -25,8 +24,8 @@ public class SayCmd extends Cmd
 			String message = args[0];
 			for(int i = 1; i < args.length; i++)
 				message += " " + args[i];
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C01PacketChatMessage(message));
+			mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(
+				message));
 		}else
 			syntaxError("Message required.");
 	}

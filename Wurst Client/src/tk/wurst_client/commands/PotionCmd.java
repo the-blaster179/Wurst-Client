@@ -10,7 +10,6 @@ package tk.wurst_client.commands;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
@@ -32,11 +31,10 @@ public class PotionCmd extends Cmd
 	{
 		if(args.length == 0)
 			syntaxError();
-		if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+		if(!mc.thePlayer.capabilities.isCreativeMode)
 			error("Creative mode only.");
 		
-		ItemStack currentItem =
-			Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
+		ItemStack currentItem = mc.thePlayer.inventory.getCurrentItem();
 		if(currentItem == null
 			|| Item.getIdFromItem(currentItem.getItem()) != 373)
 			error("You are not holding a potion in your hand.");

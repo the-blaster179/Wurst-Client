@@ -8,9 +8,7 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C01PacketChatMessage;
-import tk.wurst_client.WurstClient;
 
 @Cmd.Info(help = "Leaves the current server or changes the mode of AutoLeave.",
 	name = "leave",
@@ -22,28 +20,26 @@ public class LeaveCmd extends Cmd
 	{
 		if(args.length > 2)
 			syntaxError();
-		if(Minecraft.getMinecraft().isIntegratedServerRunning()
-			&& Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfo()
-				.size() == 1)
+		if(mc.isIntegratedServerRunning()
+			&& mc.thePlayer.sendQueue.getPlayerInfo().size() == 1)
 			error("Cannot leave server when in singleplayer.");
 		switch(args.length)
 		{
 			case 0:
-				disconnectWithMode(WurstClient.INSTANCE.options.autoLeaveMode);
+				disconnectWithMode(wurst.options.autoLeaveMode);
 				break;
 			case 1:
 				if(args[0].equalsIgnoreCase("taco"))
 					for(int i = 0; i < 128; i++)
-						Minecraft.getMinecraft().thePlayer
-							.sendAutomaticChatMessage("Taco!");
+						mc.thePlayer.sendAutomaticChatMessage("Taco!");
 				else
 					disconnectWithMode(parseMode(args[0]));
 				break;
 			case 2:
-				WurstClient.INSTANCE.options.autoLeaveMode = parseMode(args[1]);
-				WurstClient.INSTANCE.files.saveOptions();
-				WurstClient.INSTANCE.chat.message("AutoLeave mode set to \""
-					+ args[1] + "\".");
+				wurst.options.autoLeaveMode = parseMode(args[1]);
+				wurst.files.saveOptions();
+				wurst.chat
+					.message("AutoLeave mode set to \"" + args[1] + "\".");
 				break;
 			default:
 				break;
@@ -55,12 +51,11 @@ public class LeaveCmd extends Cmd
 		switch(mode)
 		{
 			case 0:
-				Minecraft.getMinecraft().theWorld
-					.sendQuittingDisconnectingPacket();
+				mc.theWorld.sendQuittingDisconnectingPacket();
 				break;
 			case 1:
-				Minecraft.getMinecraft().thePlayer.sendQueue
-					.addToSendQueue(new C01PacketChatMessage("§"));
+				mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(
+					"§"));
 				break;
 			default:
 				break;

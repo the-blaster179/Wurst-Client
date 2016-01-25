@@ -9,7 +9,6 @@
 package tk.wurst_client.commands;
 
 import static org.lwjgl.opengl.GL11.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -17,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.events.listeners.GUIRenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -48,12 +46,12 @@ public class TacoCmd extends Cmd implements GUIRenderListener, UpdateListener
 		toggled = !toggled;
 		if(toggled)
 		{
-			WurstClient.INSTANCE.events.add(GUIRenderListener.class, this);
-			WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+			wurst.events.add(GUIRenderListener.class, this);
+			wurst.events.add(UpdateListener.class, this);
 		}else
 		{
-			WurstClient.INSTANCE.events.remove(GUIRenderListener.class, this);
-			WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+			wurst.events.remove(GUIRenderListener.class, this);
+			wurst.events.remove(UpdateListener.class, this);
 		}
 	}
 	
@@ -67,14 +65,11 @@ public class TacoCmd extends Cmd implements GUIRenderListener, UpdateListener
 		Tessellator var3 = Tessellator.getInstance();
 		WorldRenderer var4 = var3.getWorldRenderer();
 		ScaledResolution screenRes =
-			new ScaledResolution(Minecraft.getMinecraft(),
-				Minecraft.getMinecraft().displayWidth,
-				Minecraft.getMinecraft().displayHeight);
+			new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		if(ticks >= 32)
 			ticks = 0;
-		Minecraft.getMinecraft().getTextureManager()
-			.bindTexture(tacoTextures[ticks / 8]);
+		mc.getTextureManager().bindTexture(tacoTextures[ticks / 8]);
 		double x = screenRes.getScaledWidth() / 2 - 32 + 76;
 		double y = screenRes.getScaledHeight() - 32 - 19;
 		double h = 32;

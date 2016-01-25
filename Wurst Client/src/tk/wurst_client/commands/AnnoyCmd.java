@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
@@ -31,11 +29,10 @@ public class AnnoyCmd extends Cmd implements ChatInputListener
 			if(args.length == 1)
 			{
 				name = args[0];
-				WurstClient.INSTANCE.chat.message("Now annoying " + name + ".");
-				if(name.equals(Minecraft.getMinecraft().thePlayer.getName()))
-					WurstClient.INSTANCE.chat
-						.warning("Annoying yourself is a bad idea!");
-				WurstClient.INSTANCE.events.add(ChatInputListener.class, this);
+				wurst.chat.message("Now annoying " + name + ".");
+				if(name.equals(mc.thePlayer.getName()))
+					wurst.chat.warning("Annoying yourself is a bad idea!");
+				wurst.events.add(ChatInputListener.class, this);
 			}else
 			{
 				toggled = false;
@@ -43,11 +40,10 @@ public class AnnoyCmd extends Cmd implements ChatInputListener
 			}
 		}else
 		{
-			WurstClient.INSTANCE.events.remove(ChatInputListener.class, this);
+			wurst.events.remove(ChatInputListener.class, this);
 			if(name != null)
 			{
-				WurstClient.INSTANCE.chat.message("No longer annoying " + name
-					+ ".");
+				wurst.chat.message("No longer annoying " + name + ".");
 				name = null;
 			}
 		}
@@ -62,12 +58,12 @@ public class AnnoyCmd extends Cmd implements ChatInputListener
 		if(message.startsWith("<" + name + ">") || message.contains(name + ">"))
 		{
 			String repeatMessage = message.substring(message.indexOf(">") + 1);
-			Minecraft.getMinecraft().thePlayer.sendChatMessage(repeatMessage);
+			mc.thePlayer.sendChatMessage(repeatMessage);
 		}else if(message.contains("] " + name + ":")
 			|| message.contains("]" + name + ":"))
 		{
 			String repeatMessage = message.substring(message.indexOf(":") + 1);
-			Minecraft.getMinecraft().thePlayer.sendChatMessage(repeatMessage);
+			mc.thePlayer.sendChatMessage(repeatMessage);
 		}
 	}
 }
