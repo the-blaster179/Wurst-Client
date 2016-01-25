@@ -13,6 +13,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.mods.GuiOpSign;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.EXPLOITS,
 	description = "Enable this mod, place a sign and click it to get OP.\n"
@@ -25,6 +26,14 @@ import tk.wurst_client.mods.Mod.Info;
 public class OpSignMod extends Mod
 {
 	public String command;
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.special.bookHackSpf,
+			wurst.mods.forceOpMod, wurst.special.sessionStealerSpf};
+	}
 	
 	@Override
 	public void onEnable()

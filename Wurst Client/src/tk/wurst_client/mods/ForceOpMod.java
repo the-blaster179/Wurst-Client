@@ -35,6 +35,7 @@ import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.CHAT,
 	description = "Cracks AuthMe passwords. Can be used to get OP.\n"
@@ -80,6 +81,14 @@ public class ForceOpMod extends Mod implements ChatInputListener
 	private boolean gotWrongPWMSG;
 	private int lastPW;
 	private JLabel lAttempts;
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.opSignMod,
+			wurst.special.bookHackSpf, wurst.special.sessionStealerSpf};
+	}
 	
 	@Override
 	public void onEnable()
