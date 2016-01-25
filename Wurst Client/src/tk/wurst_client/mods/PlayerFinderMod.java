@@ -22,6 +22,7 @@ import tk.wurst_client.events.listeners.PacketInputListener;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
 
@@ -32,6 +33,14 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	RenderListener
 {
 	private BlockPos blockPos;
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		WurstClient wurst = WurstClient.INSTANCE;
+		return new NavigatorItem[]{wurst.mods.playerEspMod,
+			wurst.mods.tracersMod};
+	}
 	
 	@Override
 	public void onEnable()
@@ -66,8 +75,7 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(PacketInputListener.class,
-			this);
+		WurstClient.INSTANCE.events.remove(PacketInputListener.class, this);
 		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
 	}
 	
