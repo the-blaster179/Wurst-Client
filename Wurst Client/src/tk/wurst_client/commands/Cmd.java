@@ -30,6 +30,9 @@ public abstract class Cmd implements NavigatorItem
 	private String tags = getClass().getAnnotation(Info.class).tags();
 	private String tutorial = getClass().getAnnotation(Info.class).tutorial();
 	
+	protected static final WurstClient wurst = WurstClient.INSTANCE;
+	protected static final Minecraft mc = Minecraft.getMinecraft();
+	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface Info
 	{
