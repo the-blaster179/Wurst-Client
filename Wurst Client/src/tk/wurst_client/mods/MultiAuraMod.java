@@ -26,7 +26,7 @@ import tk.wurst_client.utils.EntityUtils;
 public class MultiAuraMod extends Mod implements UpdateListener
 {
 	private float range = 6F;
-
+	
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{

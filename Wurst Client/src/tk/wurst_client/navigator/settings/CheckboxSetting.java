@@ -67,10 +67,10 @@ public class CheckboxSetting implements NavigatorSetting
 	{
 		checked = json.get(name).getAsBoolean();
 	}
-
+	
 	@Override
 	public void update()
-	{
+	{	
 		
 	}
 }

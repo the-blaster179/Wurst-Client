@@ -29,8 +29,10 @@ public class GuiManagerDisplayScreen extends GuiScreen
 	@Override
 	public void initGui()
 	{
-		buttonList.add(new GuiButton(0, 2, height - 20, 150, 16, "Switch to the new GUI"));
-		buttonList.add(new GuiButton(1, 156, height - 20, 150, 16, "Learn More"));
+		buttonList.add(new GuiButton(0, 2, height - 20, 150, 16,
+			"Switch to the new GUI"));
+		buttonList
+			.add(new GuiButton(1, 156, height - 20, 150, 16, "Learn More"));
 	}
 	
 	@Override
@@ -39,7 +41,8 @@ public class GuiManagerDisplayScreen extends GuiScreen
 		switch(button.id)
 		{
 			case 0:
-				for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds.entrySet())
+				for(Entry<String, String> entry : WurstClient.INSTANCE.keybinds
+					.entrySet())
 					if(entry.getValue().equalsIgnoreCase(".t clickgui"))
 						entry.setValue(".t navigator");
 				WurstClient.INSTANCE.files.saveKeybinds();
@@ -155,7 +158,7 @@ public class GuiManagerDisplayScreen extends GuiScreen
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
-
+		
 		glColor4f(0.25F, 0.25F, 0.25F, 0.5F);
 		glBegin(GL_QUADS);
 		{
@@ -169,8 +172,9 @@ public class GuiManagerDisplayScreen extends GuiScreen
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
-		drawString(fontRendererObj, "§lNotice:§r You are currently viewing the old GUI.", 4, height - 36,
-			0xffffff);
+		drawString(fontRendererObj,
+			"§lNotice:§r You are currently viewing the old GUI.", 4,
+			height - 36, 0xffffff);
 		super.drawScreen(par2, par3, par4);
 	}
 }

@@ -33,9 +33,8 @@ public class Navigator
 		Field[] modFields = ModManager.class.getFields();
 		try
 		{
-			for(int i = 0; i < modFields.length; i++)
+			for(Field field : modFields)
 			{
-				Field field = modFields[i];
 				if(field.getName().endsWith("Mod"))
 					navigatorList.add((NavigatorItem)field
 						.get(WurstClient.INSTANCE.mods));
@@ -49,9 +48,8 @@ public class Navigator
 		Field[] cmdFields = CmdManager.class.getFields();
 		try
 		{
-			for(int i = 0; i < cmdFields.length; i++)
+			for(Field field : cmdFields)
 			{
-				Field field = cmdFields[i];
 				if(field.getName().endsWith("Cmd"))
 					navigatorList.add((NavigatorItem)field
 						.get(WurstClient.INSTANCE.commands));
@@ -65,9 +63,8 @@ public class Navigator
 		Field[] specialFields = SpfManager.class.getFields();
 		try
 		{
-			for(int i = 0; i < specialFields.length; i++)
+			for(Field field : specialFields)
 			{
-				Field field = specialFields[i];
 				if(field.getName().endsWith("Spf"))
 					navigatorList.add((NavigatorItem)field
 						.get(WurstClient.INSTANCE.special));

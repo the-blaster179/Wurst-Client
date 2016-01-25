@@ -29,7 +29,7 @@ public class AutoToolMod extends Mod implements LeftClickListener,
 {
 	private boolean isActive = false;
 	private int oldSlot;
-
+	
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{

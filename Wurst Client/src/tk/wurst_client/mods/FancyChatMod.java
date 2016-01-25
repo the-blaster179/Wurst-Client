@@ -32,19 +32,18 @@ public class FancyChatMod extends Mod implements ChatOutputListener
 	@Override
 	public void onSentMessage(ChatOutputEvent event)
 	{
-		if(event.getMessage().startsWith("/") || event.getMessage().startsWith("."))
+		if(event.getMessage().startsWith("/")
+			|| event.getMessage().startsWith("."))
 			return;
-			
+		
 		String out = "";
 		
 		for(char chr : event.getMessage().toCharArray())
-		{
 			if(chr >= 0x21 && chr <= 0x80
 				&& !blacklist.contains(Character.toString(chr)))
-				out += new String(Character.toChars(((int)chr) + 0xFEE0));
+				out += new String(Character.toChars(chr + 0xFEE0));
 			else
 				out += chr;
-		}
 		
 		event.setMessage(out);
 	}

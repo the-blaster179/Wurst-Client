@@ -73,8 +73,7 @@ public class GuiTeamSettings extends GuiScreen
 				/ 3 + offsetY, "§" + colors[i] + colors[i]));
 		}
 		boolean[] team_colors =
-			WurstClient.INSTANCE.special.targetSpf.teamColors
-				.getSelected();
+			WurstClient.INSTANCE.special.targetSpf.teamColors.getSelected();
 		for(int i = 0; i < 16; i++)
 			((TeamColorButton)buttonList.get(i)).setFakeHover(team_colors[i]);
 		
@@ -149,7 +148,7 @@ public class GuiTeamSettings extends GuiScreen
 		ArrayList<String> tooltip = new ArrayList<>();
 		for(int i = 0; i < buttonList.size(); i++)
 		{
-			GuiButton button = ((GuiButton)buttonList.get(i));
+			GuiButton button = (GuiButton)buttonList.get(i);
 			button.drawButton(mc, mouseX, mouseY);
 			
 			if(!button.isMouseOver())

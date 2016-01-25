@@ -30,7 +30,7 @@ public class AutoSwordMod extends Mod implements LeftClickListener,
 {
 	private int oldSlot;
 	private int timer;
-
+	
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
@@ -79,7 +79,7 @@ public class AutoSwordMod extends Mod implements LeftClickListener,
 	
 	public static void setSlot()
 	{
-		if((WurstClient.INSTANCE.mods.autoEatMod).isEating())
+		if(WurstClient.INSTANCE.mods.autoEatMod.isEating())
 			return;
 		float bestSpeed = 1F;
 		int bestSlot = -1;

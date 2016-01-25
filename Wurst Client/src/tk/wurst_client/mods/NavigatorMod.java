@@ -20,6 +20,7 @@ public class NavigatorMod extends Mod
 	public void onToggle()
 	{
 		if(!(Minecraft.getMinecraft().currentScreen instanceof NavigatorMainScreen))
-			Minecraft.getMinecraft().displayGuiScreen(new NavigatorMainScreen());
+			Minecraft.getMinecraft()
+				.displayGuiScreen(new NavigatorMainScreen());
 	}
 }

@@ -19,9 +19,7 @@ import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 import tk.wurst_client.utils.BlockUtils;
 
-@Info(category = Category.HIDDEN,
-	description = "",
-	name = "GoTo")
+@Info(category = Category.HIDDEN, description = "", name = "GoTo")
 public class GoToCmdMod extends Mod implements UpdateListener
 {
 	private static ArrayList<BlockPos> path;

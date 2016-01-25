@@ -54,7 +54,6 @@ public class KillauraLegitMod extends Mod implements UpdateListener
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
 		if(hasTimePassedS(WurstClient.INSTANCE.mods.killauraMod.yesCheatSpeed)
 			&& en != null)
-		{
 			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= WurstClient.INSTANCE.mods.killauraMod.yesCheatRange)
 			{
 				if(WurstClient.INSTANCE.mods.criticalsMod.isActive()
@@ -71,7 +70,6 @@ public class KillauraLegitMod extends Mod implements UpdateListener
 				}
 				updateLastMS();
 			}
-		}
 	}
 	
 	@Override

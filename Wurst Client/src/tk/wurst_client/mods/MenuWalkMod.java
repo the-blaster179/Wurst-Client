@@ -34,9 +34,9 @@ public class MenuWalkMod extends Mod
 			return false;
 		
 		// check if player is viewing chat
-		if((mc.currentScreen instanceof GuiChat)
-			|| (mc.currentScreen instanceof GuiIngameMenu)
-			|| (mc.currentScreen instanceof NavigatorScreen))
+		if(mc.currentScreen instanceof GuiChat
+			|| mc.currentScreen instanceof GuiIngameMenu
+			|| mc.currentScreen instanceof NavigatorScreen)
 			return false;
 		
 		// check if inventory key is pressed

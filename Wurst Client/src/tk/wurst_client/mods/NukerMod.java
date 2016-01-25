@@ -197,7 +197,7 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 				Minecraft.getMinecraft().theWorld, pos)
 				* (WurstClient.INSTANCE.mods.fastBreakMod.isActive()
 					&& WurstClient.INSTANCE.options.fastbreakMode == 0
-					? (WurstClient.INSTANCE.mods.fastBreakMod).speed : 1);
+					? WurstClient.INSTANCE.mods.fastBreakMod.speed : 1);
 		Minecraft.getMinecraft().theWorld.sendBlockBreakProgress(
 			Minecraft.getMinecraft().thePlayer.getEntityId(), pos,
 			(int)(currentDamage * 10.0F) - 1);

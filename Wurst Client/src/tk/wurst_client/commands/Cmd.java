@@ -103,8 +103,8 @@ public abstract class Cmd implements NavigatorItem
 		String description = help;
 		if(syntax.length > 0)
 			description += "\n\nSyntax:";
-		for(int i = 0; i < syntax.length; i++)
-			description += "\n  ." + name + " " + syntax[i];
+		for(String element : syntax)
+			description += "\n  ." + name + " " + element;
 		return description;
 	}
 	

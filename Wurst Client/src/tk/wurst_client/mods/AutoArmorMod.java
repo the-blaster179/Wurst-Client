@@ -35,8 +35,8 @@ public class AutoArmorMod extends Mod implements UpdateListener
 	public void onUpdate()
 	{
 		if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-			|| (Minecraft.getMinecraft().currentScreen instanceof GuiContainer && !(Minecraft
-				.getMinecraft().currentScreen instanceof GuiInventory)))
+			|| Minecraft.getMinecraft().currentScreen instanceof GuiContainer
+			&& !(Minecraft.getMinecraft().currentScreen instanceof GuiInventory))
 			return;
 		updateMS();
 		if(hasTimePassedM(3000))

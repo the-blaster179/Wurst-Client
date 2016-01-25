@@ -32,8 +32,8 @@ public class SpeedHackMod extends Mod implements UpdateListener
 	{
 		// return if sneaking or not walking
 		if(Minecraft.getMinecraft().thePlayer.isSneaking()
-			|| (Minecraft.getMinecraft().thePlayer.moveForward == 0 && Minecraft
-				.getMinecraft().thePlayer.moveStrafing == 0))
+			|| Minecraft.getMinecraft().thePlayer.moveForward == 0
+			&& Minecraft.getMinecraft().thePlayer.moveStrafing == 0)
 			return;
 		
 		// activate sprint if walking forward

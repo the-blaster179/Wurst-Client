@@ -167,7 +167,7 @@ public final class GuiManager extends AbstractGuiManager
 			for(NavigatorSetting setting : mod.getSettings())
 				if(setting instanceof BasicSlider)
 				{
-					BasicSlider slider = ((BasicSlider)setting);
+					BasicSlider slider = (BasicSlider)setting;
 					slider.addSliderListener(new SliderListener()
 					{
 						@Override

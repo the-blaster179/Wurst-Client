@@ -114,8 +114,7 @@ public class FileManager
 		loadAutoBuildTemplates();
 		AutoBuildMod autoBuildMod = WurstClient.INSTANCE.mods.autoBuildMod;
 		autoBuildMod.initTemplateSetting();
-		if(autoBuildMod .getTemplate() >= AutoBuildMod.names
-			.size())
+		if(autoBuildMod.getTemplate() >= AutoBuildMod.names.size())
 		{
 			autoBuildMod.setTemplate(0);
 			saveNavigatorData();

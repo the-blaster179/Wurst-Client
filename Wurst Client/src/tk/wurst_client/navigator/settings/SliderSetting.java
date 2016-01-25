@@ -10,9 +10,9 @@ package tk.wurst_client.navigator.settings;
 
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
-import com.google.gson.JsonObject;
-
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
+
+import com.google.gson.JsonObject;
 
 public class SliderSetting extends BasicSlider implements NavigatorSetting
 {

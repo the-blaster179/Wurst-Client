@@ -57,7 +57,6 @@ public class ClickAuraMod extends Mod implements UpdateListener
 		if(hasTimePassedS(WurstClient.INSTANCE.mods.killauraMod.realSpeed)
 			&& en != null
 			&& Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed)
-		{
 			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= WurstClient.INSTANCE.mods.killauraMod.realRange)
 			{
 				if(WurstClient.INSTANCE.mods.autoSwordMod.isActive())
@@ -70,7 +69,6 @@ public class ClickAuraMod extends Mod implements UpdateListener
 					Minecraft.getMinecraft().thePlayer, en);
 				updateLastMS();
 			}
-		}
 	}
 	
 	@Override

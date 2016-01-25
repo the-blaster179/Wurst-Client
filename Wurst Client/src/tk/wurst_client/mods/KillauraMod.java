@@ -95,7 +95,6 @@ public class KillauraMod extends Mod implements UpdateListener
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
 		if(hasTimePassedS(realSpeed) && en != null)
-		{
 			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= realRange)
 			{
 				if(WurstClient.INSTANCE.mods.autoSwordMod.isActive())
@@ -108,7 +107,6 @@ public class KillauraMod extends Mod implements UpdateListener
 					Minecraft.getMinecraft().thePlayer, en);
 				updateLastMS();
 			}
-		}
 	}
 	
 	@Override
