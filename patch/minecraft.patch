@@ -1,6 +1,6 @@
-From 2c2b22a0704f687e76707a68b929e6c5da7232f6 Mon Sep 17 00:00:00 2001
+From bf24b04dc8f098dc51d17f56ff9108db514a3563 Mon Sep 17 00:00:00 2001
 From: Alexander01998 <contact.wurstimperium@gmail.com>
-Date: Mon, 7 Dec 2015 22:15:21 +0100
+Date: Mon, 25 Jan 2016 11:05:54 +0100
 Subject: [PATCH] Wurst
 
 ---
@@ -16,7 +16,7 @@ Subject: [PATCH] Wurst
  src/net/minecraft/client/Minecraft.java            | 391 ++++++++++++++-------
  src/net/minecraft/client/audio/SoundManager.java   |   8 +-
  .../client/entity/AbstractClientPlayer.java        |  19 +-
- .../minecraft/client/entity/EntityPlayerSP.java    | 152 ++++++--
+ .../minecraft/client/entity/EntityPlayerSP.java    | 154 ++++++--
  src/net/minecraft/client/gui/FontRenderer.java     |  49 ++-
  src/net/minecraft/client/gui/Gui.java              |   8 +-
  src/net/minecraft/client/gui/GuiButton.java        |  96 ++---
@@ -232,7 +232,7 @@ Subject: [PATCH] Wurst
  .../minecraft/world/gen/ChunkProviderServer.java   |   3 +
  src/net/minecraft/world/gen/layer/GenLayer.java    |   1 +
  .../world/gen/structure/MapGenStructure.java       |   2 +
- 228 files changed, 2609 insertions(+), 1163 deletions(-)
+ 228 files changed, 2610 insertions(+), 1164 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index eba4a99..aad12bb 100644
@@ -318,13 +318,13 @@ index 5c07aa4..47bb6ff 100644
      }
  
 diff --git a/src/net/minecraft/block/BlockBeacon.java b/src/net/minecraft/block/BlockBeacon.java
-index a6564df..ca24541 100644
+index a6564df..0ff1405 100644
 --- a/src/net/minecraft/block/BlockBeacon.java
 +++ b/src/net/minecraft/block/BlockBeacon.java
 @@ -113,9 +113,11 @@ public class BlockBeacon extends BlockContainer
              {
                  Chunk var1 = worldIn.getChunkFromBlockCoords(p_176450_1_);
-                 
+ 
 +                // TODO: Client
 +                final BlockPos var3 = new BlockPos(0, 0, 0);
                  for (int var2 = p_176450_1_.getY() - 1; var2 >= 0; --var2)
@@ -445,7 +445,7 @@ index 4689151..5987289 100644
  
      /**
 diff --git a/src/net/minecraft/block/BlockSlab.java b/src/net/minecraft/block/BlockSlab.java
-index 0c52e06..c9d4dda 100644
+index 0c52e06..e68868e 100644
 --- a/src/net/minecraft/block/BlockSlab.java
 +++ b/src/net/minecraft/block/BlockSlab.java
 @@ -2,6 +2,7 @@ package net.minecraft.block;
@@ -539,7 +539,7 @@ index 555f15e..d98e274 100644
  
                  if (OpenGlHelper.isFramebufferEnabled())
 diff --git a/src/net/minecraft/client/Minecraft.java b/src/net/minecraft/client/Minecraft.java
-index f503b64..3a37e16 100644
+index f503b64..f3587c7 100644
 --- a/src/net/minecraft/client/Minecraft.java
 +++ b/src/net/minecraft/client/Minecraft.java
 @@ -1,60 +1,44 @@
@@ -854,33 +854,33 @@ index f503b64..3a37e16 100644
          Util.EnumOS var1 = Util.getOSType();
  
 @@ -751,23 +726,145 @@ public class Minecraft implements IThreadListener, IPlayerUsage
-     	File var3 = new File(var2, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
-     	Bootstrap.func_179870_a(crashReportIn.getCompleteReport());
-     	
+         File var3 = new File(var2, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+         Bootstrap.func_179870_a(crashReportIn.getCompleteReport());
+ 
 -        if (crashReportIn.getFile() != null)
 +		//MiscUtils.openLink("http://www.wurst-client.tk/bugs");
 +    	//doWurstCrash(crashReportIn, var3.getAbsolutePath());
 +    	//while(true);
 +    	//TODO: Client
 +    	if(crashReportIn.getFile() != null)
-     	{
-     		Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
-     		System.exit(-1);
+         {
+             Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
+             System.exit(-1);
 -        }
 -        else if (crashReportIn.saveToFile(var3))
 +    	}else if(crashReportIn.saveToFile(var3))
-     	{
-     		Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + var3.getAbsolutePath());
-     		System.exit(-1);
+         {
+             Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + var3.getAbsolutePath());
+             System.exit(-1);
 -        }
 -        else
 +    	}else
-     	{
-     		Bootstrap.func_179870_a("#@?@# Game crashed! Crash report could not be saved. #@?@#");
-     		System.exit(-2);
-     	}
+         {
+             Bootstrap.func_179870_a("#@?@# Game crashed! Crash report could not be saved. #@?@#");
+             System.exit(-2);
+         }
      }
-     
+ 
 +    //TODO: Client
 +    private void doWurstCrash(final CrashReport crashReportIn, final String reportPath)
 +    {
@@ -1035,7 +1035,7 @@ index f503b64..3a37e16 100644
      {
          this.mcProfiler.startSection("display_update");
 +        if(!WurstBot.isEnabled())
-         	Display.update();
+         Display.update();
          this.mcProfiler.endSection();
          this.func_175604_i();
 @@ -1329,7 +1427,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
@@ -1161,7 +1161,7 @@ index f503b64..3a37e16 100644
 +		// TODO: Client
 +		if(this.currentScreen != null
 +			&& !WurstClient.INSTANCE.mods.menuWalkMod.shouldAllowWalking())
- 		{
+         {
 +        	
              try
              {
@@ -1174,7 +1174,7 @@ index f503b64..3a37e16 100644
 +		// TODO: Client
 +		if(this.currentScreen == null || this.currentScreen.allowUserInput
 +			|| WurstClient.INSTANCE.mods.menuWalkMod.shouldAllowWalking())
- 		{
+         {
 +        	
              this.mcProfiler.endStartSection("mouse");
              int var1;
@@ -1259,12 +1259,12 @@ index f503b64..3a37e16 100644
              var3 = this.thePlayer.getClientBrand();
 -        }
  
- 	        this.field_175622_Z = null;
- 	        EntityPlayerSP var4 = this.thePlayer;
+         this.field_175622_Z = null;
+         EntityPlayerSP var4 = this.thePlayer;
 @@ -2436,6 +2557,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
- 	        this.thePlayer.setEntityId(var2);
- 	        this.playerController.setPlayerCapabilities(this.thePlayer);
- 	        this.thePlayer.func_175150_k(var4.func_175140_cp());
+         this.thePlayer.setEntityId(var2);
+         this.playerController.setPlayerCapabilities(this.thePlayer);
+         this.thePlayer.func_175150_k(var4.func_175140_cp());
 +        }
  
          if (this.currentScreen instanceof GuiGameOver)
@@ -1406,7 +1406,7 @@ index de9ca57..042182a 100644
  
      public float func_175156_o()
 diff --git a/src/net/minecraft/client/entity/EntityPlayerSP.java b/src/net/minecraft/client/entity/EntityPlayerSP.java
-index eefe303..e1eac90 100644
+index eefe303..132854d 100644
 --- a/src/net/minecraft/client/entity/EntityPlayerSP.java
 +++ b/src/net/minecraft/client/entity/EntityPlayerSP.java
 @@ -1,5 +1,6 @@
@@ -1535,11 +1535,11 @@ index eefe303..e1eac90 100644
 +				|| WurstClient.INSTANCE.mods.freecamMod.isActive()
 +				|| (WurstClient.INSTANCE.mods.potionSaverMod.isActive()
 +					&& !getActivePotionEffects().isEmpty() && motionX == 0 && motionZ == 0))
- 			{	
+             {
 +				
 +			}else if(WurstClient.INSTANCE.mods.blinkMod.isActive())
 +            {//Redirects motion updates to the Blink queue
-             	if (var13 && var14)
+                 if (var13 && var14)
                  {
 -                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround));
 +                    BlinkMod.addToBlinkQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, yaw, pitch, this.onGround));
@@ -1597,9 +1597,9 @@ index eefe303..e1eac90 100644
 +                else if (var14)
 +                {
 +                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(yaw, pitch, this.onGround));
-                 }
-                 else
-                 {
+             }
+             else
+             {
 -                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, this.rotationYaw, this.rotationPitch, this.onGround));
 +                    this.sendQueue.addToSendQueue(new C03PacketPlayer(this.onGround));
 +                }
@@ -1609,10 +1609,11 @@ index eefe303..e1eac90 100644
                  var13 = false;
              }
  
-@@ -255,10 +327,32 @@ public class EntityPlayerSP extends AbstractClientPlayer
+@@ -255,7 +327,29 @@ public class EntityPlayerSP extends AbstractClientPlayer
       */
      public void sendChatMessage(String p_71165_1_)
      {
+-        this.sendQueue.addToSendQueue(new C01PacketChatMessage(p_71165_1_));
 +        //TODO: Client
 +      	ChatOutputEvent event = new ChatOutputEvent(p_71165_1_, false);
 +      	WurstClient.INSTANCE.commands.onSentMessage(event);
@@ -1620,10 +1621,10 @@ index eefe303..e1eac90 100644
 +      	if(event.isCancelled())
 +      		return;
 +      	
-         this.sendQueue.addToSendQueue(new C01PacketChatMessage(event.getMessage()));
-     }
- 
-     /**
++        this.sendQueue.addToSendQueue(new C01PacketChatMessage(event.getMessage()));
++    }
++
++    /**
 +     * Sends a chat message from the player. Args: chatMessage
 +     */
 +    public void sendAutomaticChatMessage(String message)
@@ -1636,12 +1637,9 @@ index eefe303..e1eac90 100644
 +      		return;
 +      	
 +        this.sendQueue.addToSendQueue(new C01PacketChatMessage(event.getMessage()));
-+    }
-+
-+    /**
-      * Swings the item the player is holding.
-      */
-     public void swingItem()
+     }
+ 
+     /**
 @@ -738,7 +832,9 @@ public class EntityPlayerSP extends AbstractClientPlayer
          boolean var4 = this.movementInput.moveForward >= var3;
          this.movementInput.updatePlayerMoveState();
@@ -1654,7 +1652,7 @@ index eefe303..e1eac90 100644
              this.movementInput.moveStrafe *= 0.2F;
              this.movementInput.moveForward *= 0.2F;
 diff --git a/src/net/minecraft/client/gui/FontRenderer.java b/src/net/minecraft/client/gui/FontRenderer.java
-index 2d4215d..2344f7e 100644
+index 2d4215d..b1b08be 100644
 --- a/src/net/minecraft/client/gui/FontRenderer.java
 +++ b/src/net/minecraft/client/gui/FontRenderer.java
 @@ -1,8 +1,5 @@
@@ -1738,7 +1736,7 @@ index 2d4215d..2344f7e 100644
 +							Minecraft.getMinecraft().session.getUsername(),
 +							"§oMe§r");
 +				}else if(p_175065_1_.contains(name))
- 				{
+     {
 +					p_175065_1_ =
 +						p_175065_1_.replace(name, "§oPlayer" + i + "§r");
 +				}
@@ -1784,7 +1782,7 @@ index b829f4c..8172ae9 100644
  
      /**
 diff --git a/src/net/minecraft/client/gui/GuiButton.java b/src/net/minecraft/client/gui/GuiButton.java
-index e7f6171..c745728 100644
+index e7f6171..3eeba52 100644
 --- a/src/net/minecraft/client/gui/GuiButton.java
 +++ b/src/net/minecraft/client/gui/GuiButton.java
 @@ -3,6 +3,8 @@ package net.minecraft.client.gui;
@@ -1798,8 +1796,8 @@ index e7f6171..c745728 100644
  
 @@ -41,34 +43,31 @@ public class GuiButton extends Gui
  
- 	public GuiButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText)
- 	{
+     public GuiButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText)
+     {
 -        this.width = 200;
 -        this.height = 20;
 -        this.enabled = true;
@@ -1820,48 +1818,48 @@ index e7f6171..c745728 100644
 +		width = widthIn;
 +		height = heightIn;
 +		displayString = buttonText;
- 	}
+     }
  
- 	/**
+     /**
 -     * Returns 0 if the button is disabled, 1 if the mouse is NOT hovering over this button and 2 if it IS hovering over
 +	 * Returns 0 if the button is disabled, 1 if the mouse is NOT hovering over
 +	 * this button and 2 if it IS hovering over
- 	 * this button.
- 	 */
- 	protected int getHoverState(boolean mouseOver)
- 	{
- 		byte var2 = 1;
+      * this button.
+      */
+     protected int getHoverState(boolean mouseOver)
+     {
+         byte var2 = 1;
  
 -        if (!this.enabled)
 -        {
 +		if(!enabled)
- 			var2 = 0;
+             var2 = 0;
 -        }
 -        else if (mouseOver)
 -        {
 +		else if(mouseOver)
- 			var2 = 2;
+             var2 = 2;
 -        }
  
- 		return var2;
- 	}
+         return var2;
+     }
 @@ -78,51 +77,67 @@ public class GuiButton extends Gui
- 	 */
- 	public void drawButton(Minecraft mc, int mouseX, int mouseY)
- 	{
+      */
+     public void drawButton(Minecraft mc, int mouseX, int mouseY)
+     {
 -        if (this.visible)
 +		if(visible)
- 		{
- 			FontRenderer var4 = mc.fontRendererObj;
- 			mc.getTextureManager().bindTexture(buttonTextures);
- 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         {
+             FontRenderer var4 = mc.fontRendererObj;
+             mc.getTextureManager().bindTexture(buttonTextures);
+             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 -            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 -            int var5 = this.getHoverState(this.hovered);
 +			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 +			int var5 = getHoverState(hovered);
- 			GlStateManager.enableBlend();
- 			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
- 			GlStateManager.blendFunc(770, 771);
+             GlStateManager.enableBlend();
+             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+             GlStateManager.blendFunc(770, 771);
 -            this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + var5 * 20, this.width / 2, this.height);
 -            this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + var5 * 20, this.width / 2, this.height);
 -            this.mouseDragged(mc, mouseX, mouseY);
@@ -1877,13 +1875,13 @@ index e7f6171..c745728 100644
 +			 * this
 +			 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +			 */
- 			{
+             {
 -                var6 = 10526880;
 +				drawTexturedModalRect(xPosition, yPosition, 0, 46 + var5 * 20, width / 2, height / 2);
 +				drawTexturedModalRect(xPosition + width / 2, yPosition, 200 - width / 2, 46 + var5 * 20, width / 2, height / 2);
 +				drawTexturedModalRect(xPosition, yPosition + height / 2, 0, 46 + var5 * 20 + 20 - height / 2, width / 2, height / 2);
 +				drawTexturedModalRect(xPosition + width / 2, yPosition + height / 2, 200 - width / 2, 46 + var5 * 20 + 20 - height / 2, width / 2, height / 2);
- 			}
+             }
 -            else if (this.hovered)
 -            {
 +
@@ -1893,72 +1891,72 @@ index e7f6171..c745728 100644
 +			if(!enabled)
 +				var6 = 10526880;
 +			else if(hovered)
- 				var6 = 16777120;
+                 var6 = 16777120;
 -            }
  
 -            this.drawCenteredString(var4, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, var6);
 +			drawCenteredString(var4, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, var6);
- 		}
- 	}
+         }
+     }
  
- 	/**
+     /**
 -     * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
 +	 * Fired when the mouse button is dragged. Equivalent of
 +	 * MouseListener.mouseDragged(MouseEvent e).
- 	 */
+      */
 -    protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {}
 +	protected void mouseDragged(Minecraft mc, int mouseX, int mouseY)
 +	{}
  
- 	/**
+     /**
 -     * Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
 +	 * Fired when the mouse button is released. Equivalent of
 +	 * MouseListener.mouseReleased(MouseEvent e).
- 	 */
+      */
 -    public void mouseReleased(int mouseX, int mouseY) {}
 +	public void mouseReleased(int mouseX, int mouseY)
 +	{}
  
- 	/**
+     /**
 -     * Returns true if the mouse has been pressed on this control. Equivalent of MouseListener.mousePressed(MouseEvent
 +	 * Returns true if the mouse has been pressed on this control. Equivalent of
 +	 * MouseListener.mousePressed(MouseEvent
- 	 * e).
- 	 */
- 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
- 	{
+      * e).
+      */
+     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
+     {
 -        return this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 +		return enabled && visible && mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
- 	}
+     }
  
- 	/**
+     /**
 @@ -130,10 +145,11 @@ public class GuiButton extends Gui
- 	 */
- 	public boolean isMouseOver()
- 	{
+      */
+     public boolean isMouseOver()
+     {
 -        return this.hovered;
 +		return hovered;
- 	}
+     }
  
 -    public void drawButtonForegroundLayer(int mouseX, int mouseY) {}
 +	public void drawButtonForegroundLayer(int mouseX, int mouseY)
 +	{}
  
- 	public void playPressSound(SoundHandler soundHandlerIn)
- 	{
+     public void playPressSound(SoundHandler soundHandlerIn)
+     {
 @@ -142,11 +158,11 @@ public class GuiButton extends Gui
  
- 	public int getButtonWidth()
- 	{
+     public int getButtonWidth()
+     {
 -        return this.width;
 +		return width;
- 	}
+     }
  
- 	public void func_175211_a(int p_175211_1_)
- 	{
+     public void func_175211_a(int p_175211_1_)
+     {
 -        this.width = p_175211_1_;
 +		width = p_175211_1_;
- 	}
+     }
  }
 diff --git a/src/net/minecraft/client/gui/GuiButtonLanguage.java b/src/net/minecraft/client/gui/GuiButtonLanguage.java
 index 3ac6cf9..7f10253 100644
@@ -2145,7 +2143,7 @@ index 94b72e0..bd1c205 100644
              var7.addVertexWithUV((double)(this.width / 2 + 90), 185.0D, 0.0D, 5.625D, 2.65625D);
              var7.addVertexWithUV((double)(this.width / 2 + 90), 100.0D, 0.0D, 5.625D, 0.0D);
 diff --git a/src/net/minecraft/client/gui/GuiDisconnected.java b/src/net/minecraft/client/gui/GuiDisconnected.java
-index 957deda..6c447d3 100644
+index 957deda..1f58fea 100644
 --- a/src/net/minecraft/client/gui/GuiDisconnected.java
 +++ b/src/net/minecraft/client/gui/GuiDisconnected.java
 @@ -3,9 +3,17 @@ package net.minecraft.client.gui;
@@ -2176,14 +2174,14 @@ index 957deda..6c447d3 100644
  
      public GuiDisconnected(GuiScreen p_i45020_1_, String p_i45020_2_, IChatComponent p_i45020_3_)
 @@ -20,6 +30,10 @@ public class GuiDisconnected extends GuiScreen
- 		this.parentScreen = p_i45020_1_;
- 		this.reason = I18n.format(p_i45020_2_, new Object[0]);
- 		this.message = p_i45020_3_;
+         this.parentScreen = p_i45020_1_;
+         this.reason = I18n.format(p_i45020_2_, new Object[0]);
+         this.message = p_i45020_3_;
 +		LogManager.getLogger().info(
 +			"Disconnected.\n    Message: "
 +				+ (message == null ? null : message.getUnformattedText())
 +				+ "\n    Reason: " + reason);
- 	}
+     }
  
      /**
 @@ -37,13 +51,82 @@ public class GuiDisconnected extends GuiScreen
@@ -2267,11 +2265,11 @@ index 957deda..6c447d3 100644
 +			servers.serverListSelector
 +				.func_148195_a(servers.savedServerList);
 +			mc.displayGuiScreen(servers);
- 		}
+         }
      }
  
 diff --git a/src/net/minecraft/client/gui/GuiEnchantment.java b/src/net/minecraft/client/gui/GuiEnchantment.java
-index f1f80fa..4c27915 100644
+index f1f80fa..ee893f2 100644
 --- a/src/net/minecraft/client/gui/GuiEnchantment.java
 +++ b/src/net/minecraft/client/gui/GuiEnchantment.java
 @@ -209,7 +209,7 @@ public class GuiEnchantment extends GuiContainer
@@ -2298,7 +2296,7 @@ index f1f80fa..4c27915 100644
                  {
 -                    if (var8 >= 0)
 -                    {
-                     var10.add("");
+                         var10.add("");
 -                    }
  
                      if (this.mc.thePlayer.experienceLevel < var7)
@@ -3120,7 +3118,7 @@ index 518840e..0550d2e 100644
                  this.renderToolTip(var11, mouseX, mouseY);
              }
 diff --git a/src/net/minecraft/client/gui/GuiMultiplayer.java b/src/net/minecraft/client/gui/GuiMultiplayer.java
-index da42542..7fdb8d8 100644
+index da42542..f1916c2 100644
 --- a/src/net/minecraft/client/gui/GuiMultiplayer.java
 +++ b/src/net/minecraft/client/gui/GuiMultiplayer.java
 @@ -1,26 +1,53 @@
@@ -3198,7 +3196,7 @@ index da42542..7fdb8d8 100644
 +        
 +        //TODO: Client
 +        if(serverListSelector != null)
-         	this.serverListSelector.func_178039_p();
+         this.serverListSelector.func_178039_p();
      }
  
 @@ -94,7 +127,16 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
@@ -3256,7 +3254,7 @@ index da42542..7fdb8d8 100644
 -            }
 -        }
 -    }
-                 
+ 
 -    private void refreshServerList()
 +				// TODO: Client
 +			}else if(button.id == 5)
@@ -3385,7 +3383,7 @@ index da42542..7fdb8d8 100644
 +
 +        //TODO: Client
 +        ServerHook.updateLastServerFromServerlist(var1, this);
-         
+ 
          if (var1 instanceof ServerListEntryNormal)
          {
 @@ -387,14 +461,18 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
@@ -3428,7 +3426,7 @@ index da42542..7fdb8d8 100644
              this.selectServer(var4);
          }
 diff --git a/src/net/minecraft/client/gui/GuiNewChat.java b/src/net/minecraft/client/gui/GuiNewChat.java
-index 1614678..8a2e1fd 100644
+index 1614678..0ea1042 100644
 --- a/src/net/minecraft/client/gui/GuiNewChat.java
 +++ b/src/net/minecraft/client/gui/GuiNewChat.java
 @@ -1,17 +1,23 @@
@@ -3486,10 +3484,10 @@ index 1614678..8a2e1fd 100644
 +    	try
 +		{
 +			if(p_146237_2_ != 0)
- 			{
- 				this.deleteChatLine(p_146237_2_);
- 			}
- 			
+         {
+             this.deleteChatLine(p_146237_2_);
+         }
+ 
 -        int var5 = MathHelper.floor_float((float)this.getChatWidth() / this.getChatScale());
 -        List var6 = GuiUtilRenderComponents.func_178908_a(p_146237_1_, var5, this.mc.fontRendererObj, false, false);
 +			int var5 =
@@ -3498,42 +3496,42 @@ index 1614678..8a2e1fd 100644
 +			List var6 =
 +				GuiUtilRenderComponents.func_178908_a(p_146237_1_, var5,
 +					this.mc.fontRendererObj, false, false);
- 			boolean var7 = this.getChatOpen();
- 			IChatComponent var9;
- 			
+         boolean var7 = this.getChatOpen();
+         IChatComponent var9;
+ 
 -        for (Iterator var8 = var6.iterator(); var8.hasNext(); this.field_146253_i.add(0, new ChatLine(p_146237_3_, var9, p_146237_2_)))
 +			for(Iterator var8 = var6.iterator(); var8.hasNext(); this.field_146253_i
 +				.add(0, new ChatLine(p_146237_3_, var9, p_146237_2_)))
- 			{
- 				var9 = (IChatComponent)var8.next();
- 				
+         {
+             var9 = (IChatComponent)var8.next();
+ 
 -            if (var7 && this.scrollPos > 0)
 +				if(var7 && this.scrollPos > 0)
- 				{
- 					this.isScrolled = true;
- 					this.scroll(1);
- 				}
- 			}
- 			
+             {
+                 this.isScrolled = true;
+                 this.scroll(1);
+             }
+         }
+ 
 -        while (this.field_146253_i.size() > 100)
 +			while(this.field_146253_i.size() > 100)
- 			{
- 				this.field_146253_i.remove(this.field_146253_i.size() - 1);
- 			}
- 			
+         {
+             this.field_146253_i.remove(this.field_146253_i.size() - 1);
+         }
+ 
 -        if (!p_146237_4_)
 +			if(!p_146237_4_)
- 			{
+         {
 -            this.chatLines.add(0, new ChatLine(p_146237_3_, p_146237_1_, p_146237_2_));
 +				this.chatLines.add(0, new ChatLine(p_146237_3_, p_146237_1_,
 +					p_146237_2_));
- 				
+ 
 -            while (this.chatLines.size() > 100)
 +				while(this.chatLines.size() > 100)
- 				{
- 					this.chatLines.remove(this.chatLines.size() - 1);
- 				}
- 			}
+             {
+                 this.chatLines.remove(this.chatLines.size() - 1);
+             }
+         }
 +		}catch(IndexOutOfBoundsException e)
 +    	{
 +    		// Rarely gets thrown for no reason
@@ -3872,7 +3870,7 @@ index 098969d..f032cdc 100644
  
  public class GuiScreenAddServer extends GuiScreen
 diff --git a/src/net/minecraft/client/gui/GuiScreenBook.java b/src/net/minecraft/client/gui/GuiScreenBook.java
-index 914a882..bff5797 100644
+index 914a882..11ff3f7 100644
 --- a/src/net/minecraft/client/gui/GuiScreenBook.java
 +++ b/src/net/minecraft/client/gui/GuiScreenBook.java
 @@ -2,11 +2,15 @@ package net.minecraft.client.gui;
@@ -3922,7 +3920,7 @@ index 914a882..bff5797 100644
 @@ -68,6 +79,10 @@ public class GuiScreenBook extends GuiScreen
      private GuiButton buttonCancel;
      private static final String __OBFID = "CL_00000744";
-     
+ 
 +    //TODO: Client
 +    private boolean hasCommand;
 +    private String command;
@@ -3999,12 +3997,12 @@ index 914a882..bff5797 100644
 +            }else if(button.id == 6)
 +			{
 +            	mc.displayGuiScreen(new GuiBookHack(this));
- 			}
+             }
  
              this.updateButtons();
          }
      }
-     
+ 
 +    //TODO: Client
 +    public void signWithCommand(String command)
 +    {
@@ -4757,7 +4755,7 @@ index ba125d8..e681e0a 100644
  import org.apache.logging.log4j.Logger;
  
 diff --git a/src/net/minecraft/client/gui/inventory/GuiChest.java b/src/net/minecraft/client/gui/inventory/GuiChest.java
-index 93156ec..a5c9e04 100644
+index 93156ec..c1acb92 100644
 --- a/src/net/minecraft/client/gui/inventory/GuiChest.java
 +++ b/src/net/minecraft/client/gui/inventory/GuiChest.java
 @@ -1,54 +1,142 @@
@@ -4778,28 +4776,28 @@ index 93156ec..a5c9e04 100644
  public class GuiChest extends GuiContainer
  {
 +    private static final String __OBFID = "CL_00000749";
- 	private static final ResourceLocation field_147017_u = new ResourceLocation("textures/gui/container/generic_54.png");
- 	private IInventory upperChestInventory;
- 	private IInventory lowerChestInventory;
+     private static final ResourceLocation field_147017_u = new ResourceLocation("textures/gui/container/generic_54.png");
+     private IInventory upperChestInventory;
+     private IInventory lowerChestInventory;
  
- 	/**
+     /**
 -     * window height is calculated with these values; the more rows, the heigher
 +	 * window height is calculated with these values; the more rows, the higher
- 	 */
- 	private int inventoryRows;
+      */
+     private int inventoryRows;
 -    private static final String __OBFID = "CL_00000749";
  
- 	public GuiChest(IInventory p_i46315_1_, IInventory p_i46315_2_)
- 	{
- 		super(new ContainerChest(p_i46315_1_, p_i46315_2_, Minecraft.getMinecraft().thePlayer));
+     public GuiChest(IInventory p_i46315_1_, IInventory p_i46315_2_)
+     {
+         super(new ContainerChest(p_i46315_1_, p_i46315_2_, Minecraft.getMinecraft().thePlayer));
 -        this.upperChestInventory = p_i46315_1_;
 -        this.lowerChestInventory = p_i46315_2_;
 -        this.allowUserInput = false;
 +		upperChestInventory = p_i46315_1_;
 +		lowerChestInventory = p_i46315_2_;
 +		allowUserInput = false;
- 		short var3 = 222;
- 		int var4 = var3 - 108;
+         short var3 = 222;
+         int var4 = var3 - 108;
 -        this.inventoryRows = p_i46315_2_.getSizeInventory() / 9;
 -        this.ySize = var4 + this.inventoryRows * 18;
 +		inventoryRows = p_i46315_2_.getSizeInventory() / 9;
@@ -4883,29 +4881,29 @@ index 93156ec..a5c9e04 100644
 +					}
 +				}
 +			}).start();
- 	}
+     }
  
- 	/**
+     /**
 -     * Draw the foreground layer for the GuiContainer (everything in front of the items). Args : mouseX, mouseY
 +	 * Draw the foreground layer for the GuiContainer (everything in front of
 +	 * the items). Args : mouseX, mouseY
- 	 */
+      */
 +	@Override
- 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
- 	{
+     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+     {
 -        this.fontRendererObj.drawString(this.lowerChestInventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
 -        this.fontRendererObj.drawString(this.upperChestInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
 +		fontRendererObj.drawString(lowerChestInventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
 +		fontRendererObj.drawString(upperChestInventory.getDisplayName().getUnformattedText(), 8, ySize - 96 + 2, 4210752);
- 	}
+     }
  
- 	/**
- 	 * Args : renderPartialTicks, mouseX, mouseY
- 	 */
+     /**
+      * Args : renderPartialTicks, mouseX, mouseY
+      */
 +	@Override
- 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
- 	{
- 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+     {
+         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 -        this.mc.getTextureManager().bindTexture(field_147017_u);
 -        int var4 = (this.width - this.xSize) / 2;
 -        int var5 = (this.height - this.ySize) / 2;
@@ -4916,7 +4914,7 @@ index 93156ec..a5c9e04 100644
 +		int var5 = (height - ySize) / 2;
 +		drawTexturedModalRect(var4, var5, 0, 0, xSize, inventoryRows * 18 + 17);
 +		drawTexturedModalRect(var4, var5 + inventoryRows * 18 + 17, 0, 126, xSize, 96);
- 	}
+     }
  }
 diff --git a/src/net/minecraft/client/gui/inventory/GuiContainer.java b/src/net/minecraft/client/gui/inventory/GuiContainer.java
 index 07acadb..ef19d39 100644
@@ -5066,7 +5064,7 @@ index 3ba9565..4341662 100644
  
          public ItemStack decrStackSize(int p_75209_1_)
 diff --git a/src/net/minecraft/client/gui/inventory/GuiEditSign.java b/src/net/minecraft/client/gui/inventory/GuiEditSign.java
-index 21ea6e9..13a4cf2 100644
+index 21ea6e9..631b34d 100644
 --- a/src/net/minecraft/client/gui/inventory/GuiEditSign.java
 +++ b/src/net/minecraft/client/gui/inventory/GuiEditSign.java
 @@ -1,6 +1,7 @@
@@ -5106,7 +5104,7 @@ index 21ea6e9..13a4cf2 100644
      private GuiButton doneBtn;
 +
      private static final String __OBFID = "CL_00000764";
-     
+ 
      public GuiEditSign(TileEntitySign p_i1097_1_)
 @@ -40,6 +51,22 @@ public class GuiEditSign extends GuiScreen
       */
@@ -5569,13 +5567,13 @@ index 1c4d5a3..05c8ab5 100644
                  return false;
              }
 diff --git a/src/net/minecraft/client/multiplayer/ServerList.java b/src/net/minecraft/client/multiplayer/ServerList.java
-index 8bfcbea..c22761e 100644
+index 8bfcbea..a5d71ef 100644
 --- a/src/net/minecraft/client/multiplayer/ServerList.java
 +++ b/src/net/minecraft/client/multiplayer/ServerList.java
 @@ -28,6 +28,12 @@ public class ServerList
          this.loadServerList();
      }
-     
+ 
 +    //TODO: Client
 +    public void clearServerList()
 +    {
@@ -5619,7 +5617,7 @@ index 8bfcbea..c22761e 100644
              }
          }
 diff --git a/src/net/minecraft/client/multiplayer/WorldClient.java b/src/net/minecraft/client/multiplayer/WorldClient.java
-index 284bebf..a3ca587 100644
+index 284bebf..8e7c23e 100644
 --- a/src/net/minecraft/client/multiplayer/WorldClient.java
 +++ b/src/net/minecraft/client/multiplayer/WorldClient.java
 @@ -1,10 +1,12 @@
@@ -5638,7 +5636,7 @@ index 284bebf..a3ca587 100644
 @@ -306,12 +308,18 @@ public class WorldClient extends World
          ItemStack var6 = this.mc.thePlayer.getHeldItem();
          boolean var7 = this.mc.playerController.func_178889_l() == WorldSettings.GameType.CREATIVE && var6 != null && Block.getBlockFromItem(var6.getItem()) == Blocks.barrier;
-         
+ 
 +        //TODO: Client
 +        BlockPos var12 = new BlockPos(0, 0, 0);
 +        
@@ -6284,7 +6282,7 @@ index 13aedf6..ff74680 100644
                      p_178270_4_.addVertexWithUV(var58, var26 + (double)var37, var44, (double)var47, (double)var49);
                      p_178270_4_.addVertexWithUV(var58, var26 + 0.0D, var44, (double)var47, (double)var50);
 diff --git a/src/net/minecraft/client/renderer/BlockModelRenderer.java b/src/net/minecraft/client/renderer/BlockModelRenderer.java
-index e9db01f..da0cb85 100644
+index e9db01f..0d57e4a 100644
 --- a/src/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ b/src/net/minecraft/client/renderer/BlockModelRenderer.java
 @@ -3,6 +3,7 @@ package net.minecraft.client.renderer;
@@ -6314,13 +6312,13 @@ index e9db01f..da0cb85 100644
 +		if(var17.size() > 0
 +			&& (!WurstClient.INSTANCE.mods.xRayMod.isActive() || XRayUtils
 +				.isXRayBlock(p_178265_3_)))
- 		{
+         {
 +        	
              this.func_178263_a(p_178265_1_, p_178265_3_, p_178265_4_, p_178265_5_, var17, var8, var9, var10);
              var7 = true;
          }
 diff --git a/src/net/minecraft/client/renderer/EntityRenderer.java b/src/net/minecraft/client/renderer/EntityRenderer.java
-index e32c68b..0aa2f53 100644
+index e32c68b..8fbc3a7 100644
 --- a/src/net/minecraft/client/renderer/EntityRenderer.java
 +++ b/src/net/minecraft/client/renderer/EntityRenderer.java
 @@ -1,11 +1,11 @@
@@ -6411,7 +6409,7 @@ index e32c68b..0aa2f53 100644
 @@ -536,7 +546,14 @@ public class EntityRenderer implements IResourceManagerReloadListener
              if (p_78481_2_)
              {
- 				var4 = this.mc.gameSettings.fovSetting;
+                 var4 = this.mc.gameSettings.fovSetting;
 -                var4 *= this.fovModifierHandPrev + (this.fovModifierHand - this.fovModifierHandPrev) * p_78481_1_;
 +				
 +				// TODO: Client
@@ -6421,7 +6419,7 @@ index e32c68b..0aa2f53 100644
 +					this.fovModifierHandPrev
 +						+ (this.fovModifierHand - this.fovModifierHandPrev)
 +						* p_78481_1_;
- 			}
+             }
  
              if (var3 instanceof EntityLivingBase && ((EntityLivingBase)var3).getHealth() <= 0.0F)
 @@ -749,15 +766,20 @@ public class EntityRenderer implements IResourceManagerReloadListener
@@ -6432,7 +6430,7 @@ index e32c68b..0aa2f53 100644
 +		// TODO: Client
 +		if(this.mc.gameSettings.viewBobbing
 +			&& !WurstClient.INSTANCE.mods.tracersMod.isActive())
- 		{
+         {
 +        	
              this.setupViewBobbing(p_78479_1_);
          }
@@ -6442,7 +6440,7 @@ index e32c68b..0aa2f53 100644
 -        if (var4 > 0.0F)
 +		// TODO: Client
 +		if(var4 > 0.0F && !WurstClient.INSTANCE.mods.antiBlindMod.isActive())
- 		{
+         {
 +        	
              byte var5 = 20;
  
@@ -6463,7 +6461,7 @@ index e32c68b..0aa2f53 100644
 +        
 +        //TODO: Client
 +		if(!WurstClient.INSTANCE.mods.caveFinderMod.isActive())
- 			GlStateManager.enableDepth();
+         GlStateManager.enableDepth();
 +        
          GlStateManager.enableAlpha();
          GlStateManager.alphaFunc(516, 0.5F);
@@ -6532,7 +6530,7 @@ index e32c68b..0aa2f53 100644
 +		if(var3 instanceof EntityLivingBase
 +			&& ((EntityLivingBase)var3).isPotionActive(Potion.blindness)
 +			&& !WurstClient.INSTANCE.mods.antiBlindMod.isActive())
- 		{
+         {
 +        	
              int var16 = ((EntityLivingBase)var3).getActivePotionEffect(Potion.blindness).getDuration();
  
@@ -6546,7 +6544,7 @@ index e32c68b..0aa2f53 100644
 +		if(var3 instanceof EntityLivingBase
 +			&& ((EntityLivingBase)var3).isPotionActive(Potion.blindness)
 +			&& !WurstClient.INSTANCE.mods.antiBlindMod.isActive())
- 		{
+         {
 +        	
              var6 = 5.0F;
              int var7 = ((EntityLivingBase)var3).getActivePotionEffect(Potion.blindness).getDuration();
@@ -6634,7 +6632,7 @@ index 0f3580a..8bba567 100644
              if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
              {
 diff --git a/src/net/minecraft/client/renderer/RenderGlobal.java b/src/net/minecraft/client/renderer/RenderGlobal.java
-index 0ccdbe4..ab09798 100644
+index 0ccdbe4..3dabe5f 100644
 --- a/src/net/minecraft/client/renderer/RenderGlobal.java
 +++ b/src/net/minecraft/client/renderer/RenderGlobal.java
 @@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
@@ -6685,7 +6683,7 @@ index 0ccdbe4..ab09798 100644
 +        // TODO: Client
 +        BlockPos var6 = new BlockPos(var3);
 +    	for(int x = 0; x < 16; x++)
- 		{
+         {
 -            BlockPos.MutableBlockPos var6 = (BlockPos.MutableBlockPos)var5.next();
 +			for(int y = 0; y < 16; y++)
 +			{
@@ -6693,13 +6691,13 @@ index 0ccdbe4..ab09798 100644
 +				{
 +					var6.setPos(var3.getX() + x, var3.getY()
 +						+ y, var3.getZ() + z);
- 					
+ 
 -            if (var4.getBlock(var6).isOpaqueCube())
 +					if(var4.getBlock(var6).isOpaqueCube())
- 					{
- 						var2.func_178606_a(var6);
- 					}
- 				}
+             {
+                 var2.func_178606_a(var6);
+             }
+         }
 +			}
 +		}
          return var2.func_178609_b(p_174978_1_);
@@ -6818,7 +6816,7 @@ index 0ccdbe4..ab09798 100644
  
          var3.addVertex(p_147590_0_.minX, p_147590_0_.minY, p_147590_0_.minZ);
 diff --git a/src/net/minecraft/client/renderer/ThreadDownloadImageData.java b/src/net/minecraft/client/renderer/ThreadDownloadImageData.java
-index 72b9763..732101c 100644
+index 72b9763..9d3d3f8 100644
 --- a/src/net/minecraft/client/renderer/ThreadDownloadImageData.java
 +++ b/src/net/minecraft/client/renderer/ThreadDownloadImageData.java
 @@ -121,8 +121,11 @@ public class ThreadDownloadImageData extends SimpleTexture
@@ -6831,13 +6829,13 @@ index 72b9763..732101c 100644
 +                        return;
 +                    }
 +
-                     BufferedImage var2;
+                         BufferedImage var2;
  
-                     if (ThreadDownloadImageData.this.field_152434_e != null)
+                         if (ThreadDownloadImageData.this.field_152434_e != null)
 @@ -141,13 +144,10 @@ public class ThreadDownloadImageData extends SimpleTexture
-                     }
+                         }
  
-                     ThreadDownloadImageData.this.setBufferedImage(var2);
+                         ThreadDownloadImageData.this.setBufferedImage(var2);
 -                        return;
 -                    }
                  }
@@ -6849,7 +6847,7 @@ index 72b9763..732101c 100644
                  finally
                  {
 diff --git a/src/net/minecraft/client/renderer/WorldRenderer.java b/src/net/minecraft/client/renderer/WorldRenderer.java
-index 736354e..68a893d 100644
+index 736354e..777100f 100644
 --- a/src/net/minecraft/client/renderer/WorldRenderer.java
 +++ b/src/net/minecraft/client/renderer/WorldRenderer.java
 @@ -7,12 +7,15 @@ import java.nio.IntBuffer;
@@ -6885,7 +6883,7 @@ index 736354e..68a893d 100644
 -        this.func_178961_b((int)(p_178960_1_ * 255.0F), (int)(p_178960_2_ * 255.0F), (int)(p_178960_3_ * 255.0F), (int)(p_178960_4_ * 255.0F));
 +        this.setColorRGBA((int)(red * 255.0F), (int)(blue * 255.0F), (int)(green * 255.0F), (int)(alpha * 255.0F));
      }
-     
+ 
 -    /**
 -     * Sets a new position for the renderer and setting it up so it can be reloaded with the new data for that position
 -     */
@@ -7185,7 +7183,7 @@ index 63a12a1..bba85f9 100644
          }
  
 diff --git a/src/net/minecraft/client/renderer/entity/RenderFallingBlock.java b/src/net/minecraft/client/renderer/entity/RenderFallingBlock.java
-index 6936e51..e82b643 100644
+index 6936e51..de78ceb 100644
 --- a/src/net/minecraft/client/renderer/entity/RenderFallingBlock.java
 +++ b/src/net/minecraft/client/renderer/entity/RenderFallingBlock.java
 @@ -1,5 +1,7 @@
@@ -7204,7 +7202,7 @@ index 6936e51..e82b643 100644
 +		// TODO: Client
 +		if(p_180557_1_.getBlock() != null
 +			&& !WurstClient.INSTANCE.mods.prophuntEspMod.isActive())
- 		{
+         {
 +        	
              this.bindTexture(TextureMap.locationBlocksTexture);
              IBlockState var10 = p_180557_1_.getBlock();
@@ -7488,7 +7486,7 @@ index 7fdac31..7a7e5d1 100644
          var14.addVertex(p_85094_2_ + var15.xCoord * 2.0D, p_85094_4_ + (double)p_85094_1_.getEyeHeight() + var15.yCoord * 2.0D, p_85094_6_ + var15.zCoord * 2.0D);
          var16.draw();
 diff --git a/src/net/minecraft/client/renderer/entity/RenderPlayer.java b/src/net/minecraft/client/renderer/entity/RenderPlayer.java
-index bc2dd09..bb1207f 100644
+index bc2dd09..56da02b 100644
 --- a/src/net/minecraft/client/renderer/entity/RenderPlayer.java
 +++ b/src/net/minecraft/client/renderer/entity/RenderPlayer.java
 @@ -1,5 +1,7 @@
@@ -7507,7 +7505,7 @@ index bc2dd09..bb1207f 100644
 +		// TODO: Client
 +		if(!WurstClient.INSTANCE.mods.freecamMod.isActive()
 +			&& p_177137_1_.isSpectator())
- 		{
+         {
 +        	
              var2.func_178719_a(false);
              var2.bipedHead.showModel = true;
@@ -7839,7 +7837,7 @@ index 8d1baca..299d546 100644
      }
  }
 diff --git a/src/net/minecraft/client/resources/DefaultResourcePack.java b/src/net/minecraft/client/resources/DefaultResourcePack.java
-index db03245..61c7cc2 100644
+index db03245..8517494 100644
 --- a/src/net/minecraft/client/resources/DefaultResourcePack.java
 +++ b/src/net/minecraft/client/resources/DefaultResourcePack.java
 @@ -1,6 +1,7 @@
@@ -7864,11 +7862,11 @@ index db03245..61c7cc2 100644
  
 +    //TODO: Client
 +    @SuppressWarnings("resource")
- 	public InputStream func_152780_c(ResourceLocation p_152780_1_) throws IOException
+     public InputStream func_152780_c(ResourceLocation p_152780_1_) throws IOException
      {
          File var2 = (File)this.field_152781_b.get(p_152780_1_.toString());
 diff --git a/src/net/minecraft/client/resources/FallbackResourceManager.java b/src/net/minecraft/client/resources/FallbackResourceManager.java
-index f7705cd..e0e5ffc 100644
+index f7705cd..d90c1fb 100644
 --- a/src/net/minecraft/client/resources/FallbackResourceManager.java
 +++ b/src/net/minecraft/client/resources/FallbackResourceManager.java
 @@ -1,6 +1,7 @@
@@ -7896,7 +7894,7 @@ index f7705cd..e0e5ffc 100644
  
 +    //TODO: Client
 +    @SuppressWarnings("resource")
- 	protected InputStream func_177245_a(ResourceLocation p_177245_1_, IResourcePack p_177245_2_) throws IOException
+     protected InputStream func_177245_a(ResourceLocation p_177245_1_, IResourcePack p_177245_2_) throws IOException
      {
          InputStream var3 = p_177245_2_.getInputStream(p_177245_1_);
 diff --git a/src/net/minecraft/client/resources/ResourcePackListEntry.java b/src/net/minecraft/client/resources/ResourcePackListEntry.java
@@ -7948,7 +7946,7 @@ index d34b311..cf73e47 100644
  
      public ListenableFuture func_177319_a(File p_177319_1_)
 diff --git a/src/net/minecraft/client/resources/SkinManager.java b/src/net/minecraft/client/resources/SkinManager.java
-index 7729695..b6108dd 100644
+index 7729695..966a39d 100644
 --- a/src/net/minecraft/client/resources/SkinManager.java
 +++ b/src/net/minecraft/client/resources/SkinManager.java
 @@ -1,22 +1,20 @@
@@ -8012,7 +8010,7 @@ index 7729695..b6108dd 100644
 @@ -135,6 +145,10 @@ public class SkinManager
                      var1.putAll(SkinManager.this.sessionService.getTextures(SkinManager.this.sessionService.fillProfileProperties(p_152790_1_, false), false));
                  }
- 				
+ 
 +				// TODO: Client
 +                WurstCapes.checkCape(p_152790_1_, var1, p_152790_2_);
 +				
@@ -8116,7 +8114,7 @@ index f0f7524..8ffefc0 100644
          public boolean apply(Object p_apply_1_)
          {
 diff --git a/src/net/minecraft/command/server/CommandBlockLogic.java b/src/net/minecraft/command/server/CommandBlockLogic.java
-index 5f4e0f3..f87e3ea 100644
+index 5f4e0f3..778d707 100644
 --- a/src/net/minecraft/command/server/CommandBlockLogic.java
 +++ b/src/net/minecraft/command/server/CommandBlockLogic.java
 @@ -1,9 +1,11 @@
@@ -8143,7 +8141,7 @@ index 5f4e0f3..f87e3ea 100644
 +						+ timestampFormat.format(new Date()) + "] "))
 +						.appendSibling(message);
 +			}
- 			this.func_145756_e();
+             this.func_145756_e();
          }
      }
 diff --git a/src/net/minecraft/crash/CrashReport.java b/src/net/minecraft/crash/CrashReport.java
@@ -8231,7 +8229,7 @@ index c55aa0c..6cc2c1f 100644
  
  public class CrashReportCategory
 diff --git a/src/net/minecraft/entity/DataWatcher.java b/src/net/minecraft/entity/DataWatcher.java
-index 6b59121..a0061ec 100644
+index 6b59121..cdf03c7 100644
 --- a/src/net/minecraft/entity/DataWatcher.java
 +++ b/src/net/minecraft/entity/DataWatcher.java
 @@ -2,6 +2,7 @@ package net.minecraft.entity;
@@ -8270,7 +8268,7 @@ index 6b59121..a0061ec 100644
      {
 +        try
 +		{
- 			return (String)this.getWatchedObject(id).getObject();
+         return (String)this.getWatchedObject(id).getObject();
 +		}catch(Exception e)
 +		{
 +			return "";
@@ -8279,7 +8277,7 @@ index 6b59121..a0061ec 100644
  
      /**
 diff --git a/src/net/minecraft/entity/Entity.java b/src/net/minecraft/entity/Entity.java
-index 7397345..8e3807c 100644
+index 7397345..ec55d00 100644
 --- a/src/net/minecraft/entity/Entity.java
 +++ b/src/net/minecraft/entity/Entity.java
 @@ -5,6 +5,7 @@ import java.util.List;
@@ -8348,11 +8346,11 @@ index 7397345..8e3807c 100644
 +			// TODO: Client
 +			// Fixes Freecam flight speed
 +			if(this == Minecraft.getMinecraft().thePlayer && freecamActive)
- 			{
+         {
 +        		
 +        		this.func_174826_a(this.getEntityBoundingBox().offset(x * 10, y, z * 10));
 +        	}else
-         		this.func_174826_a(this.getEntityBoundingBox().offset(x, y, z));
+             this.func_174826_a(this.getEntityBoundingBox().offset(x, y, z));
              this.func_174829_m();
          }
 @@ -604,7 +626,12 @@ public abstract class Entity implements ICommandSender
@@ -8377,9 +8375,9 @@ index 7397345..8e3807c 100644
 +		if(WurstClient.INSTANCE.mods.antiKnockbackMod.isActive())
 +			return;
 +    	
- 		this.motionX = x;
-     	this.motionY = y;
-     	this.motionZ = z;
+         this.motionX = x;
+         this.motionY = y;
+         this.motionZ = z;
 @@ -2170,7 +2201,7 @@ public abstract class Entity implements ICommandSender
       */
      public boolean isInvisibleToPlayer(EntityPlayer playerIn)
@@ -8390,7 +8388,7 @@ index 7397345..8e3807c 100644
  
      public void setInvisible(boolean invisible)
 diff --git a/src/net/minecraft/entity/EntityLivingBase.java b/src/net/minecraft/entity/EntityLivingBase.java
-index c6f8843..3be36ba 100644
+index c6f8843..19eaf0a 100644
 --- a/src/net/minecraft/entity/EntityLivingBase.java
 +++ b/src/net/minecraft/entity/EntityLivingBase.java
 @@ -1,12 +1,18 @@
@@ -8445,7 +8443,7 @@ index c6f8843..3be36ba 100644
 +			if(this.isInWater()
 +				&& (!(this instanceof EntityPlayer) || !((EntityPlayer)this).capabilities.isFlying)
 +				&& !WurstClient.INSTANCE.mods.noSlowdownMod.isActive())
- 			{
+             {
 +            	
                  var8 = this.posY;
                  var5 = 0.8F;
@@ -9103,7 +9101,7 @@ index 38b9ecd..65aa056 100644
              this.playerEntity.openContainer.setCanCraft(this.playerEntity, true);
          }
 diff --git a/src/net/minecraft/network/NetworkManager.java b/src/net/minecraft/network/NetworkManager.java
-index f05dadf..83d54dd 100644
+index f05dadf..da1b8d0 100644
 --- a/src/net/minecraft/network/NetworkManager.java
 +++ b/src/net/minecraft/network/NetworkManager.java
 @@ -1,17 +1,7 @@
@@ -9165,105 +9163,105 @@ index f05dadf..83d54dd 100644
  public class NetworkManager extends SimpleChannelInboundHandler
  {
 +	private static final String __OBFID = "CL_00000668";
- 	private static final Logger logger = LogManager.getLogger();
- 	public static final Marker logMarkerNetwork = MarkerManager.getMarker("NETWORK");
- 	public static final Marker logMarkerPackets = MarkerManager.getMarker("NETWORK_PACKETS", logMarkerNetwork);
- 	public static final AttributeKey attrKeyConnectionState = AttributeKey.valueOf("protocol");
- 	public static final LazyLoadBase CLIENT_NIO_EVENTLOOP = new LazyLoadBase()
- 	{
+     private static final Logger logger = LogManager.getLogger();
+     public static final Marker logMarkerNetwork = MarkerManager.getMarker("NETWORK");
+     public static final Marker logMarkerPackets = MarkerManager.getMarker("NETWORK_PACKETS", logMarkerNetwork);
+     public static final AttributeKey attrKeyConnectionState = AttributeKey.valueOf("protocol");
+     public static final LazyLoadBase CLIENT_NIO_EVENTLOOP = new LazyLoadBase()
+     {
 -        private static final String __OBFID = "CL_00001241";
- 		protected NioEventLoopGroup genericLoad()
- 		{
+         protected NioEventLoopGroup genericLoad()
+         {
 -            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Client IO #%d").setDaemon(true).build());
 +			return new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Client IO #%d").setDaemon(true).build());
- 		}
+         }
 +
 +		@Override
- 		protected Object load()
- 		{
+         protected Object load()
+         {
 -            return this.genericLoad();
 +			return genericLoad();
- 		}
- 	};
- 	public static final LazyLoadBase CLIENT_LOCAL_EVENTLOOP = new LazyLoadBase()
- 	{
+         }
+     };
+     public static final LazyLoadBase CLIENT_LOCAL_EVENTLOOP = new LazyLoadBase()
+     {
 -        private static final String __OBFID = "CL_00001242";
- 		protected LocalEventLoopGroup genericLoad()
- 		{
+         protected LocalEventLoopGroup genericLoad()
+         {
 -            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Client IO #%d").setDaemon(true).build());
 +			return new LocalEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Local Client IO #%d").setDaemon(true).build());
- 		}
+         }
 +
 +		@Override
- 		protected Object load()
- 		{
+         protected Object load()
+         {
 -            return this.genericLoad();
 +			return genericLoad();
- 		}
- 	};
+         }
+     };
 -    private final EnumPacketDirection direction;
 -
- 	/** The queue for packets that require transmission */
- 	private final Queue outboundPacketsQueue = Queues.newConcurrentLinkedQueue();
+     /** The queue for packets that require transmission */
+     private final Queue outboundPacketsQueue = Queues.newConcurrentLinkedQueue();
  
 @@ -89,59 +83,74 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	private IChatComponent terminationReason;
- 	private boolean isEncrypted;
- 	private boolean disconnected;
+     private IChatComponent terminationReason;
+     private boolean isEncrypted;
+     private boolean disconnected;
 -    private static final String __OBFID = "CL_00001240";
  
- 	public NetworkManager(EnumPacketDirection packetDirection)
+     public NetworkManager(EnumPacketDirection packetDirection)
 -    {
 -        this.direction = packetDirection;
 -    }
 +	{}
  
 +	@Override
- 	public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
- 	{
- 		super.channelActive(p_channelActive_1_);
+     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
+     {
+         super.channelActive(p_channelActive_1_);
 -        this.channel = p_channelActive_1_.channel();
 -        this.socketAddress = this.channel.remoteAddress();
 +		channel = p_channelActive_1_.channel();
 +		socketAddress = channel.remoteAddress();
  
- 		try
- 		{
+         try
+         {
 -            this.setConnectionState(EnumConnectionState.HANDSHAKING);
 -        }
 -        catch (Throwable var3)
 +			setConnectionState(EnumConnectionState.HANDSHAKING);
 +		}catch(Throwable var3)
- 		{
- 			logger.fatal(var3);
- 		}
- 	}
+         {
+             logger.fatal(var3);
+         }
+     }
  
- 	/**
+     /**
 -     * Sets the new connection state and registers which packets this channel may send and receive
 +	 * Sets the new connection state and registers which packets this channel
 +	 * may send and receive
- 	 */
+      */
 +	@SuppressWarnings("unchecked")
- 	public void setConnectionState(EnumConnectionState newState)
- 	{
+     public void setConnectionState(EnumConnectionState newState)
+     {
 -        this.channel.attr(attrKeyConnectionState).set(newState);
 -        this.channel.config().setAutoRead(true);
 +		channel.attr(attrKeyConnectionState).set(newState);
 +		channel.config().setAutoRead(true);
- 		logger.debug("Enabled auto read");
- 	}
+         logger.debug("Enabled auto read");
+     }
  
 +	@Override
- 	public void channelInactive(ChannelHandlerContext p_channelInactive_1_)
- 	{
+     public void channelInactive(ChannelHandlerContext p_channelInactive_1_)
+     {
 -        this.closeChannel(new ChatComponentTranslation("disconnect.endOfStream", new Object[0]));
 +		closeChannel(new ChatComponentTranslation("disconnect.endOfStream", new Object[0]));
- 	}
+     }
  
 +	@Override
- 	public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_)
- 	{
+     public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_)
+     {
 -        logger.debug("Disconnecting " + this.getRemoteAddress(), p_exceptionCaught_2_);
 -        this.closeChannel(new ChatComponentTranslation("disconnect.genericReason", new Object[] {"Internal Exception: " + p_exceptionCaught_2_}));
 +		logger.debug("Disconnecting " + getRemoteAddress(), p_exceptionCaught_2_);
@@ -9277,50 +9275,50 @@ index f05dadf..83d54dd 100644
 +					+ "\n§cDon't do this!"));
 +		else
 +			closeChannel(new ChatComponentTranslation("disconnect.genericReason", new Object[]{"Internal Exception: " + p_exceptionCaught_2_}));
- 	}
+     }
  
- 	protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_)
- 	{
+     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_)
+     {
 -        if (this.channel.isOpen())
 +		if(channel.isOpen())
- 		{
+         {
 +			//TODO: Client
 +			PacketInputEvent event = new PacketInputEvent(p_channelRead0_2_);
 +			WurstClient.INSTANCE.events.fireEvent(PacketInputEvent.class, event);
 +			if(event.isCancelled())
 +				return;
 +			
- 			try
- 			{
+             try
+             {
 -                p_channelRead0_2_.processPacket(this.packetListener);
 -            }
 -            catch (ThreadQuickExitException var4)
 +				p_channelRead0_2_.processPacket(packetListener);
 +			}catch(ThreadQuickExitException var4)
- 			{
- 				;
- 			}
+             {
+                 ;
+             }
 @@ -149,110 +158,97 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	}
+     }
  
- 	/**
+     /**
 -     * Sets the NetHandler for this NetworkManager, no checks are made if this handler is suitable for the particular
 +	 * Sets the NetHandler for this NetworkManager, no checks are made if this
 +	 * handler is suitable for the particular
- 	 * connection state (protocol)
- 	 */
- 	public void setNetHandler(INetHandler handler)
- 	{
- 		Validate.notNull(handler, "packetListener", new Object[0]);
+      * connection state (protocol)
+      */
+     public void setNetHandler(INetHandler handler)
+     {
+         Validate.notNull(handler, "packetListener", new Object[0]);
 -        logger.debug("Set listener of {} to {}", new Object[] {this, handler});
 -        this.packetListener = handler;
 +		logger.debug("Set listener of {} to {}", new Object[]{this, handler});
 +		packetListener = handler;
- 	}
+     }
  
 +	@SuppressWarnings("unchecked")
- 	public void sendPacket(Packet packetIn)
- 	{
+     public void sendPacket(Packet packetIn)
+     {
 -        if (this.channel != null && this.channel.isOpen())
 -        {
 -            this.flushOutboundQueue();
@@ -9328,63 +9326,63 @@ index f05dadf..83d54dd 100644
 -        }
 -        else
 +		if(channel != null && channel.isOpen())
- 		{
+         {
 -            this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[])null));
 -        }
 +			flushOutboundQueue();
 +			dispatchPacket(packetIn, (GenericFutureListener[])null);
 +		}else
 +			outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[])null));
- 	}
+     }
  
 -    public void sendPacket(Packet packetIn, GenericFutureListener listener, GenericFutureListener ... listeners)
 -    {
 -        if (this.channel != null && this.channel.isOpen())
 +	@SuppressWarnings("unchecked")
 +	public void sendPacket(Packet packetIn, GenericFutureListener listener, GenericFutureListener... listeners)
- 	{
+         {
 -            this.flushOutboundQueue();
 -            this.dispatchPacket(packetIn, (GenericFutureListener[])ArrayUtils.add(listeners, 0, listener));
 -        }
 -        else
 +		if(channel != null && channel.isOpen())
- 		{
+         {
 -            this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[])ArrayUtils.add(listeners, 0, listener)));
 -        }
 +			flushOutboundQueue();
 +			dispatchPacket(packetIn, ArrayUtils.add(listeners, 0, listener));
 +		}else
 +			outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, ArrayUtils.add(listeners, 0, listener)));
- 	}
+     }
  
- 	/**
+     /**
 -     * Will commit the packet to the channel. If the current thread 'owns' the channel it will write and flush the
 -     * packet, otherwise it will add a task for the channel eventloop thread to do that.
 +	 * Will commit the packet to the channel. If the current thread 'owns' the
 +	 * channel it will write and flush the
 +	 * packet, otherwise it will add a task for the channel eventloop thread to
 +	 * do that.
- 	 */
+      */
 +	@SuppressWarnings("unchecked")
- 	private void dispatchPacket(final Packet inPacket, final GenericFutureListener[] futureListeners)
- 	{
- 		final EnumConnectionState var3 = EnumConnectionState.getFromPacket(inPacket);
+     private void dispatchPacket(final Packet inPacket, final GenericFutureListener[] futureListeners)
+     {
+         final EnumConnectionState var3 = EnumConnectionState.getFromPacket(inPacket);
 -        final EnumConnectionState var4 = (EnumConnectionState)this.channel.attr(attrKeyConnectionState).get();
 +		final EnumConnectionState var4 = (EnumConnectionState)channel.attr(attrKeyConnectionState).get();
  
 -        if (var4 != var3)
 +		if(var4 != var3)
- 		{
- 			logger.debug("Disabled auto read");
+         {
+             logger.debug("Disabled auto read");
 -            this.channel.config().setAutoRead(false);
 +			channel.config().setAutoRead(false);
- 		}
+         }
  
 -        if (this.channel.eventLoop().inEventLoop())
 -        {
 -            if (var3 != var4)
 +		if(channel.eventLoop().inEventLoop())
- 		{
+             {
 -                this.setConnectionState(var3);
 -            }
 +			if(var3 != var4)
@@ -9396,25 +9394,25 @@ index f05dadf..83d54dd 100644
 -            if (futureListeners != null)
 -            {
 +			if(futureListeners != null)
- 				var5.addListeners(futureListeners);
+                 var5.addListeners(futureListeners);
 -            }
  
- 			var5.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+             var5.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 -        }
 -        else
 +		}else
 +			channel.eventLoop().execute(new Runnable()
- 			{
+         {
 -            this.channel.eventLoop().execute(new Runnable()
 -            {
 -                private static final String __OBFID = "CL_00001243";
 +				@Override
- 				public void run()
- 				{
+                 public void run()
+                 {
 -                    if (var3 != var4)
 -                    {
 +					if(var3 != var4)
- 						NetworkManager.this.setConnectionState(var3);
+                         NetworkManager.this.setConnectionState(var3);
 -                    }
  
 -                    ChannelFuture var1 = NetworkManager.this.channel.writeAndFlush(inPacket);
@@ -9423,24 +9421,24 @@ index f05dadf..83d54dd 100644
 -                    if (futureListeners != null)
 -                    {
 +					if(futureListeners != null)
- 						var1.addListeners(futureListeners);
+                         var1.addListeners(futureListeners);
 -                    }
  
- 					var1.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
- 				}
- 			});
- 	}
+                     var1.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                 }
+             });
+         }
 -    }
  
- 	/**
- 	 * Will iterate through the outboundPacketQueue and dispatch all Packets
- 	 */
- 	private void flushOutboundQueue()
- 	{
+     /**
+      * Will iterate through the outboundPacketQueue and dispatch all Packets
+      */
+     private void flushOutboundQueue()
+     {
 -        if (this.channel != null && this.channel.isOpen())
 +		if(channel != null && channel.isOpen())
 +			while(!outboundPacketsQueue.isEmpty())
- 			{
+         {
 -            while (!this.outboundPacketsQueue.isEmpty())
 -            {
 -                NetworkManager.InboundHandlerTuplePacketListener var1 = (NetworkManager.InboundHandlerTuplePacketListener)this.outboundPacketsQueue.poll();
@@ -9448,13 +9446,13 @@ index f05dadf..83d54dd 100644
 -            }
 +				NetworkManager.InboundHandlerTuplePacketListener var1 = (NetworkManager.InboundHandlerTuplePacketListener)outboundPacketsQueue.poll();
 +				dispatchPacket(var1.packet, var1.futureListeners);
- 			}
- 	}
+         }
+     }
  
 @@ -261,14 +257,12 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	 */
- 	public void processReceivedPackets()
- 	{
+      */
+     public void processReceivedPackets()
+     {
 -        this.flushOutboundQueue();
 +		flushOutboundQueue();
  
@@ -9467,189 +9465,189 @@ index f05dadf..83d54dd 100644
  
 -        this.channel.flush();
 +		channel.flush();
- 	}
+     }
  
- 	/**
+     /**
 @@ -276,47 +270,50 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	 */
- 	public SocketAddress getRemoteAddress()
- 	{
+      */
+     public SocketAddress getRemoteAddress()
+     {
 -        return this.socketAddress;
 +		return socketAddress;
- 	}
+     }
  
- 	/**
+     /**
 -     * Closes the channel, the parameter can be used for an exit message (not certain how it gets sent)
 +	 * Closes the channel, the parameter can be used for an exit message (not
 +	 * certain how it gets sent)
- 	 */
- 	public void closeChannel(IChatComponent message)
- 	{
+      */
+     public void closeChannel(IChatComponent message)
+     {
 -        if (this.channel.isOpen())
 +		if(channel.isOpen())
- 		{
+         {
 -            this.channel.close().awaitUninterruptibly();
 -            this.terminationReason = message;
 +			channel.close().awaitUninterruptibly();
 +			terminationReason = message;
- 		}
- 	}
+         }
+     }
  
- 	/**
+     /**
 -     * True if this NetworkManager uses a memory connection (single player game). False may imply both an active TCP
 +	 * True if this NetworkManager uses a memory connection (single player
 +	 * game). False may imply both an active TCP
- 	 * connection or simply no active connection at all
- 	 */
- 	public boolean isLocalChannel()
- 	{
+      * connection or simply no active connection at all
+      */
+     public boolean isLocalChannel()
+     {
 -        return this.channel instanceof LocalChannel || this.channel instanceof LocalServerChannel;
 +		return channel instanceof LocalChannel || channel instanceof LocalServerChannel;
- 	}
+     }
  
- 	/**
+     /**
 -     * Prepares a clientside NetworkManager: establishes a connection to the address and port supplied and configures
 +	 * Prepares a clientside NetworkManager: establishes a connection to the
 +	 * address and port supplied and configures
- 	 * the channel pipeline. Returns the newly created instance.
- 	 */
- 	public static NetworkManager provideLanClient(InetAddress p_150726_0_, int p_150726_1_)
- 	{
- 		final NetworkManager var2 = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
+      * the channel pipeline. Returns the newly created instance.
+      */
+     public static NetworkManager provideLanClient(InetAddress p_150726_0_, int p_150726_1_)
+     {
+         final NetworkManager var2 = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
 -        ((Bootstrap)((Bootstrap)((Bootstrap)(new Bootstrap()).group((EventLoopGroup)CLIENT_NIO_EVENTLOOP.getValue())).handler(new ChannelInitializer()
 +		new Bootstrap().group((EventLoopGroup)CLIENT_NIO_EVENTLOOP.getValue()).handler(new ChannelInitializer()
- 		{
+         {
 -            private static final String __OBFID = "CL_00002312";
 +			@Override
- 			protected void initChannel(Channel p_initChannel_1_)
- 			{
- 				try
- 				{
- 					p_initChannel_1_.config().setOption(ChannelOption.IP_TOS, Integer.valueOf(24));
- 				}
+             protected void initChannel(Channel p_initChannel_1_)
+             {
+                 try
+                 {
+                     p_initChannel_1_.config().setOption(ChannelOption.IP_TOS, Integer.valueOf(24));
+                 }
 -                catch (ChannelException var4)
 +				catch(ChannelException var4)
- 				{
- 					;
- 				}
+                 {
+                     ;
+                 }
 @@ -325,61 +322,64 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 				{
- 					p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.valueOf(false));
- 				}
+                 {
+                     p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.valueOf(false));
+                 }
 -                catch (ChannelException var3)
 +				catch(ChannelException var3)
- 				{
- 					;
- 				}
+                 {
+                     ;
+                 }
  
- 				p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(20)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(EnumPacketDirection.CLIENTBOUND)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(EnumPacketDirection.SERVERBOUND)).addLast("packet_handler", var2);
- 			}
+                 p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(20)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(EnumPacketDirection.CLIENTBOUND)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(EnumPacketDirection.SERVERBOUND)).addLast("packet_handler", var2);
+             }
 -        })).channel(NioSocketChannel.class)).connect(p_150726_0_, p_150726_1_).syncUninterruptibly();
 +		}).channel(NioSocketChannel.class).connect(p_150726_0_, p_150726_1_).syncUninterruptibly();
- 		return var2;
- 	}
+         return var2;
+     }
  
- 	/**
+     /**
 -     * Prepares a clientside NetworkManager: establishes a connection to the socket supplied and configures the channel
 +	 * Prepares a clientside NetworkManager: establishes a connection to the
 +	 * socket supplied and configures the channel
- 	 * pipeline. Returns the newly created instance.
- 	 */
- 	public static NetworkManager provideLocalClient(SocketAddress p_150722_0_)
- 	{
- 		final NetworkManager var1 = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
+      * pipeline. Returns the newly created instance.
+      */
+     public static NetworkManager provideLocalClient(SocketAddress p_150722_0_)
+     {
+         final NetworkManager var1 = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
 -        ((Bootstrap)((Bootstrap)((Bootstrap)(new Bootstrap()).group((EventLoopGroup)CLIENT_LOCAL_EVENTLOOP.getValue())).handler(new ChannelInitializer()
 +		new Bootstrap().group((EventLoopGroup)CLIENT_LOCAL_EVENTLOOP.getValue()).handler(new ChannelInitializer()
- 		{
+         {
 -            private static final String __OBFID = "CL_00002311";
 +			@Override
- 			protected void initChannel(Channel p_initChannel_1_)
- 			{
- 				p_initChannel_1_.pipeline().addLast("packet_handler", var1);
- 			}
+             protected void initChannel(Channel p_initChannel_1_)
+             {
+                 p_initChannel_1_.pipeline().addLast("packet_handler", var1);
+             }
 -        })).channel(LocalChannel.class)).connect(p_150722_0_).syncUninterruptibly();
 +		}).channel(LocalChannel.class).connect(p_150722_0_).syncUninterruptibly();
- 		return var1;
- 	}
+         return var1;
+     }
  
- 	/**
+     /**
 -     * Adds an encoder+decoder to the channel pipeline. The parameter is the secret key used for encrypted communication
 +	 * Adds an encoder+decoder to the channel pipeline. The parameter is the
 +	 * secret key used for encrypted communication
- 	 */
- 	public void enableEncryption(SecretKey key)
- 	{
+      */
+     public void enableEncryption(SecretKey key)
+     {
 -        this.isEncrypted = true;
 -        this.channel.pipeline().addBefore("splitter", "decrypt", new NettyEncryptingDecoder(CryptManager.func_151229_a(2, key)));
 -        this.channel.pipeline().addBefore("prepender", "encrypt", new NettyEncryptingEncoder(CryptManager.func_151229_a(1, key)));
 +		isEncrypted = true;
 +		channel.pipeline().addBefore("splitter", "decrypt", new NettyEncryptingDecoder(CryptManager.getAESCipher(2, key)));
 +		channel.pipeline().addBefore("prepender", "encrypt", new NettyEncryptingEncoder(CryptManager.getAESCipher(1, key)));
- 	}
+     }
  
 -    public boolean func_179292_f()
 +	public boolean isEncrypted()
- 	{
+     {
 -        return this.isEncrypted;
 +		return isEncrypted;
- 	}
+     }
  
- 	/**
+     /**
 -     * Returns true if this NetworkManager has an active channel, false otherwise
 +	 * Returns true if this NetworkManager has an active channel, false
 +	 * otherwise
- 	 */
- 	public boolean isChannelOpen()
- 	{
+      */
+     public boolean isChannelOpen()
+     {
 -        return this.channel != null && this.channel.isOpen();
 +		return channel != null && channel.isOpen();
- 	}
+     }
  
- 	public boolean hasNoChannel()
- 	{
+     public boolean hasNoChannel()
+     {
 -        return this.channel == null;
 +		return channel == null;
- 	}
+     }
  
- 	/**
+     /**
 @@ -387,7 +387,7 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	 */
- 	public INetHandler getNetHandler()
- 	{
+      */
+     public INetHandler getNetHandler()
+     {
 -        return this.packetListener;
 +		return packetListener;
- 	}
+     }
  
- 	/**
+     /**
 @@ -395,7 +395,7 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	 */
- 	public IChatComponent getExitMessage()
- 	{
+      */
+     public IChatComponent getExitMessage()
+     {
 -        return this.terminationReason;
 +		return terminationReason;
- 	}
+     }
  
- 	/**
+     /**
 @@ -403,62 +403,47 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	 */
- 	public void disableAutoRead()
- 	{
+      */
+     public void disableAutoRead()
+     {
 -        this.channel.config().setAutoRead(false);
 +		channel.config().setAutoRead(false);
- 	}
+     }
  
- 	public void setCompressionTreshold(int treshold)
- 	{
+     public void setCompressionTreshold(int treshold)
+     {
 -        if (treshold >= 0)
 -        {
 -            if (this.channel.pipeline().get("decompress") instanceof NettyCompressionDecoder)
 +		if(treshold >= 0)
- 		{
+             {
 -                ((NettyCompressionDecoder)this.channel.pipeline().get("decompress")).setCompressionTreshold(treshold);
 -            }
 +			if(channel.pipeline().get("decompress") instanceof NettyCompressionDecoder)
 +				((NettyCompressionDecoder)channel.pipeline().get("decompress")).setCompressionTreshold(treshold);
- 			else
+             else
 -            {
 -                this.channel.pipeline().addBefore("decoder", "decompress", new NettyCompressionDecoder(treshold));
 -            }
@@ -9661,14 +9659,14 @@ index f05dadf..83d54dd 100644
 -            }
 +			if(channel.pipeline().get("compress") instanceof NettyCompressionEncoder)
 +				((NettyCompressionEncoder)channel.pipeline().get("decompress")).setCompressionTreshold(treshold);
- 			else
+             else
 -            {
 -                this.channel.pipeline().addBefore("encoder", "compress", new NettyCompressionEncoder(treshold));
 -            }
 +				channel.pipeline().addBefore("encoder", "compress", new NettyCompressionEncoder(treshold));
- 		}
- 		else
- 		{
+         }
+         else
+         {
 -            if (this.channel.pipeline().get("decompress") instanceof NettyCompressionDecoder)
 -            {
 -                this.channel.pipeline().remove("decompress");
@@ -9682,14 +9680,14 @@ index f05dadf..83d54dd 100644
 -            }
 +			if(channel.pipeline().get("compress") instanceof NettyCompressionEncoder)
 +				channel.pipeline().remove("compress");
- 		}
- 	}
+         }
+     }
  
- 	public void checkDisconnected()
- 	{
+     public void checkDisconnected()
+     {
 -        if (!this.hasNoChannel() && !this.isChannelOpen() && !this.disconnected)
 +		if(!hasNoChannel() && !isChannelOpen() && !disconnected)
- 		{
+         {
 -            this.disconnected = true;
 +			disconnected = true;
  
@@ -9705,28 +9703,28 @@ index f05dadf..83d54dd 100644
 +				getNetHandler().onDisconnect(getExitMessage());
 +			else if(getNetHandler() != null)
 +				getNetHandler().onDisconnect(new ChatComponentText("Disconnected"));
- 		}
- 	}
+         }
+     }
  
 +	@Override
- 	protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Object p_channelRead0_2_)
- 	{
- 		this.channelRead0(p_channelRead0_1_, (Packet)p_channelRead0_2_);
+     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Object p_channelRead0_2_)
+     {
+         this.channelRead0(p_channelRead0_1_, (Packet)p_channelRead0_2_);
 @@ -468,12 +453,11 @@ public class NetworkManager extends SimpleChannelInboundHandler
- 	{
- 		private final Packet packet;
- 		private final GenericFutureListener[] futureListeners;
+     {
+         private final Packet packet;
+         private final GenericFutureListener[] futureListeners;
 -        private static final String __OBFID = "CL_00001244";
  
 -        public InboundHandlerTuplePacketListener(Packet inPacket, GenericFutureListener ... inFutureListeners)
 +		public InboundHandlerTuplePacketListener(Packet inPacket, GenericFutureListener... inFutureListeners)
- 		{
+         {
 -            this.packet = inPacket;
 -            this.futureListeners = inFutureListeners;
 +			packet = inPacket;
 +			futureListeners = inFutureListeners;
- 		}
- 	}
+         }
+     }
  }
 diff --git a/src/net/minecraft/network/NetworkSystem.java b/src/net/minecraft/network/NetworkSystem.java
 index f713c5d..3ac4a53 100644
@@ -9806,7 +9804,7 @@ index c9f2a49..8dcd696 100644
  {
      private final ByteBuf buf;
 diff --git a/src/net/minecraft/potion/PotionEffect.java b/src/net/minecraft/potion/PotionEffect.java
-index 1a7fd07..217aec4 100644
+index 1a7fd07..c7f63ef 100644
 --- a/src/net/minecraft/potion/PotionEffect.java
 +++ b/src/net/minecraft/potion/PotionEffect.java
 @@ -1,10 +1,16 @@
@@ -9829,14 +9827,14 @@ index 1a7fd07..217aec4 100644
 @@ -141,7 +147,11 @@ public class PotionEffect
  
      private int deincrementDuration()
- 	{
+     {
 -        return --this.duration;
 +		// TODO: Client
 +		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 +		return player.motionX == 0 && player.motionZ == 0
 +			&& WurstClient.INSTANCE.mods.potionSaverMod.isActive() ? duration
 +			: --duration;
- 	}
+     }
  
      public void performEffect(EntityLivingBase entityIn)
 diff --git a/src/net/minecraft/realms/RealmsConnect.java b/src/net/minecraft/realms/RealmsConnect.java
@@ -10035,7 +10033,7 @@ index cf310a1..f79805f 100644
  import org.apache.logging.log4j.Logger;
  
 diff --git a/src/net/minecraft/server/management/BanEntry.java b/src/net/minecraft/server/management/BanEntry.java
-index 737d827..f652ec2 100644
+index 737d827..1238292 100644
 --- a/src/net/minecraft/server/management/BanEntry.java
 +++ b/src/net/minecraft/server/management/BanEntry.java
 @@ -7,7 +7,7 @@ import java.util.Date;
@@ -10081,16 +10079,16 @@ index 737d827..f652ec2 100644
      {
 +        synchronized(dateFormat)
 +		{
- 			data.addProperty("created", dateFormat.format(this.banStartDate));
+         data.addProperty("created", dateFormat.format(this.banStartDate));
 +		}
- 		data.addProperty("source", this.bannedBy);
+         data.addProperty("source", this.bannedBy);
 -        data.addProperty("expires", this.banEndDate == null ? "forever" : dateFormat.format(this.banEndDate));
 +        synchronized(dateFormat)
 +		{
 +			data.addProperty("expires", this.banEndDate == null ? "forever"
 +				: dateFormat.format(this.banEndDate));
 +		}
- 		data.addProperty("reason", this.reason);
+         data.addProperty("reason", this.reason);
      }
  }
 diff --git a/src/net/minecraft/server/management/ItemInWorldManager.java b/src/net/minecraft/server/management/ItemInWorldManager.java
@@ -10311,7 +10309,7 @@ index cf74f0e..8098aae 100644
      /**
       * The index of the line currently being edited. Only used on client side, but defined on both. Note this is only
 diff --git a/src/net/minecraft/util/BlockPos.java b/src/net/minecraft/util/BlockPos.java
-index b856a09..bb5d645 100644
+index b856a09..c5ab1d7 100644
 --- a/src/net/minecraft/util/BlockPos.java
 +++ b/src/net/minecraft/util/BlockPos.java
 @@ -43,6 +43,14 @@ public class BlockPos extends Vec3i
@@ -10326,11 +10324,11 @@ index b856a09..bb5d645 100644
 +	    this.z = z;
 +	}
 +
- 	/**
+     /**
       * Add the given coordinates to the coordinates of this BlockPos
       *  
 diff --git a/src/net/minecraft/util/ChatComponentStyle.java b/src/net/minecraft/util/ChatComponentStyle.java
-index 0fd2665..736a7f1 100644
+index 0fd2665..5eb0b26 100644
 --- a/src/net/minecraft/util/ChatComponentStyle.java
 +++ b/src/net/minecraft/util/ChatComponentStyle.java
 @@ -3,6 +3,8 @@ package net.minecraft.util;
@@ -10348,13 +10346,13 @@ index 0fd2665..736a7f1 100644
  
 +        try
 +		{
- 			while (var2.hasNext())
- 			{
- 			    IChatComponent var3 = (IChatComponent)var2.next();
+         while (var2.hasNext())
+         {
+             IChatComponent var3 = (IChatComponent)var2.next();
 @@ -111,6 +115,10 @@ public abstract class ChatComponentStyle implements IChatComponent
- 			    var1.append(var3.getUnformattedTextForChat());
- 			    var1.append(EnumChatFormatting.RESET);
- 			}
+             var1.append(var3.getUnformattedTextForChat());
+             var1.append(EnumChatFormatting.RESET);
+         }
 +		}catch(ConcurrentModificationException e)
 +		{
 +			e.printStackTrace();
@@ -10684,7 +10682,7 @@ index 45f7cde..fba9f60 100644
                  this.theVillage = this.worldObj.getVillageCollection().func_176056_a(new BlockPos(var3), 1);
  
 diff --git a/src/net/minecraft/world/SpawnerAnimals.java b/src/net/minecraft/world/SpawnerAnimals.java
-index 9cd6216..ae6e4fd 100644
+index 9cd6216..9cfcc6b 100644
 --- a/src/net/minecraft/world/SpawnerAnimals.java
 +++ b/src/net/minecraft/world/SpawnerAnimals.java
 @@ -1,10 +1,12 @@
@@ -10716,13 +10714,13 @@ index 9cd6216..ae6e4fd 100644
 +                //TODO: Client
 +                try
 +				{
- 					if (!World.doesBlockHaveSolidTopSurface(worldIn, var4))
- 					{
- 					    return false;
+                 if (!World.doesBlockHaveSolidTopSurface(worldIn, var4))
+                 {
+                     return false;
 @@ -236,6 +241,10 @@ public final class SpawnerAnimals
- 					    boolean var6 = var5 != Blocks.bedrock && var5 != Blocks.barrier;
- 					    return var6 && !var3.isNormalCube() && !var3.getMaterial().isLiquid() && !worldIn.getBlockState(p_180267_2_.offsetUp()).getBlock().isNormalCube();
- 					}
+                     boolean var6 = var5 != Blocks.bedrock && var5 != Blocks.barrier;
+                     return var6 && !var3.isNormalCube() && !var3.getMaterial().isLiquid() && !worldIn.getBlockState(p_180267_2_.offsetUp()).getBlock().isNormalCube();
+                 }
 +				}catch(IllegalArgumentException e)
 +				{
 +					return false;
@@ -10731,7 +10729,7 @@ index 9cd6216..ae6e4fd 100644
          }
      }
 diff --git a/src/net/minecraft/world/World.java b/src/net/minecraft/world/World.java
-index fa8c3f0..829b79d 100644
+index fa8c3f0..12faa30 100644
 --- a/src/net/minecraft/world/World.java
 +++ b/src/net/minecraft/world/World.java
 @@ -3,6 +3,7 @@ package net.minecraft.world;
@@ -10753,7 +10751,7 @@ index fa8c3f0..829b79d 100644
 @@ -82,12 +84,15 @@ public abstract class World implements IBlockAccess
      /** How much light is subtracted from full daylight */
      private int skylightSubtracted;
-     
+ 
 +    /** RNG for World. */
 +    public final Random rand = new Random();
 +
@@ -10783,13 +10781,13 @@ index fa8c3f0..829b79d 100644
          {
 -            if (p_72945_1_.riddenByEntity != var18 && p_72945_1_.ridingEntity != var18)
 -            {
-             AxisAlignedBB var20 = ((Entity)var18.get(var19)).getBoundingBox();
+                 AxisAlignedBB var20 = ((Entity)var18.get(var19)).getBoundingBox();
  
-             if (var20 != null && var20.intersectsWith(p_72945_2_))
+                 if (var20 != null && var20.intersectsWith(p_72945_2_))
 @@ -1330,7 +1330,6 @@ public abstract class World implements IBlockAccess
-                 var3.add(var20);
+                     var3.add(var20);
+                 }
              }
-         }
 -        }
  
          return var3;
@@ -10895,7 +10893,7 @@ index fb26ace..68c73f0 100644
  import org.apache.logging.log4j.Logger;
  
 diff --git a/src/net/minecraft/world/chunk/storage/AnvilChunkLoader.java b/src/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-index 79ce940..23d9110 100644
+index 79ce940..f5c3af7 100644
 --- a/src/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ b/src/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 @@ -176,8 +176,6 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
@@ -10904,19 +10902,19 @@ index 79ce940..23d9110 100644
  
 -        if (var1 != null)
 -        {
-         try
-         {
-             this.writeChunkNBTTags(var1);
+             try
+             {
+                 this.writeChunkNBTTags(var1);
 @@ -186,7 +184,6 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
-         {
-             var4.printStackTrace();
-         }
+             {
+                 var4.printStackTrace();
+             }
 -        }
  
          return true;
      }
 diff --git a/src/net/minecraft/world/chunk/storage/RegionFile.java b/src/net/minecraft/world/chunk/storage/RegionFile.java
-index 65c7029..8e578de 100644
+index 65c7029..9efafc4 100644
 --- a/src/net/minecraft/world/chunk/storage/RegionFile.java
 +++ b/src/net/minecraft/world/chunk/storage/RegionFile.java
 @@ -1,6 +1,7 @@
@@ -10941,11 +10939,11 @@ index 65c7029..8e578de 100644
       */
 +    //TODO: Client
 +    @SuppressWarnings("resource")
- 	public DataOutputStream getChunkDataOutputStream(int p_76710_1_, int p_76710_2_)
+     public DataOutputStream getChunkDataOutputStream(int p_76710_1_, int p_76710_2_)
      {
          return this.outOfBounds(p_76710_1_, p_76710_2_) ? null : new DataOutputStream(new DeflaterOutputStream(new RegionFile.ChunkBuffer(p_76710_1_, p_76710_2_)));
 diff --git a/src/net/minecraft/world/gen/ChunkProviderEnd.java b/src/net/minecraft/world/gen/ChunkProviderEnd.java
-index 237f88e..73b8ee9 100644
+index 237f88e..2401400 100644
 --- a/src/net/minecraft/world/gen/ChunkProviderEnd.java
 +++ b/src/net/minecraft/world/gen/ChunkProviderEnd.java
 @@ -146,15 +146,8 @@ public class ChunkProviderEnd implements IChunkProvider
@@ -10954,8 +10952,8 @@ index 237f88e..73b8ee9 100644
  
 -                            if (var8 >= 0)
 -                            {
-                             p_180519_1_.setBlockState(var2, var8, var3, var6);
-                         }
+                                 p_180519_1_.setBlockState(var2, var8, var3, var6);
+                             }
 -                            else
 -                            {
 -                                p_180519_1_.setBlockState(var2, var8, var3, var7);
