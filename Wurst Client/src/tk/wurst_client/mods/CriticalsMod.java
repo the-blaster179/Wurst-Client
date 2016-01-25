@@ -11,7 +11,6 @@ package tk.wurst_client.mods;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.LeftClickListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -25,7 +24,6 @@ public class CriticalsMod extends Mod implements LeftClickListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.killauraMod,
 			wurst.mods.triggerBotMod};
 	}
@@ -33,13 +31,13 @@ public class CriticalsMod extends Mod implements LeftClickListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(LeftClickListener.class, this);
+		wurst.events.add(LeftClickListener.class, this);
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(LeftClickListener.class, this);
+		wurst.events.remove(LeftClickListener.class, this);
 	}
 	
 	@Override
@@ -52,7 +50,7 @@ public class CriticalsMod extends Mod implements LeftClickListener
 	
 	public static void doCritical()
 	{
-		if(!WurstClient.INSTANCE.mods.criticalsMod.isActive())
+		if(!wurst.mods.criticalsMod.isActive())
 			return;
 		if(!Minecraft.getMinecraft().thePlayer.isInWater()
 			&& !Minecraft.getMinecraft().thePlayer

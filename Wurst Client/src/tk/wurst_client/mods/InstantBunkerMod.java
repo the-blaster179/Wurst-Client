@@ -12,7 +12,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -54,11 +53,11 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.fastPlaceMod.isActive())
+		if(wurst.mods.fastPlaceMod.isActive())
 			speed = 1000000000;
 		else
 			speed = 5;
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive())
+		if(wurst.mods.yesCheatMod.isActive())
 		{
 			i = 0;
 			shouldBuild = true;
@@ -72,8 +71,8 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 			while(playerYaw < -180)
 				playerYaw += 360;
 		}
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
@@ -230,8 +229,8 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 		updateMS();
 		if(shouldBuild)
 		{
-			if((hasTimePassedS(speed) || WurstClient.INSTANCE.mods.fastPlaceMod
-				.isActive()) && i < building.length)
+			if((hasTimePassedS(speed) || wurst.mods.fastPlaceMod.isActive())
+				&& i < building.length)
 			{
 				BuildUtils.advancedInstantBuildNext(building, MouseOver,
 					playerYaw, posX + 1, posY, posZ, i);
@@ -331,8 +330,8 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 		shouldBuild = false;
 	}
 }

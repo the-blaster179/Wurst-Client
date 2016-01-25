@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -45,7 +44,7 @@ public class ProtectMod extends Mod implements UpdateListener
 		if(en != null
 			&& Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= range)
 			friend = en;
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -90,20 +89,20 @@ public class ProtectMod extends Mod implements UpdateListener
 		if(Minecraft.getMinecraft().thePlayer.isInWater()
 			&& Minecraft.getMinecraft().thePlayer.posY < friend.posY)
 			Minecraft.getMinecraft().thePlayer.motionY += 0.04;
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive())
-			speed = WurstClient.INSTANCE.mods.killauraMod.yesCheatSpeed;
+		if(wurst.mods.yesCheatMod.isActive())
+			speed = wurst.mods.killauraMod.yesCheatSpeed;
 		else
-			speed = WurstClient.INSTANCE.mods.killauraMod.normalSpeed;
+			speed = wurst.mods.killauraMod.normalSpeed;
 		updateMS();
 		if(hasTimePassedS(speed) && EntityUtils.getClosestEnemy(friend) != null)
 		{
 			enemy = EntityUtils.getClosestEnemy(friend);
 			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(enemy) <= range)
 			{
-				if(WurstClient.INSTANCE.mods.autoSwordMod.isActive())
+				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
 				CriticalsMod.doCritical();
-				WurstClient.INSTANCE.mods.blockHitMod.doBlock();
+				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityClient(enemy);
 				Minecraft.getMinecraft().thePlayer.swingItem();
 				Minecraft.getMinecraft().playerController.attackEntity(
@@ -116,7 +115,7 @@ public class ProtectMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 		if(friend != null)
 			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
 				false;

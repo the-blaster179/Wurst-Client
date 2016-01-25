@@ -21,7 +21,6 @@ import net.minecraft.item.ItemBow;
 import org.darkstorm.minecraft.gui.theme.wurst.WurstTheme;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.GUIRenderListener;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -44,16 +43,15 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.fastBowMod};
 	}
 	
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(GUIRenderListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(GUIRenderListener.class, this);
+		wurst.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -84,31 +82,27 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 		glBegin(GL_QUADS);
 		{
 			glVertex2d(width / 2 + 1, height / 2 + 1);
+			glVertex2d(width
+				/ 2
+				+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer()
+					.getStringWidth(targetLocked) + 4, height / 2 + 1);
 			glVertex2d(
 				width
 					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.gui.getTheme())
-						.getFontRenderer().getStringWidth(targetLocked) + 4,
-				height / 2 + 1);
-			glVertex2d(
-				width
-					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.gui.getTheme())
-						.getFontRenderer().getStringWidth(targetLocked) + 4,
+					+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer()
+						.getStringWidth(targetLocked) + 4,
 				height
 					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.gui.getTheme())
-						.getFontRenderer().FONT_HEIGHT);
+					+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer().FONT_HEIGHT);
 			glVertex2d(
 				width / 2 + 1,
 				height
 					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.gui.getTheme())
-						.getFontRenderer().FONT_HEIGHT);
+					+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer().FONT_HEIGHT);
 		}
 		glEnd();
 		glEnable(GL_TEXTURE_2D);
-		((WurstTheme)WurstClient.INSTANCE.gui.getTheme()).getFontRenderer()
+		((WurstTheme)wurst.gui.getTheme()).getFontRenderer()
 			.drawStringWithShadow(targetLocked, width / 2 + 2, height / 2,
 				RenderUtil.toRGBA(Color.WHITE));
 		glEnable(GL_CULL_FACE);
@@ -132,9 +126,9 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(GUIRenderListener.class, this);
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(GUIRenderListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 	
 	private void aimAtTarget()
@@ -145,7 +139,7 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 			Minecraft.getMinecraft().thePlayer.getItemInUseDuration();
 		velocity = bowCharge / 20;
 		velocity = (velocity * velocity + velocity * 2) / 3;
-		if(WurstClient.INSTANCE.mods.fastBowMod.isActive())
+		if(wurst.mods.fastBowMod.isActive())
 			velocity = 1;
 		if(velocity < 0.1)
 		{

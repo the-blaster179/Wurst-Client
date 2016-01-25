@@ -20,7 +20,6 @@ import net.minecraft.world.Explosion;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -55,7 +54,7 @@ public class KaboomMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -63,7 +62,7 @@ public class KaboomMod extends Mod implements UpdateListener
 	{
 		if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
 		{
-			WurstClient.INSTANCE.chat.error("Surivival mode only.");
+			wurst.chat.error("Surivival mode only.");
 			setEnabled(false);
 			return;
 		}
@@ -144,6 +143,6 @@ public class KaboomMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

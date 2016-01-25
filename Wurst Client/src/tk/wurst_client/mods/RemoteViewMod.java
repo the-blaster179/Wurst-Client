@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -41,7 +40,7 @@ public class RemoteViewMod extends Mod implements UpdateListener
 	{
 		if(EntityUtils.getClosestEntityRaw(false) == null)
 		{
-			WurstClient.INSTANCE.chat.message("There is no nearby entity.");
+			wurst.chat.message("There is no nearby entity.");
 			setEnabled(false);
 			return;
 		}
@@ -65,9 +64,8 @@ public class RemoteViewMod extends Mod implements UpdateListener
 		fakePlayer.rotationYawHead =
 			Minecraft.getMinecraft().thePlayer.rotationYawHead;
 		Minecraft.getMinecraft().theWorld.addEntityToWorld(-69, fakePlayer);
-		WurstClient.INSTANCE.chat.message("Now viewing " + otherView.getName()
-			+ ".");
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.chat.message("Now viewing " + otherView.getName() + ".");
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	public static void onEnabledByCommand(String viewName)
@@ -77,10 +75,10 @@ public class RemoteViewMod extends Mod implements UpdateListener
 			if(otherID == null && !viewName.equals(""))
 				otherID =
 					EntityUtils.searchEntityByNameRaw(viewName).getUniqueID();
-			WurstClient.INSTANCE.mods.remoteViewMod.toggle();
+			wurst.mods.remoteViewMod.toggle();
 		}catch(NullPointerException e)
 		{
-			WurstClient.INSTANCE.chat.error("Entity not found.");
+			wurst.chat.error("Entity not found.");
 		}
 	}
 	
@@ -105,11 +103,11 @@ public class RemoteViewMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 		if(otherView != null)
 		{
-			WurstClient.INSTANCE.chat.message("No longer viewing "
-				+ otherView.getName() + ".");
+			wurst.chat
+				.message("No longer viewing " + otherView.getName() + ".");
 			otherView.setInvisible(wasInvisible);
 			Minecraft.getMinecraft().thePlayer.noClip = false;
 			Minecraft.getMinecraft().thePlayer.setPositionAndRotation(oldX,

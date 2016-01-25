@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import java.util.HashSet;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
@@ -25,30 +24,30 @@ public class AntiMacMod extends Mod
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isEnabled())
-			WurstClient.INSTANCE.mods.yesCheatMod.setEnabled(false);
+		if(wurst.mods.yesCheatMod.isEnabled())
+			wurst.mods.yesCheatMod.setEnabled(false);
 		if(blockedMods == null)
 		{
 			blockedMods = new HashSet<>();
 			// add mods that down't work with YesCheat+
-			for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
+			for(Mod mod : wurst.mods.getAllMods())
 				if(!mod.getClass().getAnnotation(Mod.Info.class)
 					.noCheatCompatible())
 					blockedMods.add(mod);
 			
 			// remove mods that work with MAC
 			// TODO: More efficient method to do this
-			blockedMods.remove(WurstClient.INSTANCE.mods.antiFireMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.antiPotionMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.fastBowMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.glideMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.multiAuraMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.noSlowdownMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.regenMod);
-			blockedMods.remove(WurstClient.INSTANCE.mods.spiderMod);
+			blockedMods.remove(wurst.mods.antiFireMod);
+			blockedMods.remove(wurst.mods.antiPotionMod);
+			blockedMods.remove(wurst.mods.fastBowMod);
+			blockedMods.remove(wurst.mods.glideMod);
+			blockedMods.remove(wurst.mods.multiAuraMod);
+			blockedMods.remove(wurst.mods.noSlowdownMod);
+			blockedMods.remove(wurst.mods.regenMod);
+			blockedMods.remove(wurst.mods.spiderMod);
 			
 			// block FancyChat because Mineplex disables special characters
-			blockedMods.add(WurstClient.INSTANCE.mods.fancyChatMod);
+			blockedMods.add(wurst.mods.fancyChatMod);
 		}
 		for(Mod mod : blockedMods)
 			mod.setBlocked(true);

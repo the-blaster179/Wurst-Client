@@ -30,7 +30,6 @@ import org.darkstorm.minecraft.gui.layout.GridLayoutManager;
 import org.darkstorm.minecraft.gui.layout.GridLayoutManager.HorizontalGridConstraint;
 import org.darkstorm.minecraft.gui.theme.wurst.WurstTheme;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.events.listeners.DeathListener;
@@ -94,10 +93,10 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	public void onEnable()
 	{
 		reset();
-		WurstClient.INSTANCE.events.add(ChatInputListener.class, this);
-		WurstClient.INSTANCE.events.add(DeathListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(ChatInputListener.class, this);
+		wurst.events.add(DeathListener.class, this);
+		wurst.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -183,7 +182,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 		if(scoreboard != null
 			&& (scoreboard.size() == 13 || scoreboard.size() == 11))
 		{// If you are in the lobby:
-			WurstClient.INSTANCE.chat.message("You need to be in a 2v2 arena.");
+			wurst.chat.message("You need to be in a 2v2 arena.");
 			setEnabled(false);
 			return;
 		}
@@ -271,15 +270,14 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(ChatInputListener.class, this);
-		WurstClient.INSTANCE.events.remove(DeathListener.class, this);
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(ChatInputListener.class, this);
+		wurst.events.remove(DeathListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
 		if(friendsName != null)
-			WurstClient.INSTANCE.chat
-				.message("No longer playing ArenaBrawl with " + friendsName
-					+ ".");
+			wurst.chat.message("No longer playing ArenaBrawl with "
+				+ friendsName + ".");
 		reset();
 	}
 	
@@ -291,7 +289,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 			&& message.endsWith(" has won the game!"))
 		{
 			event.cancel();
-			WurstClient.INSTANCE.chat.message(message.substring(9));
+			wurst.chat.message(message.substring(9));
 			setEnabled(false);
 		}
 	}
@@ -301,15 +299,14 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	{
 		Minecraft.getMinecraft().thePlayer.respawnPlayer();
 		GuiScreen.mc.displayGuiScreen((GuiScreen)null);
-		WurstClient.INSTANCE.chat.message("You died.");
+		wurst.chat.message("You died.");
 		setEnabled(false);
 	}
 	
 	private void setupFrame()
 	{
 		friendsName = formatSBName(0);
-		WurstClient.INSTANCE.chat.message("Now playing ArenaBrawl with "
-			+ friendsName + ".");
+		wurst.chat.message("Now playing ArenaBrawl with " + friendsName + ".");
 		frame = new BasicFrame("ArenaBrawl");
 		frame.setTheme(new WurstTheme());
 		frame.setLayoutManager(new GridLayoutManager(2, 0));
@@ -339,7 +336,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 		frame.setHeight(frame.getTheme().getUIForComponent(frame)
 			.getDefaultSize(frame).height);
 		frame.layoutChildren();
-		WurstClient.INSTANCE.gui.addFrame(frame);
+		wurst.gui.addFrame(frame);
 		frame.setBackgroundColor(new Color(64, 64, 64, 224));
 		((Label)frame.getChildren()[0]).setForegroundColor(Color.CYAN);
 		((Label)frame.getChildren()[1]).setForegroundColor(Color.CYAN);
@@ -654,7 +651,7 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 		matchingBlocks.clear();
 		enemyTotems.clear();
 		friendTotems.clear();
-		WurstClient.INSTANCE.gui.removeFrame(frame);
+		wurst.gui.removeFrame(frame);
 		frame = null;
 		friend = null;
 		entityTarget = null;

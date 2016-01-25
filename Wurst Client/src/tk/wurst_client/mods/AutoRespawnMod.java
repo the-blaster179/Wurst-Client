@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.DeathListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -23,7 +22,7 @@ public class AutoRespawnMod extends Mod implements DeathListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(DeathListener.class, this);
+		wurst.events.add(DeathListener.class, this);
 	}
 	
 	@Override
@@ -36,6 +35,6 @@ public class AutoRespawnMod extends Mod implements DeathListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(DeathListener.class, this);
+		wurst.events.remove(DeathListener.class, this);
 	}
 }

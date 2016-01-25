@@ -11,7 +11,6 @@ package tk.wurst_client.mods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -27,7 +26,6 @@ public class TriggerBotMod extends Mod implements UpdateListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.special.targetSpf,
 			wurst.mods.killauraMod, wurst.mods.killauraLegitMod,
 			wurst.mods.multiAuraMod, wurst.mods.clickAuraMod,
@@ -38,15 +36,15 @@ public class TriggerBotMod extends Mod implements UpdateListener
 	public void onEnable()
 	{
 		// TODO: Clean up this mess!
-		if(WurstClient.INSTANCE.mods.killauraMod.isEnabled())
-			WurstClient.INSTANCE.mods.killauraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.killauraLegitMod.isEnabled())
-			WurstClient.INSTANCE.mods.killauraLegitMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.multiAuraMod.isEnabled())
-			WurstClient.INSTANCE.mods.multiAuraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.clickAuraMod.isEnabled())
-			WurstClient.INSTANCE.mods.clickAuraMod.setEnabled(false);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		if(wurst.mods.killauraMod.isEnabled())
+			wurst.mods.killauraMod.setEnabled(false);
+		if(wurst.mods.killauraLegitMod.isEnabled())
+			wurst.mods.killauraLegitMod.setEnabled(false);
+		if(wurst.mods.multiAuraMod.isEnabled())
+			wurst.mods.multiAuraMod.setEnabled(false);
+		if(wurst.mods.clickAuraMod.isEnabled())
+			wurst.mods.clickAuraMod.setEnabled(false);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -57,26 +55,25 @@ public class TriggerBotMod extends Mod implements UpdateListener
 			&& Minecraft.getMinecraft().objectMouseOver.entityHit instanceof EntityLivingBase)
 		{
 			updateMS();
-			boolean yesCheatMode =
-				WurstClient.INSTANCE.mods.yesCheatMod.isActive();
+			boolean yesCheatMode = wurst.mods.yesCheatMod.isActive();
 			if(yesCheatMode
-				&& hasTimePassedS(WurstClient.INSTANCE.mods.killauraMod.yesCheatSpeed)
+				&& hasTimePassedS(wurst.mods.killauraMod.yesCheatSpeed)
 				|| !yesCheatMode
-				&& hasTimePassedS(WurstClient.INSTANCE.mods.killauraMod.normalSpeed))
+				&& hasTimePassedS(wurst.mods.killauraMod.normalSpeed))
 			{
 				EntityLivingBase en =
 					(EntityLivingBase)Minecraft.getMinecraft().objectMouseOver.entityHit;
 				if((yesCheatMode
 					&& Minecraft.getMinecraft().thePlayer
-						.getDistanceToEntity(en) <= WurstClient.INSTANCE.mods.killauraMod.yesCheatRange || !yesCheatMode
+						.getDistanceToEntity(en) <= wurst.mods.killauraMod.yesCheatRange || !yesCheatMode
 					&& Minecraft.getMinecraft().thePlayer
-						.getDistanceToEntity(en) <= WurstClient.INSTANCE.mods.killauraMod.normalRange)
+						.getDistanceToEntity(en) <= wurst.mods.killauraMod.normalRange)
 					&& EntityUtils.isCorrectEntity(en, true))
 				{
-					if(WurstClient.INSTANCE.mods.autoSwordMod.isActive())
+					if(wurst.mods.autoSwordMod.isActive())
 						AutoSwordMod.setSlot();
 					CriticalsMod.doCritical();
-					WurstClient.INSTANCE.mods.blockHitMod.doBlock();
+					wurst.mods.blockHitMod.doBlock();
 					Minecraft.getMinecraft().thePlayer.swingItem();
 					Minecraft.getMinecraft().playerController.attackEntity(
 						Minecraft.getMinecraft().thePlayer, en);
@@ -89,6 +86,6 @@ public class TriggerBotMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

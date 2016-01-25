@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 
 import org.darkstorm.minecraft.gui.util.GuiManagerDisplayScreen;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -22,7 +21,7 @@ public class ClickGuiMod extends Mod implements UpdateListener
 {
 	public ClickGuiMod()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -30,12 +29,12 @@ public class ClickGuiMod extends Mod implements UpdateListener
 	{
 		if(!(Minecraft.getMinecraft().currentScreen instanceof GuiManagerDisplayScreen))
 			Minecraft.getMinecraft().displayGuiScreen(
-				new GuiManagerDisplayScreen(WurstClient.INSTANCE.gui));
+				new GuiManagerDisplayScreen(wurst.gui));
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		WurstClient.INSTANCE.gui.update();
+		wurst.gui.update();
 	}
 }

@@ -14,7 +14,6 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -31,7 +30,6 @@ public class BuildRandomMod extends Mod implements UpdateListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.autoBuildMod,
 			wurst.mods.fastPlaceMod, wurst.mods.autoSwitchMod};
 	}
@@ -39,19 +37,19 @@ public class BuildRandomMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(WurstClient.INSTANCE.mods.freecamMod.isActive()
-			|| WurstClient.INSTANCE.mods.remoteViewMod.isActive()
+		if(wurst.mods.freecamMod.isActive()
+			|| wurst.mods.remoteViewMod.isActive()
 			|| Minecraft.getMinecraft().objectMouseOver == null
 			|| Minecraft.getMinecraft().objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
 			return;
 		if(Minecraft.getMinecraft().rightClickDelayTimer > 0
-			&& !WurstClient.INSTANCE.mods.fastPlaceMod.isActive())
+			&& !wurst.mods.fastPlaceMod.isActive())
 			return;
 		float xDiff = 0;
 		float yDiff = 0;
@@ -125,6 +123,6 @@ public class BuildRandomMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

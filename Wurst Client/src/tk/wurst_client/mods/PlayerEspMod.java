@@ -11,7 +11,6 @@ package tk.wurst_client.mods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -26,7 +25,6 @@ public class PlayerEspMod extends Mod implements RenderListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.tracersMod,
 			wurst.mods.playerFinderMod, wurst.mods.mobEspMod,
 			wurst.mods.prophuntEspMod};
@@ -35,26 +33,25 @@ public class PlayerEspMod extends Mod implements RenderListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onRender()
 	{
-		if(WurstClient.INSTANCE.mods.arenaBrawlMod.isActive())
+		if(wurst.mods.arenaBrawlMod.isActive())
 			return;
 		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
 			if(entity instanceof EntityPlayer
 				&& !((Entity)entity).getName().equals(
 					Minecraft.getMinecraft().getSession().getUsername()))
-				RenderUtils.entityESPBox((Entity)entity,
-					WurstClient.INSTANCE.friends
-						.contains(((EntityPlayer)entity).getName()) ? 1 : 0);
+				RenderUtils.entityESPBox((Entity)entity, wurst.friends
+					.contains(((EntityPlayer)entity).getName()) ? 1 : 0);
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 }

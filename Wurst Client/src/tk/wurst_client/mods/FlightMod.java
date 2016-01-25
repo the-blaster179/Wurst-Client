@@ -13,7 +13,6 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -43,11 +42,11 @@ public class FlightMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.jetpackMod.isEnabled())
-			WurstClient.INSTANCE.mods.jetpackMod.setEnabled(false);
+		if(wurst.mods.jetpackMod.isEnabled())
+			wurst.mods.jetpackMod.setEnabled(false);
 		
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive()
-			|| WurstClient.INSTANCE.mods.antiMacMod.isActive())
+		if(wurst.mods.yesCheatMod.isActive()
+			|| wurst.mods.antiMacMod.isActive())
 		{
 			double startX = Minecraft.getMinecraft().thePlayer.posX;
 			startY = Minecraft.getMinecraft().thePlayer.posY;
@@ -63,13 +62,13 @@ public class FlightMod extends Mod implements UpdateListener
 			}
 			Minecraft.getMinecraft().thePlayer.jump();
 		}
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive())
+		if(wurst.mods.yesCheatMod.isActive())
 		{
 			if(!Minecraft.getMinecraft().thePlayer.onGround)
 				if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed
@@ -77,7 +76,7 @@ public class FlightMod extends Mod implements UpdateListener
 					Minecraft.getMinecraft().thePlayer.motionY = 0.2;
 				else
 					Minecraft.getMinecraft().thePlayer.motionY = -0.02;
-		}else if(WurstClient.INSTANCE.mods.antiMacMod.isActive())
+		}else if(wurst.mods.antiMacMod.isActive())
 		{
 			updateMS();
 			if(!Minecraft.getMinecraft().thePlayer.onGround)
@@ -111,6 +110,6 @@ public class FlightMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

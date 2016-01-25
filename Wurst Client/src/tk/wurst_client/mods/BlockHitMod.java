@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.LeftClickListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -27,13 +26,13 @@ public class BlockHitMod extends Mod implements LeftClickListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(LeftClickListener.class, this);
+		wurst.events.add(LeftClickListener.class, this);
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(LeftClickListener.class, this);
+		wurst.events.remove(LeftClickListener.class, this);
 	}
 	
 	@Override

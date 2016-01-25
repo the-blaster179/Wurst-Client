@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import tk.wurst_client.WurstClient;
-
 @Mod.Info(category = Mod.Category.BLOCKS,
 	description = "Allows you to reach specific blocks through walls.\n"
 		+ "Use .ghosthand id <block id> or .ghosthand name <block name>\n"
@@ -20,7 +18,6 @@ public class GhostHandMod extends Mod
 	@Override
 	public String getRenderName()
 	{
-		return getName() + " [" + WurstClient.INSTANCE.options.ghostHandID
-			+ "]";
+		return getName() + " [" + wurst.options.ghostHandID + "]";
 	}
 }

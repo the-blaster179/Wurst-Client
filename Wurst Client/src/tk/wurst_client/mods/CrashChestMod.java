@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import tk.wurst_client.WurstClient;
 
 @Mod.Info(category = Mod.Category.EXPLOITS,
 	description = "Generates a CrashChest. Give a lot of these to another\n"
@@ -29,15 +28,14 @@ public class CrashChestMod extends Mod
 		{
 			if(Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(36)
 				.getDisplayName().equals("§6§lCOPY ME"))
-				WurstClient.INSTANCE.chat
-					.error("You already have a CrashChest.");
+				wurst.chat.error("You already have a CrashChest.");
 			else
-				WurstClient.INSTANCE.chat.error("Please take off your shoes.");
+				wurst.chat.error("Please take off your shoes.");
 			setEnabled(false);
 			return;
 		}else if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
 		{
-			WurstClient.INSTANCE.chat.error("Creative mode only.");
+			wurst.chat.error("Creative mode only.");
 			setEnabled(false);
 			return;
 		}
@@ -50,8 +48,7 @@ public class CrashChestMod extends Mod
 		stack.setTagInfo("www.wurst-client.tk", nbtTagCompound);
 		Minecraft.getMinecraft().thePlayer.getInventory()[0] = stack;
 		stack.setStackDisplayName("§6§lCOPY ME");
-		WurstClient.INSTANCE.chat
-			.message("A CrashChest was placed in your shoes slot.");
+		wurst.chat.message("A CrashChest was placed in your shoes slot.");
 		setEnabled(false);
 	}
 }

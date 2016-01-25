@@ -16,7 +16,6 @@ import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.StringUtils;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -46,8 +45,8 @@ public class MassTpaMod extends Mod implements UpdateListener,
 			players.add(StringUtils.stripControlCodes(((NetworkPlayerInfo)itr
 				.next()).getPlayerNameForReal()));
 		Collections.shuffle(players, random);
-		WurstClient.INSTANCE.events.add(ChatInputListener.class, this);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(ChatInputListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -70,8 +69,8 @@ public class MassTpaMod extends Mod implements UpdateListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(ChatInputListener.class, this);
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(ChatInputListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -84,8 +83,7 @@ public class MassTpaMod extends Mod implements UpdateListener,
 			|| message.toLowerCase().contains("permission"))
 		{
 			event.cancel();
-			WurstClient.INSTANCE.chat
-				.message("§4§lERROR:§f This server doesn't have TPA.");
+			wurst.chat.message("§4§lERROR:§f This server doesn't have TPA.");
 			setEnabled(false);
 		}else if(message.toLowerCase().contains("accepted")
 			&& message.toLowerCase().contains("request")
@@ -93,8 +91,7 @@ public class MassTpaMod extends Mod implements UpdateListener,
 			&& message.toLowerCase().contains("anfrage"))
 		{
 			event.cancel();
-			WurstClient.INSTANCE.chat
-				.message("Someone accepted your TPA request. Stopping.");
+			wurst.chat.message("Someone accepted your TPA request. Stopping.");
 			setEnabled(false);
 		}
 	}
