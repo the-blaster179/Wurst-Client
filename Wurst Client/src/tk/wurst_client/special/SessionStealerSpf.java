@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.special;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.navigator.NavigatorItem;
 
 @Spf.Info(description = "Allows you to temporarily steal the Minecraft account of another player. This can either be\n"
@@ -23,7 +22,6 @@ public class SessionStealerSpf extends Spf
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.opSignMod,
 			wurst.special.bookHackSpf, wurst.mods.forceOpMod};
 	}
