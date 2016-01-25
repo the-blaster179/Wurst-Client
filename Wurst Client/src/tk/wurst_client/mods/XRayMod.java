@@ -11,7 +11,6 @@ package tk.wurst_client.mods;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
@@ -31,6 +30,6 @@ public class XRayMod extends Mod
 	@Override
 	public void onToggle()
 	{
-		Minecraft.getMinecraft().renderGlobal.loadRenderers();
+		mc.renderGlobal.loadRenderers();
 	}
 }

@@ -36,8 +36,7 @@ public class TargetFrame extends BasicFrame
 		
 		WurstClient wurst = WurstClient.INSTANCE;
 		
-		for(NavigatorSetting setting : wurst.special.targetSpf
-			.getSettings())
+		for(NavigatorSetting setting : wurst.special.targetSpf.getSettings())
 		{
 			if(!(setting instanceof CheckboxSetting))
 				continue;

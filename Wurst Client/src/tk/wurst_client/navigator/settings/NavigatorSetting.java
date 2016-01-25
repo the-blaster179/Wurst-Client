@@ -8,9 +8,9 @@
  */
 package tk.wurst_client.navigator.settings;
 
-import com.google.gson.JsonObject;
-
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
+
+import com.google.gson.JsonObject;
 
 public interface NavigatorSetting
 {

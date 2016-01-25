@@ -139,8 +139,7 @@ public class EntityUtils
 				.getName()))
 				return false;
 		
-		TargetSpf targetSpf =
-			WurstClient.INSTANCE.special.targetSpf;
+		TargetSpf targetSpf = WurstClient.INSTANCE.special.targetSpf;
 		
 		// invisible entities
 		if(((Entity)o).isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))

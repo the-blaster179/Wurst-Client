@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -24,7 +22,6 @@ public class FastPlaceMod extends Mod implements UpdateListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.fastBreakMod,
 			wurst.mods.buildRandomMod, wurst.mods.autoBuildMod};
 	}
@@ -32,18 +29,18 @@ public class FastPlaceMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		Minecraft.getMinecraft().rightClickDelayTimer = 0;
+		mc.rightClickDelayTimer = 0;
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

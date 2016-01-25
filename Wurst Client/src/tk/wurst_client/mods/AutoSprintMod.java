@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -22,21 +20,20 @@ public class AutoSprintMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(!Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-			&& Minecraft.getMinecraft().thePlayer.moveForward > 0
-			&& !Minecraft.getMinecraft().thePlayer.isSneaking())
-			Minecraft.getMinecraft().thePlayer.setSprinting(true);
+		if(!mc.thePlayer.isCollidedHorizontally && mc.thePlayer.moveForward > 0
+			&& !mc.thePlayer.isSneaking())
+			mc.thePlayer.setSprinting(true);
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

@@ -8,7 +8,11 @@
  */
 package tk.wurst_client.navigator.gui;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -57,10 +61,8 @@ public class NavigatorMainScreen extends NavigatorScreen
 	protected void onKeyPress(char typedChar, int keyCode)
 	{
 		if(keyCode == 1)
-		{
 			if(clickTimer == -1)
 				mc.displayGuiScreen((GuiScreen)null);
-		}
 		
 		if(clickTimer == -1)
 		{
@@ -88,7 +90,7 @@ public class NavigatorMainScreen extends NavigatorScreen
 	protected void onMouseClick(int x, int y, int button)
 	{
 		if(clickTimer == -1 && hoveredItem != -1)
-			if((button == 0 && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+			if(button == 0 && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
 				|| button == 2)
 			{
 				NavigatorItem item = navigatorDisplayList.get(hoveredItem);

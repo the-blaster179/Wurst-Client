@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C10PacketCreativeInventoryAction;
@@ -25,7 +24,7 @@ public class RepairCmd extends Cmd
 			syntaxError();
 		
 		// check for creative mode
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP player = mc.thePlayer;
 		if(!player.capabilities.isCreativeMode)
 			error("Creative mode only.");
 		

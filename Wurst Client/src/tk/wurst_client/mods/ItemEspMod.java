@@ -8,10 +8,8 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -26,20 +24,19 @@ public class ItemEspMod extends Mod implements RenderListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.chestEspMod};
 	}
 	
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onRender()
 	{
-		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object entity : mc.theWorld.loadedEntityList)
 			if(entity instanceof EntityItem)
 				RenderUtils.entityESPBox((Entity)entity, 2);
 	}
@@ -47,6 +44,6 @@ public class ItemEspMod extends Mod implements RenderListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 }

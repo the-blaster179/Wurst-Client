@@ -10,10 +10,8 @@ package tk.wurst_client.commands;
 
 import java.util.Iterator;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.StringUtils;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.alts.Alt;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.gui.alts.GuiAltList;
@@ -31,16 +29,13 @@ public class AddAltCmd extends Cmd
 		if(args[0].equals("all"))
 		{
 			int alts = 0;
-			Iterator itr =
-				Minecraft.getMinecraft().getNetHandler().getPlayerInfo()
-					.iterator();
+			Iterator itr = mc.getNetHandler().getPlayerInfo().iterator();
 			while(itr.hasNext())
 			{
 				NetworkPlayerInfo info = (NetworkPlayerInfo)itr.next();
 				String crackedName =
 					StringUtils.stripControlCodes(info.getPlayerNameForReal());
-				if(crackedName.equals(Minecraft.getMinecraft().thePlayer
-					.getName())
+				if(crackedName.equals(mc.thePlayer.getName())
 					|| crackedName.equals("Alexander01998")
 					|| GuiAltList.alts.contains(new Alt(crackedName)))
 					continue;
@@ -48,20 +43,17 @@ public class AddAltCmd extends Cmd
 				alts++;
 			}
 			if(alts == 1)
-				WurstClient.INSTANCE.chat
-					.message("Added 1 alt to the alt list.");
+				wurst.chat.message("Added 1 alt to the alt list.");
 			else
-				WurstClient.INSTANCE.chat.message("Added " + alts
-					+ " alts to the alt list.");
+				wurst.chat.message("Added " + alts + " alts to the alt list.");
 			GuiAltList.sortAlts();
-			WurstClient.INSTANCE.files.saveAlts();
+			wurst.files.saveAlts();
 		}else if(!args[0].equals("Alexander01998"))
 		{
 			GuiAltList.alts.add(new Alt(args[0]));
 			GuiAltList.sortAlts();
-			WurstClient.INSTANCE.files.saveAlts();
-			WurstClient.INSTANCE.chat.message("Added \"" + args[0]
-				+ "\" to the alt list.");
+			wurst.files.saveAlts();
+			wurst.chat.message("Added \"" + args[0] + "\" to the alt list.");
 		}
 	}
 }

@@ -9,11 +9,9 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -28,26 +26,24 @@ public class OverlayMod extends Mod implements RenderListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.nukerMod};
 	}
 	
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onRender()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver == null
-			|| Minecraft.getMinecraft().objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
+		if(mc.objectMouseOver == null
+			|| mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK)
 			return;
-		BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
+		BlockPos pos = mc.objectMouseOver.getBlockPos();
 		Block mouseOverBlock =
-			Minecraft.getMinecraft().theWorld.getBlockState(
-				Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+			mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 				.getBlock();
 		if(Block.getIdFromBlock(mouseOverBlock) != 0)
 			RenderUtils.nukerBox(pos, PlayerControllerMP.curBlockDamageMP);
@@ -56,6 +52,6 @@ public class OverlayMod extends Mod implements RenderListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 }

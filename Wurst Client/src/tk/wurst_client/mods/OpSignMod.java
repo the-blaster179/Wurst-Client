@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.mods.GuiOpSign;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -30,7 +28,6 @@ public class OpSignMod extends Mod
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.special.bookHackSpf,
 			wurst.mods.forceOpMod, wurst.special.sessionStealerSpf};
 	}
@@ -38,14 +35,13 @@ public class OpSignMod extends Mod
 	@Override
 	public void onEnable()
 	{
-		Minecraft.getMinecraft().displayGuiScreen(
-			new GuiOpSign(this, Minecraft.getMinecraft().currentScreen));
+		mc.displayGuiScreen(new GuiOpSign(this, mc.currentScreen));
 	}
 	
 	public void setCommand(String cmd)
 	{
 		command = cmd.replace("\"", "\\\\\"");
-		WurstClient.INSTANCE.chat
+		wurst.chat
 			.message("Command set. Place & right click a sign to run it.");
 	}
 }

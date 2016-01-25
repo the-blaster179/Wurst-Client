@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
-
 @Cmd.Info(help = "Makes you jump once.", name = "jump", syntax = {})
 public class JumpCmd extends Cmd
 {
@@ -18,8 +16,8 @@ public class JumpCmd extends Cmd
 	{
 		if(args.length != 0)
 			syntaxError();
-		if(!Minecraft.getMinecraft().thePlayer.onGround)
+		if(!mc.thePlayer.onGround)
 			error("Can't jump in mid-air.");
-		Minecraft.getMinecraft().thePlayer.jump();
+		mc.thePlayer.jump();
 	}
 }

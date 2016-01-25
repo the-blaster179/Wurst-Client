@@ -139,8 +139,7 @@ public class NavigatorRemoveKeybindScreen extends NavigatorScreen
 		// possible keybinds
 		hoveredKeybind = "";
 		int yi = bgy1 - 12 + scroll;
-		for(Entry<String, PossibleKeybind> entry : existingKeybinds
-			.entrySet())
+		for(Entry<String, PossibleKeybind> entry : existingKeybinds.entrySet())
 		{
 			String key = entry.getKey();
 			PossibleKeybind keybind = entry.getValue();

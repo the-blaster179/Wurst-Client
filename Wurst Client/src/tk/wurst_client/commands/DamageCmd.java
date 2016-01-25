@@ -11,7 +11,6 @@ package tk.wurst_client.commands;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.ai.PathUtils;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -27,21 +26,21 @@ public class DamageCmd extends Cmd
 			syntaxError();
 		if(!MiscUtils.isInteger(args[0]))
 			syntaxError("Amount must be a number.");
-		if(Minecraft.getMinecraft().thePlayer.isOnLadder())
+		if(mc.thePlayer.isOnLadder())
 			error("Cannot damage while climbing ladders.");
-		if(!Minecraft.getMinecraft().thePlayer.onGround)
+		if(!mc.thePlayer.onGround)
 			error("Cannot damage in mid-air.");
-		if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+		if(mc.thePlayer.capabilities.isCreativeMode)
 			error("Cannot damage in creative mode.");
 		int dmg = Integer.parseInt(args[0]);
 		if(dmg < 1)
 			error("Amount must be at least 1.");
 		if(dmg > 40)
 			error("Amount must be at most 40.");
-		double x = Minecraft.getMinecraft().thePlayer.posX;
-		double y = Minecraft.getMinecraft().thePlayer.posY;
-		double z = Minecraft.getMinecraft().thePlayer.posZ;
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive())
+		double x = mc.thePlayer.posX;
+		double y = mc.thePlayer.posY;
+		double z = mc.thePlayer.posZ;
+		if(wurst.mods.yesCheatMod.isActive())
 		{
 			Minecraft
 				.getMinecraft()
@@ -68,9 +67,8 @@ public class DamageCmd extends Cmd
 						error("Not enough space. Cannot apply any damage.");
 					else
 					{
-						WurstClient.INSTANCE.chat
-							.warning("Not enough space. Can only apply "
-								+ (i - 5) + " of " + dmg + " damage.");
+						wurst.chat.warning("Not enough space. Can only apply "
+							+ (i - 5) + " of " + dmg + " damage.");
 						dmg = i - 6;
 						break;
 					}

@@ -12,9 +12,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -43,8 +41,8 @@ public class BaseFinderMod extends Mod implements UpdateListener,
 	public void onEnable()
 	{
 		shouldInform = true;
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
@@ -67,16 +65,12 @@ public class BaseFinderMod extends Mod implements UpdateListener,
 				{
 					for(int z = range; z >= -range; z--)
 					{
-						int posX =
-							(int)(Minecraft.getMinecraft().thePlayer.posX + x);
-						int posY =
-							(int)(Minecraft.getMinecraft().thePlayer.posY + y);
-						int posZ =
-							(int)(Minecraft.getMinecraft().thePlayer.posZ + z);
+						int posX = (int)(mc.thePlayer.posX + x);
+						int posY = (int)(mc.thePlayer.posY + y);
+						int posZ = (int)(mc.thePlayer.posZ + z);
 						BlockPos pos = new BlockPos(posX, posY, posZ);
-						if(!naturalBlocks
-							.contains(Minecraft.getMinecraft().theWorld
-								.getBlockState(pos).getBlock()))
+						if(!naturalBlocks.contains(mc.theWorld.getBlockState(
+							pos).getBlock()))
 							matchingBlocks.add(pos);
 						if(matchingBlocks.size() >= maxBlocks)
 							break;
@@ -89,9 +83,8 @@ public class BaseFinderMod extends Mod implements UpdateListener,
 			}
 			if(matchingBlocks.size() >= maxBlocks && shouldInform)
 			{
-				WurstClient.INSTANCE.chat.warning(getName()
-					+ " found §lA LOT§r of blocks.");
-				WurstClient.INSTANCE.chat
+				wurst.chat.warning(getName() + " found §lA LOT§r of blocks.");
+				wurst.chat
 					.message("To prevent lag, it will only show the first "
 						+ maxBlocks + " blocks.");
 				shouldInform = false;
@@ -104,8 +97,8 @@ public class BaseFinderMod extends Mod implements UpdateListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 	
 	private void initBlocks()

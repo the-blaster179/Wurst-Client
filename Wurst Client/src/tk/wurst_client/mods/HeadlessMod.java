@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -24,13 +23,13 @@ public class HeadlessMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		Minecraft.getMinecraft().thePlayer.sendQueue
+		mc.thePlayer.sendQueue
 			.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(Minecraft
 				.getMinecraft().thePlayer.rotationYaw, 180F, Minecraft
 				.getMinecraft().thePlayer.onGround));
@@ -39,6 +38,6 @@ public class HeadlessMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

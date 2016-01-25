@@ -8,7 +8,11 @@
  */
 package tk.wurst_client.navigator.gui;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,13 +115,13 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 	
 	@Override
 	protected void onMouseDrag(int x, int y, int button, long timeDragged)
-	{
+	{	
 		
 	}
 	
 	@Override
 	protected void onMouseRelease(int x, int y, int button)
-	{
+	{	
 		
 	}
 	
@@ -173,8 +177,7 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 			for(int i = 0; i < possibleKeybinds.size(); i++)
 			{
 				yi += 24;
-				PossibleKeybind possibleKeybind =
-					possibleKeybinds.get(i);
+				PossibleKeybind possibleKeybind = possibleKeybinds.get(i);
 				
 				// positions
 				int x1 = bgx1 + 2;

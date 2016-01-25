@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.commands.Cmd.Info;
 
 @Info(help = "Teleports you up to 100 blocks away.\nOnly works on vanilla servers!",
@@ -20,6 +19,6 @@ public class TpCmd extends Cmd
 	public void execute(String[] args) throws Error
 	{
 		int[] pos = argsToPos(args);
-		Minecraft.getMinecraft().thePlayer.setPosition(pos[0], pos[1], pos[2]);
+		mc.thePlayer.setPosition(pos[0], pos[1], pos[2]);
 	}
 }

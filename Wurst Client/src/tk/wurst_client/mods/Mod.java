@@ -37,6 +37,9 @@ public class Mod implements NavigatorItem
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
 	
+	protected static final WurstClient wurst = WurstClient.INSTANCE;
+	protected static final Minecraft mc = Minecraft.getMinecraft();
+	
 	public enum Category
 	{
 		AUTOBUILD,

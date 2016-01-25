@@ -90,8 +90,9 @@ public class ColorsSetting implements NavigatorSetting
 					x += 16;
 					break;
 			}
-			ColorButton button = new ColorButton(featureScreen, x, y,
-				colorNames[i], colors[i], i);
+			ColorButton button =
+				new ColorButton(featureScreen, x, y, colorNames[i], colors[i],
+					i);
 			buttons[i] = button;
 			featureScreen.addButton(button);
 		}

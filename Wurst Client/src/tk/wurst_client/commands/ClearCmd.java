@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import tk.wurst_client.commands.Cmd.Info;
 
 @Info(help = "Clears the chat completely.", name = "clear", syntax = {})
@@ -18,7 +17,7 @@ public class ClearCmd extends Cmd
 	public void execute(String[] args) throws Error
 	{
 		if(args.length == 0)
-			Minecraft.getMinecraft().ingameGUI.getChatGUI().clearChatMessages();
+			mc.ingameGUI.getChatGUI().clearChatMessages();
 		else
 			syntaxError();
 	}

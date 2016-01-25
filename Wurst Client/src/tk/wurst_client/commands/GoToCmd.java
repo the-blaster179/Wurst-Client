@@ -8,9 +8,7 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.ai.PathFinder;
 import tk.wurst_client.commands.Cmd.Info;
 
@@ -23,11 +21,11 @@ public class GoToCmd extends Cmd
 	public void execute(String[] args) throws Error
 	{
 		int[] pos = argsToPos(args);
-		if(Math.abs(pos[0] - Minecraft.getMinecraft().thePlayer.posX) > 256
-			|| Math.abs(pos[2] - Minecraft.getMinecraft().thePlayer.posZ) > 256)
+		if(Math.abs(pos[0] - mc.thePlayer.posX) > 256
+			|| Math.abs(pos[2] - mc.thePlayer.posZ) > 256)
 		{
-			WurstClient.INSTANCE.chat.error("Goal is out of range!");
-			WurstClient.INSTANCE.chat.message("Maximum range is 256 blocks.");
+			wurst.chat.error("Goal is out of range!");
+			wurst.chat.message("Maximum range is 256 blocks.");
 			return;
 		}
 		tk.wurst_client.mods.GoToCmdMod.setGoal(new BlockPos(pos[0], pos[1],
@@ -45,9 +43,9 @@ public class GoToCmd extends Cmd
 				{
 					tk.wurst_client.mods.GoToCmdMod.setPath(pathFinder
 						.formatPath());
-					WurstClient.INSTANCE.mods.goToCmdMod.setEnabled(true);
+					wurst.mods.goToCmdMod.setEnabled(true);
 				}else
-					WurstClient.INSTANCE.chat.error("Could not find a path.");
+					wurst.chat.error("Could not find a path.");
 				System.out.println("Done after "
 					+ (System.nanoTime() - startTime) / 1e6 + "ms");
 			}

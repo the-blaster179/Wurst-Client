@@ -10,11 +10,9 @@ package tk.wurst_client.mods;
 
 import java.util.UUID;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -41,33 +39,28 @@ public class RemoteViewMod extends Mod implements UpdateListener
 	{
 		if(EntityUtils.getClosestEntityRaw(false) == null)
 		{
-			WurstClient.INSTANCE.chat.message("There is no nearby entity.");
+			wurst.chat.message("There is no nearby entity.");
 			setEnabled(false);
 			return;
 		}
-		oldX = Minecraft.getMinecraft().thePlayer.posX;
-		oldY = Minecraft.getMinecraft().thePlayer.posY;
-		oldZ = Minecraft.getMinecraft().thePlayer.posZ;
-		oldYaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
-		oldPitch = Minecraft.getMinecraft().thePlayer.rotationPitch;
-		Minecraft.getMinecraft().thePlayer.noClip = true;
+		oldX = mc.thePlayer.posX;
+		oldY = mc.thePlayer.posY;
+		oldZ = mc.thePlayer.posZ;
+		oldYaw = mc.thePlayer.rotationYaw;
+		oldPitch = mc.thePlayer.rotationPitch;
+		mc.thePlayer.noClip = true;
 		if(otherID == null)
 			otherID = EntityUtils.getClosestEntityRaw(false).getUniqueID();
 		otherView = EntityUtils.searchEntityByIdRaw(otherID);
-		wasInvisible =
-			otherView.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer);
+		wasInvisible = otherView.isInvisibleToPlayer(mc.thePlayer);
 		EntityOtherPlayerMP fakePlayer =
-			new EntityOtherPlayerMP(Minecraft.getMinecraft().theWorld,
-				Minecraft.getMinecraft().thePlayer.getGameProfile());
-		fakePlayer.clonePlayer(Minecraft.getMinecraft().thePlayer, true);
-		fakePlayer
-			.copyLocationAndAnglesFrom(Minecraft.getMinecraft().thePlayer);
-		fakePlayer.rotationYawHead =
-			Minecraft.getMinecraft().thePlayer.rotationYawHead;
-		Minecraft.getMinecraft().theWorld.addEntityToWorld(-69, fakePlayer);
-		WurstClient.INSTANCE.chat.message("Now viewing " + otherView.getName()
-			+ ".");
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+			new EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.getGameProfile());
+		fakePlayer.clonePlayer(mc.thePlayer, true);
+		fakePlayer.copyLocationAndAnglesFrom(mc.thePlayer);
+		fakePlayer.rotationYawHead = mc.thePlayer.rotationYawHead;
+		mc.theWorld.addEntityToWorld(-69, fakePlayer);
+		wurst.chat.message("Now viewing " + otherView.getName() + ".");
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	public static void onEnabledByCommand(String viewName)
@@ -77,10 +70,10 @@ public class RemoteViewMod extends Mod implements UpdateListener
 			if(otherID == null && !viewName.equals(""))
 				otherID =
 					EntityUtils.searchEntityByNameRaw(viewName).getUniqueID();
-			WurstClient.INSTANCE.mods.remoteViewMod.toggle();
+			wurst.mods.remoteViewMod.toggle();
 		}catch(NullPointerException e)
 		{
-			WurstClient.INSTANCE.chat.error("Entity not found.");
+			wurst.chat.error("Entity not found.");
 		}
 	}
 	
@@ -92,29 +85,29 @@ public class RemoteViewMod extends Mod implements UpdateListener
 			setEnabled(false);
 			return;
 		}
-		newView = Minecraft.getMinecraft().thePlayer;
+		newView = mc.thePlayer;
 		otherView = EntityUtils.searchEntityByIdRaw(otherID);
 		newView.copyLocationAndAnglesFrom(otherView);
-		Minecraft.getMinecraft().thePlayer.motionX = 0;
-		Minecraft.getMinecraft().thePlayer.motionY = 0;
-		Minecraft.getMinecraft().thePlayer.motionZ = 0;
-		Minecraft.getMinecraft().thePlayer = newView;
+		mc.thePlayer.motionX = 0;
+		mc.thePlayer.motionY = 0;
+		mc.thePlayer.motionZ = 0;
+		mc.thePlayer = newView;
 		otherView.setInvisible(true);
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 		if(otherView != null)
 		{
-			WurstClient.INSTANCE.chat.message("No longer viewing "
-				+ otherView.getName() + ".");
+			wurst.chat
+				.message("No longer viewing " + otherView.getName() + ".");
 			otherView.setInvisible(wasInvisible);
-			Minecraft.getMinecraft().thePlayer.noClip = false;
-			Minecraft.getMinecraft().thePlayer.setPositionAndRotation(oldX,
-				oldY, oldZ, oldYaw, oldPitch);
-			Minecraft.getMinecraft().theWorld.removeEntityFromWorld(-69);
+			mc.thePlayer.noClip = false;
+			mc.thePlayer.setPositionAndRotation(oldX, oldY, oldZ, oldYaw,
+				oldPitch);
+			mc.theWorld.removeEntityFromWorld(-69);
 		}
 		newView = null;
 		otherView = null;

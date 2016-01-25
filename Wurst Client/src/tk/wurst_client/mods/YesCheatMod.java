@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import java.util.HashSet;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
@@ -25,12 +24,12 @@ public class YesCheatMod extends Mod
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.antiMacMod.isEnabled())
-			WurstClient.INSTANCE.mods.antiMacMod.setEnabled(false);
+		if(wurst.mods.antiMacMod.isEnabled())
+			wurst.mods.antiMacMod.setEnabled(false);
 		if(blockedMods == null)
 		{
 			blockedMods = new HashSet<>();
-			for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
+			for(Mod mod : wurst.mods.getAllMods())
 				if(!mod.getClass().getAnnotation(Mod.Info.class)
 					.noCheatCompatible())
 					blockedMods.add(mod);

@@ -10,11 +10,11 @@ package tk.wurst_client.navigator.settings;
 
 import java.awt.Color;
 
-import com.google.gson.JsonObject;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen.ButtonData;
+
+import com.google.gson.JsonObject;
 
 public abstract class ModeSetting implements NavigatorSetting
 {

@@ -10,7 +10,6 @@ package tk.wurst_client.mods;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 import tk.wurst_client.navigator.NavigatorItem;
@@ -34,7 +33,6 @@ public class FastBreakMod extends Mod
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.fastPlaceMod,
 			wurst.mods.autoMineMod, wurst.mods.nukerMod};
 	}

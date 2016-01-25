@@ -8,9 +8,7 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -26,7 +24,6 @@ public class KillauraLegitMod extends Mod implements UpdateListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.special.targetSpf,
 			wurst.mods.killauraMod, wurst.mods.multiAuraMod,
 			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod};
@@ -36,15 +33,15 @@ public class KillauraLegitMod extends Mod implements UpdateListener
 	public void onEnable()
 	{
 		// TODO: Clean up this mess!
-		if(WurstClient.INSTANCE.mods.killauraMod.isEnabled())
-			WurstClient.INSTANCE.mods.killauraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.multiAuraMod.isEnabled())
-			WurstClient.INSTANCE.mods.multiAuraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.clickAuraMod.isEnabled())
-			WurstClient.INSTANCE.mods.clickAuraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.triggerBotMod.isEnabled())
-			WurstClient.INSTANCE.mods.triggerBotMod.setEnabled(false);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		if(wurst.mods.killauraMod.isEnabled())
+			wurst.mods.killauraMod.setEnabled(false);
+		if(wurst.mods.multiAuraMod.isEnabled())
+			wurst.mods.multiAuraMod.setEnabled(false);
+		if(wurst.mods.clickAuraMod.isEnabled())
+			wurst.mods.clickAuraMod.setEnabled(false);
+		if(wurst.mods.triggerBotMod.isEnabled())
+			wurst.mods.triggerBotMod.setEnabled(false);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -52,31 +49,26 @@ public class KillauraLegitMod extends Mod implements UpdateListener
 	{
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
-		if(hasTimePassedS(WurstClient.INSTANCE.mods.killauraMod.yesCheatSpeed)
-			&& en != null)
-		{
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= WurstClient.INSTANCE.mods.killauraMod.yesCheatRange)
+		if(hasTimePassedS(wurst.mods.killauraMod.yesCheatSpeed) && en != null)
+			if(mc.thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.yesCheatRange)
 			{
-				if(WurstClient.INSTANCE.mods.criticalsMod.isActive()
-					&& Minecraft.getMinecraft().thePlayer.onGround)
-					Minecraft.getMinecraft().thePlayer.jump();
+				if(wurst.mods.criticalsMod.isActive() && mc.thePlayer.onGround)
+					mc.thePlayer.jump();
 				if(EntityUtils.getDistanceFromMouse(en) > 55)
 					EntityUtils.faceEntityClient(en);
 				else
 				{
 					EntityUtils.faceEntityClient(en);
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController.attackEntity(
-						Minecraft.getMinecraft().thePlayer, en);
+					mc.thePlayer.swingItem();
+					mc.playerController.attackEntity(mc.thePlayer, en);
 				}
 				updateLastMS();
 			}
-		}
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

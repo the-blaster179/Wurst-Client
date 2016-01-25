@@ -12,12 +12,10 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -39,7 +37,6 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.itemEspMod, wurst.mods.searchMod,
 			wurst.mods.xRayMod};
 	}
@@ -48,15 +45,15 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 	public void onEnable()
 	{
 		shouldInform = true;
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onRender()
 	{
 		int i = 0;
-		for(Object o : Minecraft.getMinecraft().theWorld.loadedTileEntityList)
+		for(Object o : mc.theWorld.loadedTileEntityList)
 		{
 			if(i >= maxChests)
 				break;
@@ -70,7 +67,7 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 				RenderUtils.blockESPBox(((TileEntityEnderChest)o).getPos());
 			}
 		}
-		for(Object o : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object o : mc.theWorld.loadedEntityList)
 		{
 			if(i >= maxChests)
 				break;
@@ -89,11 +86,9 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 		}
 		if(i >= maxChests && shouldInform)
 		{
-			WurstClient.INSTANCE.chat.warning(getName()
-				+ " found §lA LOT§r of chests.");
-			WurstClient.INSTANCE.chat
-				.message("To prevent lag, it will only show the first "
-					+ maxChests + " chests.");
+			wurst.chat.warning(getName() + " found §lA LOT§r of chests.");
+			wurst.chat.message("To prevent lag, it will only show the first "
+				+ maxChests + " chests.");
 			shouldInform = false;
 		}else if(i < maxChests)
 			shouldInform = true;
@@ -110,16 +105,11 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 				for(int x = range; x >= -range; x--)
 					for(int z = range; z >= -range; z--)
 					{
-						int posX =
-							(int)(Minecraft.getMinecraft().thePlayer.posX + x);
-						int posY =
-							(int)(Minecraft.getMinecraft().thePlayer.posY + y);
-						int posZ =
-							(int)(Minecraft.getMinecraft().thePlayer.posZ + z);
+						int posX = (int)(mc.thePlayer.posX + x);
+						int posY = (int)(mc.thePlayer.posY + y);
+						int posZ = (int)(mc.thePlayer.posZ + z);
 						BlockPos pos = new BlockPos(posX, posY, posZ);
-						IBlockState state =
-							Minecraft.getMinecraft().theWorld
-								.getBlockState(pos);
+						IBlockState state = mc.theWorld.getBlockState(pos);
 						Block block = state.getBlock();
 						int metadata = block.getMetaFromState(state);
 						if(Block.getIdFromBlock(block) == 33
@@ -133,7 +123,7 @@ public class ChestEspMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 }

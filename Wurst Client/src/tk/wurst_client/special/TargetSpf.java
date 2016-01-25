@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.special;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.CheckboxSetting;
 import tk.wurst_client.navigator.settings.ColorsSetting;
@@ -54,7 +53,6 @@ public class TargetSpf extends Spf
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.killauraMod,
 			wurst.mods.killauraLegitMod, wurst.mods.multiAuraMod,
 			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,

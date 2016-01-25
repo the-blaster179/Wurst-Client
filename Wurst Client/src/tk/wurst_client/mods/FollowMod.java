@@ -8,9 +8,7 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -38,10 +36,9 @@ public class FollowMod extends Mod implements UpdateListener
 	{
 		entity = null;
 		EntityLivingBase en = EntityUtils.getClosestEntity(false, true);
-		if(en != null
-			&& Minecraft.getMinecraft().thePlayer.getDistanceToEntity(en) <= range)
+		if(en != null && mc.thePlayer.getDistanceToEntity(en) <= range)
 			entity = en;
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -52,37 +49,31 @@ public class FollowMod extends Mod implements UpdateListener
 			setEnabled(false);
 			return;
 		}
-		if(entity.isDead || Minecraft.getMinecraft().thePlayer.isDead)
+		if(entity.isDead || mc.thePlayer.isDead)
 		{
 			entity = null;
 			setEnabled(false);
 			return;
 		}
-		double xDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posX - entity.posX);
-		double zDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posZ - entity.posZ);
+		double xDist = Math.abs(mc.thePlayer.posX - entity.posX);
+		double zDist = Math.abs(mc.thePlayer.posZ - entity.posZ);
 		EntityUtils.faceEntityClient(entity);
 		if(xDist > 1D || zDist > 1D)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			mc.gameSettings.keyBindForward.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
-		if(Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-			&& Minecraft.getMinecraft().thePlayer.onGround)
-			Minecraft.getMinecraft().thePlayer.jump();
-		if(Minecraft.getMinecraft().thePlayer.isInWater()
-			&& Minecraft.getMinecraft().thePlayer.posY < entity.posY)
-			Minecraft.getMinecraft().thePlayer.motionY += 0.04;
+			mc.gameSettings.keyBindForward.pressed = false;
+		if(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)
+			mc.thePlayer.jump();
+		if(mc.thePlayer.isInWater() && mc.thePlayer.posY < entity.posY)
+			mc.thePlayer.motionY += 0.04;
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 		if(entity != null)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
+			mc.gameSettings.keyBindForward.pressed = false;
 	}
 	
 	public void setEntity(EntityLivingBase entity)

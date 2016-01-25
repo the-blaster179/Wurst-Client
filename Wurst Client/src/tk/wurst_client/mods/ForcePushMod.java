@@ -8,10 +8,8 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.C03PacketPlayer;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.utils.EntityUtils;
 
@@ -24,23 +22,23 @@ public class ForcePushMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
-		if(Minecraft.getMinecraft().thePlayer.onGround && en != null
-			&& en.getDistanceToEntity(Minecraft.getMinecraft().thePlayer) < 1)
+		if(mc.thePlayer.onGround && en != null
+			&& en.getDistanceToEntity(mc.thePlayer) < 1)
 			for(int i = 0; i < 1000; i++)
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer(true));
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

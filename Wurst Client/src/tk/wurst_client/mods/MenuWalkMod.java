@@ -8,7 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngameMenu;
 
@@ -29,14 +28,13 @@ public class MenuWalkMod extends Mod
 			return false;
 		
 		// check if there is a player to move
-		Minecraft mc = Minecraft.getMinecraft();
 		if(mc.thePlayer == null)
 			return false;
 		
 		// check if player is viewing chat
-		if((mc.currentScreen instanceof GuiChat)
-			|| (mc.currentScreen instanceof GuiIngameMenu)
-			|| (mc.currentScreen instanceof NavigatorScreen))
+		if(mc.currentScreen instanceof GuiChat
+			|| mc.currentScreen instanceof GuiIngameMenu
+			|| mc.currentScreen instanceof NavigatorScreen)
 			return false;
 		
 		// check if inventory key is pressed

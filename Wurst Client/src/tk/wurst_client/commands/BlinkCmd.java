@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.commands;
 
-import tk.wurst_client.WurstClient;
-
 @Cmd.Info(help = "Enables, disables or cancels Blink.",
 	name = "blink",
 	syntax = {"[(on|off|cancel)]"})
@@ -21,17 +19,17 @@ public class BlinkCmd extends Cmd
 		if(args.length > 1)
 			syntaxError();
 		if(args.length == 0)
-			WurstClient.INSTANCE.mods.blinkMod.toggle();
+			wurst.mods.blinkMod.toggle();
 		else if(args[0].equalsIgnoreCase("on"))
 		{
-			if(!WurstClient.INSTANCE.mods.blinkMod.isEnabled())
-				WurstClient.INSTANCE.mods.blinkMod.setEnabled(true);
+			if(!wurst.mods.blinkMod.isEnabled())
+				wurst.mods.blinkMod.setEnabled(true);
 		}else if(args[0].equalsIgnoreCase("off"))
-			WurstClient.INSTANCE.mods.blinkMod.setEnabled(false);
+			wurst.mods.blinkMod.setEnabled(false);
 		else if(args[0].equalsIgnoreCase("cancel"))
 		{
-			if(WurstClient.INSTANCE.mods.blinkMod.isEnabled())
-				WurstClient.INSTANCE.mods.blinkMod.cancel();
+			if(wurst.mods.blinkMod.isEnabled())
+				wurst.mods.blinkMod.cancel();
 		}else
 			syntaxError();
 	}

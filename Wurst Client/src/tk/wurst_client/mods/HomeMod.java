@@ -8,8 +8,6 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.events.listeners.UpdateListener;
@@ -27,8 +25,8 @@ public class HomeMod extends Mod implements UpdateListener, ChatInputListener
 	public void onEnable()
 	{
 		disableTimer = 0;
-		WurstClient.INSTANCE.events.add(ChatInputListener.class, this);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(ChatInputListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -37,15 +35,15 @@ public class HomeMod extends Mod implements UpdateListener, ChatInputListener
 		if(disableTimer == 4)
 			setEnabled(false);
 		else if(disableTimer == 0)
-			Minecraft.getMinecraft().thePlayer.sendChatMessage("/home");
+			mc.thePlayer.sendChatMessage("/home");
 		disableTimer++;
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(ChatInputListener.class, this);
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(ChatInputListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -58,7 +56,7 @@ public class HomeMod extends Mod implements UpdateListener, ChatInputListener
 			|| message.toLowerCase().contains("permission"))
 		{
 			event.cancel();
-			WurstClient.INSTANCE.chat.error("This server doesn't have /home.");
+			wurst.chat.error("This server doesn't have /home.");
 		}
 	}
 }

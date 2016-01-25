@@ -10,13 +10,11 @@ package tk.wurst_client.mods;
 
 import java.awt.Color;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S28PacketEffect;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
 import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.PacketInputEvent;
 import tk.wurst_client.events.listeners.PacketInputListener;
 import tk.wurst_client.events.listeners.RenderListener;
@@ -37,7 +35,6 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		WurstClient wurst = WurstClient.INSTANCE;
 		return new NavigatorItem[]{wurst.mods.playerEspMod,
 			wurst.mods.tracersMod};
 	}
@@ -46,8 +43,8 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	public void onEnable()
 	{
 		blockPos = null;
-		WurstClient.INSTANCE.events.add(PacketInputListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(PacketInputListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
@@ -75,14 +72,14 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(PacketInputListener.class, this);
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(PacketInputListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onReceivedPacket(PacketInputEvent event)
 	{
-		if(Minecraft.getMinecraft().thePlayer == null)
+		if(mc.thePlayer == null)
 			return;
 		Packet packet = event.getPacket();
 		if(packet instanceof S28PacketEffect)

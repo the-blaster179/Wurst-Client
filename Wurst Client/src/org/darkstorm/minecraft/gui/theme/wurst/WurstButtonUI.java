@@ -29,8 +29,8 @@ import org.lwjgl.input.Mouse;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.mods.Mod;
-import tk.wurst_client.mods.ModManager;
 import tk.wurst_client.mods.Mod.Category;
+import tk.wurst_client.mods.ModManager;
 
 public class WurstButtonUI extends AbstractComponentUI<Button>
 {
