@@ -7,8 +7,9 @@ import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.CHAT,
-	description = "Uses a special font to bypass some\n"
-		+ "Word and Capslock filters.",
+	description = "Replaces ASCII characters in sent chat messages with fancier unicode characters. Can be\n"
+		+ "used to bypass curse word filters on some servers. Does not work on servers that block\n"
+		+ "unicode characters.",
 	name = "FancyChat")
 public class FancyChatMod extends Mod implements ChatOutputListener
 {
