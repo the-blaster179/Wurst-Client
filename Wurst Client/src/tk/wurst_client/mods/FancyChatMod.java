@@ -9,8 +9,8 @@ import tk.wurst_client.mods.Mod.Info;
 @Info(category = Category.CHAT,
 	description = "Uses a special font to bypass some\n"
 		+ "Word and Capslock filters.",
-	name = "AntiChatFilter")
-public class AntiChatFilterMod extends Mod implements ChatOutputListener
+	name = "FancyChat")
+public class FancyChatMod extends Mod implements ChatOutputListener
 {
 	private final String blacklist = "(){}[]|";
 	

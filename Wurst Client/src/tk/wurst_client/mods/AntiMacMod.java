@@ -47,8 +47,8 @@ public class AntiMacMod extends Mod
 			blockedMods.remove(WurstClient.INSTANCE.mods.regenMod);
 			blockedMods.remove(WurstClient.INSTANCE.mods.spiderMod);
 			
-			// block AntiChatFilter because Mineplex disables special characters
-			blockedMods.add(WurstClient.INSTANCE.mods.antiChatFilterMod);
+			// block FancyChat because Mineplex disables special characters
+			blockedMods.add(WurstClient.INSTANCE.mods.fancyChatMod);
 		}
 		for(Mod mod : blockedMods)
 			mod.setBlocked(true);

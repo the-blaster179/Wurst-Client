@@ -28,7 +28,6 @@ public class ModManager
 	public final AntiAfkMod antiAfkMod = new AntiAfkMod();
 	public final AntiBlindMod antiBlindMod = new AntiBlindMod();
 	public final AntiCactusMod antiCactusMod = new AntiCactusMod();
-	public final AntiChatFilterMod antiChatFilterMod = new AntiChatFilterMod();
 	public final AntiFireMod antiFireMod = new AntiFireMod();
 	public final AntiKnockbackMod antiKnockbackMod = new AntiKnockbackMod();
 	public final AntiMacMod antiMacMod = new AntiMacMod();
@@ -65,6 +64,7 @@ public class ModManager
 	public final CriticalsMod criticalsMod = new CriticalsMod();
 	public final DerpMod derpMod = new DerpMod();
 	public final DolphinMod dolphinMod = new DolphinMod();
+	public final FancyChatMod fancyChatMod = new FancyChatMod();
 	public final FastBreakMod fastBreakMod = new FastBreakMod();
 	public final FastBowMod fastBowMod = new FastBowMod();
 	public final FastEatMod fastEatMod = new FastEatMod();
