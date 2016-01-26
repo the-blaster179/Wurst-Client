@@ -10,9 +10,9 @@ package tk.wurst_client.commands;
 
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.mods.Mod;
-import tk.wurst_client.mods.Mod.Category;
+import tk.wurst_client.special.Spf;
 
-@Info(help = "Counts the features in this release of Wurst.",
+@Info(help = "Shows the feature count and some over statistics.",
 	name = "features",
 	syntax = {})
 public class FeaturesCmd extends Cmd
@@ -22,21 +22,25 @@ public class FeaturesCmd extends Cmd
 	{
 		if(args.length != 0)
 			syntaxError();
-		wurst.chat.message("Features in this release of Wurst:");
-		int mods = wurst.mods.countMods();
-		int hiddenMods = 0;
+		
+		wurst.chat.message("> All features: "
+			+ wurst.navigator.countAllFeatures());
+		wurst.chat.message("> Mods: " + wurst.mods.countMods());
+		wurst.chat.message("> Commands: " + wurst.commands.countCommands());
+		wurst.chat.message("> Special features: "
+			+ wurst.special.countFeatures());
+		int settings = 0, bypasses = 0;
 		for(Mod mod : wurst.mods.getAllMods())
-			if(mod.getCategory() == Category.HIDDEN)
-				hiddenMods++;
-		wurst.chat.message(">" + (mods - hiddenMods) + " mods (+" + hiddenMods
-			+ " hidden mods)");
-		int commands = wurst.commands.countCommands();
-		wurst.chat.message(">" + commands + " commands");
-		wurst.chat.message(">" + wurst.keybinds.size()
-			+ " keybinds in your current configuration");
-		int settings = 0;
-		for(Mod mod : wurst.mods.getAllMods())
+		{
 			settings += mod.getSettings().size();
-		wurst.chat.message(">" + settings + " settings");
+			if(mod.getClass().getAnnotation(Mod.Info.class).noCheatCompatible())
+				bypasses++;
+		}
+		wurst.chat.message("> NoCheat bypasses (mods only): " + bypasses);
+		for(Cmd cmd : wurst.commands.getAllCommands())
+			settings += cmd.getSettings().size();
+		for(Spf spf : wurst.special.getAllFeatures())
+			settings += spf.getSettings().size();
+		wurst.chat.message("> Settings: " + settings);
 	}
 }
