@@ -35,10 +35,10 @@ public class SpfManager
 		try
 		{
 			for(Field field : SpfManager.class.getFields())
-				if(field.getName().endsWith("Feature"))
+				if(field.getName().endsWith("Spf"))
 				{
-					Spf cmd = (Spf)field.get(this);
-					features.put(cmd.getName(), cmd);
+					Spf spf = (Spf)field.get(this);
+					features.put(spf.getName(), spf);
 				}
 		}catch(Exception e)
 		{
