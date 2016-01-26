@@ -179,4 +179,9 @@ public class Navigator
 			}
 		});
 	}
+	
+	public int countAllFeatures()
+	{
+		return navigatorList.size();
+	}
 }
