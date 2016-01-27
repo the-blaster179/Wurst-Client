@@ -209,6 +209,7 @@ public class GuiWurstMainMenu extends GuiMainMenu
 				WurstClient.INSTANCE.analytics.trackEvent("changelog",
 					"view changelog");
 			}
+			mc.displayGuiScreen(this);
 		}
 	}
 	
