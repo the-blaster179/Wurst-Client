@@ -27,6 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -200,6 +201,20 @@ public class GuiWurstMainMenu extends GuiMainMenu
 			e.printStackTrace();
 		}
 		
+		// changelog
+		if(WurstClient.INSTANCE.startupMessageDisabled)
+			return;
+		if(!WurstClient.VERSION
+			.equals(WurstClient.INSTANCE.options.lastLaunchedVersion))
+		{
+			mc.displayGuiScreen(new GuiYesNo(this,
+				"Successfully updated to Wurst v" + WurstClient.VERSION, "",
+				"Go Play", "View Changelog", 64));
+			WurstClient.INSTANCE.options.lastLaunchedVersion =
+				WurstClient.VERSION;
+			WurstClient.INSTANCE.files.saveOptions();
+		}
+		
 		WurstClient.INSTANCE.startupMessageDisabled = true;
 	}
 	
@@ -231,6 +246,26 @@ public class GuiWurstMainMenu extends GuiMainMenu
 			case 25:
 				MiscUtils.openLink("https://www.wurst-client.tk/fanshop");
 				break;
+		}
+	}
+	
+	@Override
+	public void confirmClicked(boolean result, int id)
+	{
+		super.confirmClicked(result, id);
+		
+		// changelog
+		if(id == 64)
+		{
+			if(result)
+				WurstClient.INSTANCE.analytics.trackEvent("changelog",
+					"go play");
+			else
+			{
+				MiscUtils.openLink("https://www.wurst-client.tk/changelog/");
+				WurstClient.INSTANCE.analytics.trackEvent("changelog",
+					"view changelog");
+			}
 		}
 	}
 	
