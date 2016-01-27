@@ -159,6 +159,63 @@ public class GuiWurstMainMenu extends GuiMainMenu
 					newsTicker += newsTicker;
 			}
 		}).start();
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException
+	{
+		super.actionPerformed(button);
+		
+		switch(button.id)
+		{
+			case 3:
+				mc.displayGuiScreen(new GuiAlts(this));
+				break;
+			case 20:
+				MiscUtils.openLink("https://www.wurst-client.tk/youtube");
+				break;
+			case 21:
+				MiscUtils.openLink("https://www.wurst-client.tk/twitter");
+				break;
+			case 22:
+				MiscUtils.openLink("https://www.wurst-client.tk/gplus");
+				break;
+			case 23:
+				MiscUtils.openLink("https://www.wurst-client.tk/github");
+				break;
+			case 24:
+				MiscUtils.openLink("https://www.wurst-client.tk/feedback");
+				break;
+			case 25:
+				MiscUtils.openLink("https://www.wurst-client.tk/fanshop");
+				break;
+		}
+	}
+	
+	@Override
+	public void confirmClicked(boolean result, int id)
+	{
+		super.confirmClicked(result, id);
+		
+		// changelog
+		if(id == 64)
+		{
+			if(result)
+				WurstClient.INSTANCE.analytics.trackEvent("changelog",
+					"go play");
+			else
+			{
+				MiscUtils.openLink("https://www.wurst-client.tk/changelog/");
+				WurstClient.INSTANCE.analytics.trackEvent("changelog",
+					"view changelog");
+			}
+		}
+	}
+	
+	@Override
+	public void updateScreen()
+	{
+		super.updateScreen();
 		
 		// updater
 		if(WurstClient.INSTANCE.startupMessageDisabled)
@@ -216,57 +273,6 @@ public class GuiWurstMainMenu extends GuiMainMenu
 		}
 		
 		WurstClient.INSTANCE.startupMessageDisabled = true;
-	}
-	
-	@Override
-	protected void actionPerformed(GuiButton button) throws IOException
-	{
-		super.actionPerformed(button);
-		
-		switch(button.id)
-		{
-			case 3:
-				mc.displayGuiScreen(new GuiAlts(this));
-				break;
-			case 20:
-				MiscUtils.openLink("https://www.wurst-client.tk/youtube");
-				break;
-			case 21:
-				MiscUtils.openLink("https://www.wurst-client.tk/twitter");
-				break;
-			case 22:
-				MiscUtils.openLink("https://www.wurst-client.tk/gplus");
-				break;
-			case 23:
-				MiscUtils.openLink("https://www.wurst-client.tk/github");
-				break;
-			case 24:
-				MiscUtils.openLink("https://www.wurst-client.tk/feedback");
-				break;
-			case 25:
-				MiscUtils.openLink("https://www.wurst-client.tk/fanshop");
-				break;
-		}
-	}
-	
-	@Override
-	public void confirmClicked(boolean result, int id)
-	{
-		super.confirmClicked(result, id);
-		
-		// changelog
-		if(id == 64)
-		{
-			if(result)
-				WurstClient.INSTANCE.analytics.trackEvent("changelog",
-					"go play");
-			else
-			{
-				MiscUtils.openLink("https://www.wurst-client.tk/changelog/");
-				WurstClient.INSTANCE.analytics.trackEvent("changelog",
-					"view changelog");
-			}
-		}
 	}
 	
 	@Override
