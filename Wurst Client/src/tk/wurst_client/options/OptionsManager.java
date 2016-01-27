@@ -35,6 +35,7 @@ public class OptionsManager
 	public int throwAmount = 16;
 	
 	public String forceOPList = WurstClient.INSTANCE.files.wurstDir.getPath();
+	public String lastLaunchedVersion = "0";
 	
 	public OptionsManager.GoogleAnalytics google_analytics =
 		new OptionsManager.GoogleAnalytics();
