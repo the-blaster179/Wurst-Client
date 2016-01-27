@@ -158,6 +158,49 @@ public class GuiWurstMainMenu extends GuiMainMenu
 					newsTicker += newsTicker;
 			}
 		}).start();
+		
+		// updater
+		if(WurstClient.INSTANCE.startupMessageDisabled)
+			return;
+		if(WurstClient.INSTANCE.updater.isOutdated())
+		{
+			WurstClient.INSTANCE.analytics.trackEvent("updater", "update to v"
+				+ WurstClient.INSTANCE.updater.getLatestVersion(), "from "
+				+ WurstClient.INSTANCE.updater.getCurrentVersion());
+			WurstClient.INSTANCE.updater.update();
+			WurstClient.INSTANCE.startupMessageDisabled = true;
+		}
+		
+		// emergency message
+		if(WurstClient.INSTANCE.startupMessageDisabled)
+			return;
+		try
+		{
+			HttpsURLConnection connection =
+				(HttpsURLConnection)new URL(
+					"https://www.wurst-client.tk/api/v1/messages.json")
+					.openConnection();
+			connection.connect();
+			
+			JsonObject json =
+				JsonUtils.jsonParser
+					.parse(
+						new InputStreamReader(connection.getInputStream(),
+							"UTF-8")).getAsJsonObject();
+			
+			if(json.get(WurstClient.VERSION) != null)
+			{
+				System.out.println("Emergency message found!");
+				mc.displayGuiScreen(new GuiMessage(json
+					.get(WurstClient.VERSION).getAsJsonObject()));
+				WurstClient.INSTANCE.startupMessageDisabled = true;
+			}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		WurstClient.INSTANCE.startupMessageDisabled = true;
 	}
 	
 	@Override
@@ -364,46 +407,6 @@ public class GuiWurstMainMenu extends GuiMainMenu
 				drawHoveringText(tooltip, mouseX, mouseY);
 				break;
 			}
-		}
-		
-		if(!WurstClient.INSTANCE.startupMessageDisabled)
-		{
-			if(WurstClient.INSTANCE.updater.isOutdated())
-			{
-				// updater
-				WurstClient.INSTANCE.analytics.trackEvent(
-					"updater",
-					"update to v"
-						+ WurstClient.INSTANCE.updater.getLatestVersion(),
-					"from " + WurstClient.INSTANCE.updater.getCurrentVersion());
-				WurstClient.INSTANCE.updater.update();
-			}else
-				// emergency message
-				try
-				{
-					HttpsURLConnection connection =
-						(HttpsURLConnection)new URL(
-							"https://www.wurst-client.tk/api/v1/messages.json")
-							.openConnection();
-					connection.connect();
-					
-					JsonObject json =
-						JsonUtils.jsonParser.parse(
-							new InputStreamReader(connection.getInputStream(),
-								"UTF-8")).getAsJsonObject();
-					
-					if(json.get(WurstClient.VERSION) != null)
-					{
-						System.out.println("Emergency message found!");
-						mc.displayGuiScreen(new GuiMessage(json.get(
-							WurstClient.VERSION).getAsJsonObject()));
-					}
-				}catch(Exception e)
-				{
-					e.printStackTrace();
-				}
-			
-			WurstClient.INSTANCE.startupMessageDisabled = true;
 		}
 	}
 	
