@@ -9,8 +9,10 @@
 package tk.wurst_client.navigator.settings;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen.ButtonData;
 
@@ -27,6 +29,12 @@ public abstract class ModeSetting implements NavigatorSetting
 		this.name = name;
 		this.modes = modes;
 		this.selected = selected;
+	}
+	
+	@Override
+	public String getName()
+	{
+		return name;
 	}
 	
 	@Override
@@ -77,6 +85,26 @@ public abstract class ModeSetting implements NavigatorSetting
 		}
 	}
 	
+	@Override
+	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
+	{
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		String fullName = featureName + " " + name;
+		String command = ".setmode " + fullName.toLowerCase() + " ";
+		String description = "Set " + fullName + " to ";
+		
+		possibleKeybinds.add(new PossibleKeybind(command + "next", "Next "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "prev", "Previous "
+			+ fullName));
+		
+		for(String mode : modes)
+			possibleKeybinds.add(new PossibleKeybind(command + mode.toLowerCase(),
+				description + mode));
+		
+		return possibleKeybinds;
+	}
+	
 	protected int getSelected()
 	{
 		return selected;
@@ -86,6 +114,31 @@ public abstract class ModeSetting implements NavigatorSetting
 	{
 		this.selected = selected;
 		update();
+	}
+	
+	public void nextMode()
+	{
+		selected++;
+		if(selected >= modes.length)
+			selected = 0;
+		update();
+	}
+	
+	public void prevMode()
+	{
+		selected--;
+		if(selected <= -1)
+			selected = modes.length - 1;
+		update();
+	}
+	
+	public int indexOf(String mode)
+	{
+		for(int i = 0; i < modes.length; i++)
+			if(modes[i].equalsIgnoreCase(mode))
+				return i;
+		
+		return -1;
 	}
 	
 	@Override

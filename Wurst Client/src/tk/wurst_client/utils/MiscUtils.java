@@ -48,6 +48,18 @@ public class MiscUtils
 		return true;
 	}
 	
+	public static boolean isDouble(String s)
+	{
+		try
+		{
+			Double.parseDouble(s);
+		}catch(NumberFormatException e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
 	public static int countMatches(String string, String regex)
 	{
 		Matcher matcher = Pattern.compile(regex).matcher(string);

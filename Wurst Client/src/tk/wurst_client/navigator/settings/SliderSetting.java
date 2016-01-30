@@ -8,8 +8,11 @@
  */
 package tk.wurst_client.navigator.settings;
 
+import java.util.ArrayList;
+
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 import com.google.gson.JsonObject;
@@ -50,6 +53,12 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	}
 	
 	@Override
+	public String getName()
+	{
+		return getText();
+	}
+	
+	@Override
 	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
 		// text
@@ -61,9 +70,40 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	}
 	
 	@Override
+	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
+	{
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		String fullName = featureName + " " + getText();
+		String command = ".setslider " + fullName.toLowerCase() + " ";
+		
+		possibleKeybinds.add(new PossibleKeybind(command + "more", "Increase "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "less", "Decrease "
+			+ fullName));
+		
+		return possibleKeybinds;
+	}
+	
+	@Override
 	public double getValue()
 	{
 		return super.getValue();
+	}
+	
+	@Override
+	public void setValue(double value)
+	{
+		super.setValue(value);
+	}
+	
+	public void increaseValue()
+	{
+		setValue(getValue() + getIncrement());
+	}
+	
+	public void decreaseValue()
+	{
+		setValue(getValue() - getIncrement());
 	}
 	
 	@Override

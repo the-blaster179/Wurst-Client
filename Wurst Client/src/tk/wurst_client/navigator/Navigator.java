@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 import tk.wurst_client.WurstClient;
@@ -161,6 +162,11 @@ public class Navigator
 		navigatorList.forEach(action);
 	}
 	
+	public Iterator<NavigatorItem> iterator()
+	{
+		return navigatorList.iterator();
+	}
+
 	public void sortFeatures()
 	{
 		navigatorList.sort(new Comparator<NavigatorItem>()

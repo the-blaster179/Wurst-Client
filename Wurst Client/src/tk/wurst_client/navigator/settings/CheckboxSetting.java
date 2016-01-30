@@ -8,7 +8,10 @@
  */
 package tk.wurst_client.navigator.settings;
 
+import java.util.ArrayList;
+
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 import com.google.gson.JsonObject;
@@ -22,6 +25,12 @@ public class CheckboxSetting implements NavigatorSetting
 	{
 		this.name = name;
 		this.checked = checked;
+	}
+	
+	@Override
+	public final String getName()
+	{
+		return name;
 	}
 	
 	@Override
@@ -40,9 +49,21 @@ public class CheckboxSetting implements NavigatorSetting
 		});
 	}
 	
-	public final String getName()
+	@Override
+	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{
-		return name;
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		String fullName = featureName + " " + name;
+		String command = ".setcheckbox " + fullName.toLowerCase() + " ";
+		
+		possibleKeybinds.add(new PossibleKeybind(command + "toggle", "Toggle "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "on", "Enable "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "off", "Disable "
+			+ fullName));
+		
+		return possibleKeybinds;
 	}
 	
 	public final boolean isChecked()

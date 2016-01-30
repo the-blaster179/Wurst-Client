@@ -88,7 +88,13 @@ public class Spf implements NavigatorItem
 	@Override
 	public ArrayList<PossibleKeybind> getPossibleKeybinds()
 	{
-		return new ArrayList<PossibleKeybind>();
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		
+		// settings keybinds
+		for(NavigatorSetting setting : settings)
+			possibleKeybinds.addAll(setting.getPossibleKeybinds(name));
+		
+		return possibleKeybinds;
 	}
 	
 	@Override
