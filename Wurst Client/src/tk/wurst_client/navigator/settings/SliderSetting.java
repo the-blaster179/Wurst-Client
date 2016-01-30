@@ -8,8 +8,11 @@
  */
 package tk.wurst_client.navigator.settings;
 
+import java.util.ArrayList;
+
 import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 import com.google.gson.JsonObject;
@@ -64,6 +67,12 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 		// slider
 		featureScreen.addSlider(featureScreen.new SliderData(this,
 			60 + featureScreen.getTextHeight()));
+	}
+	
+	@Override
+	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
+	{
+		return new ArrayList<>();
 	}
 	
 	@Override

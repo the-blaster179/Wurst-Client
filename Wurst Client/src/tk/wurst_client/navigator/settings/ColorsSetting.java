@@ -9,7 +9,9 @@
 package tk.wurst_client.navigator.settings;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 import tk.wurst_client.utils.JsonUtils;
 
@@ -139,6 +141,12 @@ public class ColorsSetting implements NavigatorSetting
 		});
 	}
 	
+	@Override
+	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
+	{
+		return new ArrayList<>();
+	}
+
 	public boolean[] getSelected()
 	{
 		return selected;

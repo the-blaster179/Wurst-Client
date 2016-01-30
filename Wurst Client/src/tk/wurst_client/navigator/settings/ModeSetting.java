@@ -9,8 +9,10 @@
 package tk.wurst_client.navigator.settings;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.navigator.PossibleKeybind;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 import tk.wurst_client.navigator.gui.NavigatorFeatureScreen.ButtonData;
 
@@ -81,6 +83,26 @@ public abstract class ModeSetting implements NavigatorSetting
 			buttons[i] = button;
 			featureScreen.addButton(button);
 		}
+	}
+	
+	@Override
+	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
+	{
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		String fullName = featureName + " " + name;
+		String command = ".setmode " + fullName + " ";
+		String description = "Set " + fullName + " to ";
+		
+		possibleKeybinds.add(new PossibleKeybind(command + "next", "Next "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "prev", "Previous "
+			+ fullName));
+		
+		for(String mode : modes)
+			possibleKeybinds.add(new PossibleKeybind(command + mode,
+				description + mode));
+		
+		return possibleKeybinds;
 	}
 	
 	protected int getSelected()
