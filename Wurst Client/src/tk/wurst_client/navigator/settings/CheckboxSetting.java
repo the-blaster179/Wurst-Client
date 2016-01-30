@@ -32,7 +32,7 @@ public class CheckboxSetting implements NavigatorSetting
 	{
 		return name;
 	}
-
+	
 	@Override
 	public final void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
@@ -52,7 +52,18 @@ public class CheckboxSetting implements NavigatorSetting
 	@Override
 	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{
-		return new ArrayList<>();
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		String fullName = featureName + " " + name;
+		String command = ".setcheckbox " + fullName.toLowerCase() + " ";
+		
+		possibleKeybinds.add(new PossibleKeybind(command + "toggle", "Toggle "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "on", "Enable "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "off", "Disable "
+			+ fullName));
+		
+		return possibleKeybinds;
 	}
 	
 	public final boolean isChecked()
