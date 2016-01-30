@@ -64,6 +64,7 @@ public class CmdManager implements ChatOutputListener
 	public final SayCmd sayCmd = new SayCmd();
 	public final SearchCmd searchCmd = new SearchCmd();
 	public final SetModeCmd setModeCmd = new SetModeCmd();
+	public final SetSliderCmd setSliderCmd = new SetSliderCmd();
 	public final SpammerCmd spammerCmd = new SpammerCmd();
 	public final TacoCmd tacoCmd = new TacoCmd();
 	public final TCmd tCmd = new TCmd();

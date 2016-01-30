@@ -82,6 +82,22 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	}
 	
 	@Override
+	public void setValue(double value)
+	{
+		super.setValue(value);
+	}
+	
+	public void increaseValue()
+	{
+		setValue(getValue() + getIncrement());
+	}
+	
+	public void decreaseValue()
+	{
+		setValue(getValue() - getIncrement());
+	}
+	
+	@Override
 	public void save(JsonObject json)
 	{
 		json.addProperty(getText(), getValue());
