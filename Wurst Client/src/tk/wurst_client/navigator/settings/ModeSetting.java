@@ -90,7 +90,7 @@ public abstract class ModeSetting implements NavigatorSetting
 	{
 		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
 		String fullName = featureName + " " + name;
-		String command = ".setmode " + fullName + " ";
+		String command = ".setmode " + fullName.toLowerCase() + " ";
 		String description = "Set " + fullName + " to ";
 		
 		possibleKeybinds.add(new PossibleKeybind(command + "next", "Next "
@@ -99,7 +99,7 @@ public abstract class ModeSetting implements NavigatorSetting
 			+ fullName));
 		
 		for(String mode : modes)
-			possibleKeybinds.add(new PossibleKeybind(command + mode,
+			possibleKeybinds.add(new PossibleKeybind(command + mode.toLowerCase(),
 				description + mode));
 		
 		return possibleKeybinds;

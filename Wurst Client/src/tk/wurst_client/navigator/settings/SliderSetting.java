@@ -74,7 +74,7 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	{
 		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
 		String fullName = featureName + " " + getText();
-		String command = ".setslider " + fullName + " ";
+		String command = ".setslider " + fullName.toLowerCase() + " ";
 		
 		possibleKeybinds.add(new PossibleKeybind(command + "more", "Increase "
 			+ fullName));
