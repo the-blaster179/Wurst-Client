@@ -94,6 +94,22 @@ public abstract class ModeSetting implements NavigatorSetting
 		update();
 	}
 	
+	public void nextMode()
+	{
+		selected++;
+		if(selected >= modes.length)
+			selected = 0;
+		update();
+	}
+	
+	public void prevMode()
+	{
+		selected--;
+		if(selected <= -1)
+			selected = modes.length - 1;
+		update();
+	}
+	
 	@Override
 	public void save(JsonObject json)
 	{
