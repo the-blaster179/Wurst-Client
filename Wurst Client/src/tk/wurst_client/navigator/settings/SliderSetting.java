@@ -72,7 +72,16 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	@Override
 	public ArrayList<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{
-		return new ArrayList<>();
+		ArrayList<PossibleKeybind> possibleKeybinds = new ArrayList<>();
+		String fullName = featureName + " " + getText();
+		String command = ".setslider " + fullName + " ";
+		
+		possibleKeybinds.add(new PossibleKeybind(command + "more", "Increase "
+			+ fullName));
+		possibleKeybinds.add(new PossibleKeybind(command + "less", "Decrease "
+			+ fullName));
+		
+		return possibleKeybinds;
 	}
 	
 	@Override
