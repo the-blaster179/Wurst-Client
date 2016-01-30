@@ -30,6 +30,12 @@ public abstract class ModeSetting implements NavigatorSetting
 	}
 	
 	@Override
+	public String getName()
+	{
+		return name;
+	}
+	
+	@Override
 	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
 		// heading

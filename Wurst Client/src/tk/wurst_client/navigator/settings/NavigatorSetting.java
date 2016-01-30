@@ -14,6 +14,8 @@ import com.google.gson.JsonObject;
 
 public interface NavigatorSetting
 {
+	public String getName();
+	
 	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen);
 	
 	public void save(JsonObject json);

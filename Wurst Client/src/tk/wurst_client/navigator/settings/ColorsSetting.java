@@ -33,6 +33,12 @@ public class ColorsSetting implements NavigatorSetting
 	}
 	
 	@Override
+	public String getName()
+	{
+		return name;
+	}
+	
+	@Override
 	public final void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
 		// text

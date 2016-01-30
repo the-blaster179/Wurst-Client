@@ -50,6 +50,12 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	}
 	
 	@Override
+	public String getName()
+	{
+		return getText();
+	}
+	
+	@Override
 	public void addToFeatureScreen(NavigatorFeatureScreen featureScreen)
 	{
 		// text
