@@ -110,6 +110,15 @@ public abstract class ModeSetting implements NavigatorSetting
 		update();
 	}
 	
+	public int indexOf(String mode)
+	{
+		for(int i = 0; i < modes.length; i++)
+			if(modes[i].equalsIgnoreCase(mode))
+				return i;
+		
+		return -1;
+	}
+	
 	@Override
 	public void save(JsonObject json)
 	{
