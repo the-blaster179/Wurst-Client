@@ -7,6 +7,8 @@
  */
 package tk.wurst_client.commands;
 
+import tk.wurst_client.events.ChatOutputEvent;
+
 @Cmd.Info(help = "Makes you jump once.", name = "jump", syntax = {})
 public class JumpCmd extends Cmd
 {
@@ -18,5 +20,17 @@ public class JumpCmd extends Cmd
 		if(!mc.thePlayer.onGround)
 			error("Can't jump in mid-air.");
 		mc.thePlayer.jump();
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Jump";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".jump", true));
 	}
 }
