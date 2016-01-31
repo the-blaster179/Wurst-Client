@@ -8,6 +8,7 @@
 package tk.wurst_client.commands;
 
 import tk.wurst_client.commands.Cmd.Info;
+import tk.wurst_client.events.ChatOutputEvent;
 
 @Info(help = "Does nothing. Useful for scripting.",
 	name = "nothing",
@@ -18,5 +19,17 @@ public class NothingCmd extends Cmd
 	public void execute(String[] args) throws Error
 	{	
 		
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Do Nothing";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".nothing", true));
 	}
 }
