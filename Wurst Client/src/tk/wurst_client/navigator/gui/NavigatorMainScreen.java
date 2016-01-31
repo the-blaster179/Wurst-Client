@@ -237,9 +237,7 @@ public class NavigatorMainScreen extends NavigatorScreen
 					String buttonText = item.getName();
 					Fonts.segoe15.drawString(
 						buttonText,
-						area.x
-							+ (area.width - Fonts.segoe15
-								.getStringWidth(buttonText)) / 2, area.y + 2,
+						area.x + 4, area.y + 2,
 						0xffffff);
 					glDisable(GL_TEXTURE_2D);
 				}
