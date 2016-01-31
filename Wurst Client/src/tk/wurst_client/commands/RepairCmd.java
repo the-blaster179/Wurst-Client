@@ -7,6 +7,7 @@
  */
 package tk.wurst_client.commands;
 
+import tk.wurst_client.events.ChatOutputEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C10PacketCreativeInventoryAction;
@@ -40,5 +41,17 @@ public class RepairCmd extends Cmd
 		item.setItemDamage(0);
 		player.sendQueue.addToSendQueue(new C10PacketCreativeInventoryAction(
 			36 + player.inventory.currentItem, item));
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Repair Current Item";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".repair", true));
 	}
 }
