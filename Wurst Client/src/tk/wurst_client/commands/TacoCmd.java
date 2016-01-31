@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import tk.wurst_client.commands.Cmd.Info;
+import tk.wurst_client.events.ChatOutputEvent;
 import tk.wurst_client.events.listeners.GUIRenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 
@@ -52,6 +53,18 @@ public class TacoCmd extends Cmd implements GUIRenderListener, UpdateListener
 			wurst.events.remove(GUIRenderListener.class, this);
 			wurst.events.remove(UpdateListener.class, this);
 		}
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Be a BOSS!";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".taco", true));
 	}
 	
 	@Override
