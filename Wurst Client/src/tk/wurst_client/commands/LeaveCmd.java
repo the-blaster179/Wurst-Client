@@ -7,6 +7,7 @@
  */
 package tk.wurst_client.commands;
 
+import tk.wurst_client.events.ChatOutputEvent;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 
 @Cmd.Info(help = "Leaves the current server or changes the mode of AutoLeave.",
@@ -43,6 +44,18 @@ public class LeaveCmd extends Cmd
 			default:
 				break;
 		}
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Leave";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".leave", true));
 	}
 	
 	private void disconnectWithMode(int mode)
