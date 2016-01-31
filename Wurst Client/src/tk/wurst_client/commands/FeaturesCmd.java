@@ -8,6 +8,7 @@
 package tk.wurst_client.commands;
 
 import tk.wurst_client.commands.Cmd.Info;
+import tk.wurst_client.events.ChatOutputEvent;
 import tk.wurst_client.mods.Mod;
 import tk.wurst_client.special.Spf;
 
@@ -41,5 +42,17 @@ public class FeaturesCmd extends Cmd
 		for(Spf spf : wurst.special.getAllFeatures())
 			settings += spf.getSettings().size();
 		wurst.chat.message("> Settings: " + settings);
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Show Statistics";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".features", true));
 	}
 }
