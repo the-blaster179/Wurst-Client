@@ -15,7 +15,7 @@ import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.MISC,
 	description = "Automatically eats food when necessary.",
-	name = "AutoEat")
+	name = "AutoEat", tags = "AutoSoup,auto eat,auto soup")
 public class AutoEatMod extends Mod implements UpdateListener
 {
 	private int oldSlot;
