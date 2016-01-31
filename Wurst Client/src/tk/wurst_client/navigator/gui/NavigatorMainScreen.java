@@ -8,11 +8,7 @@
  */
 package tk.wurst_client.navigator.gui;
 
-import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -231,14 +227,53 @@ public class NavigatorMainScreen extends NavigatorScreen
 				drawBox(area.x, area.y, area.x + area.width, area.y
 					+ area.height);
 				
+				// separator
+				int bx1 = area.x + area.width - area.height;
+				int by1 = area.y + 2;
+				int by2 = by1 + area.height - 4;
+				glBegin(GL_LINES);
+				{
+					glVertex2i(bx1, by1);
+					glVertex2i(bx1, by2);
+				}
+				glEnd();
+				
+				// arrow positions
+				double oneThrird = area.height / 3D;
+				double twoThrirds = area.height * 2D / 3D;
+				double ax1 = bx1 + oneThrird - 2D;
+				double ax2 = bx1 + twoThrirds + 2D;
+				double ax3 = bx1 + area.height / 2D;
+				double ay1 = area.y + oneThrird;
+				double ay2 = area.y + twoThrirds;
+				
+				// arrow
+				glColor4f(0f, 1f, 0f, hovering ? 0.75f : 0.375f);
+				glBegin(GL_TRIANGLES);
+				{
+					glVertex2d(ax1, ay1);
+					glVertex2d(ax2, ay1);
+					glVertex2d(ax3, ay2);
+				}
+				glEnd();
+				
+				// arrow shadow
+				glLineWidth(1f);
+				glColor4f(0.125f, 0.125f, 0.125f, hovering ? 0.75f : 0.5f);
+				glBegin(GL_LINE_LOOP);
+				{
+					glVertex2d(ax1, ay1);
+					glVertex2d(ax2, ay1);
+					glVertex2d(ax3, ay2);
+				}
+				glEnd();
+				
 				// text
 				if(clickTimerNotRunning)
 				{
 					String buttonText = item.getName();
-					Fonts.segoe15.drawString(
-						buttonText,
-						area.x + 4, area.y + 2,
-						0xffffff);
+					Fonts.segoe15.drawString(buttonText, area.x + 4,
+						area.y + 2, 0xffffff);
 					glDisable(GL_TEXTURE_2D);
 				}
 			}
