@@ -10,6 +10,7 @@ package tk.wurst_client.commands;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import tk.wurst_client.commands.Cmd.Info;
+import tk.wurst_client.events.ChatOutputEvent;
 
 @Info(help = "Enchants items with everything.",
 	name = "enchant",
@@ -63,5 +64,17 @@ public class EnchantCmd extends Cmd
 				wurst.chat.message("Enchanted " + items + " items.");
 		}else
 			syntaxError();
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Enchant Current Item";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".enchant", true));
 	}
 }
