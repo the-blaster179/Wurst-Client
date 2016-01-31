@@ -23,6 +23,7 @@ import tk.wurst_client.WurstClient;
 import tk.wurst_client.font.Fonts;
 import tk.wurst_client.navigator.Navigator;
 import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.utils.MiscUtils;
 
 public class NavigatorMainScreen extends NavigatorScreen
 {
@@ -30,6 +31,7 @@ public class NavigatorMainScreen extends NavigatorScreen
 		new ArrayList<>();
 	private GuiTextField searchBar;
 	private int hoveredItem = -1;
+	private boolean hoveringArrow;
 	private int clickTimer = -1;
 	private boolean expanding = false;
 	
@@ -86,16 +88,37 @@ public class NavigatorMainScreen extends NavigatorScreen
 	protected void onMouseClick(int x, int y, int button)
 	{
 		if(clickTimer == -1 && hoveredItem != -1)
-			if(button == 0 && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
+			if(button == 0
+				&& (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || hoveringArrow)
 				|| button == 2)
 			{
+				// arrow click, shift click, wheel click
+				expanding = true;
+			}else if(button == 0)
+			{
+				// left click
 				NavigatorItem item = navigatorDisplayList.get(hoveredItem);
-				item.doPrimaryAction();
+				if(item.getPrimaryAction().isEmpty())
+					expanding = true;
+				else
+				{
+					item.doPrimaryAction();
+					WurstClient wurst = WurstClient.INSTANCE;
+					wurst.navigator.addPreference(item.getName());
+					wurst.files.saveNavigatorData();
+				}
+			}else if(button == 1)
+			{
+				// right click
+				NavigatorItem item = navigatorDisplayList.get(hoveredItem);
+				if(item.getTutorialPage().isEmpty())
+					return;
+				MiscUtils.openLink("https://www.wurst-client.tk/wiki/"
+					+ item.getTutorialPage());
 				WurstClient wurst = WurstClient.INSTANCE;
 				wurst.navigator.addPreference(item.getName());
 				wurst.files.saveNavigatorData();
-			}else if(button == 0)
-				expanding = true;
+			}
 	}
 	
 	@Override
@@ -237,6 +260,10 @@ public class NavigatorMainScreen extends NavigatorScreen
 					glVertex2i(bx1, by2);
 				}
 				glEnd();
+				
+				// hovering
+				if(hovering)
+					hoveringArrow = mouseX >= bx1;
 				
 				// arrow positions
 				double oneThrird = area.height / 3D;
