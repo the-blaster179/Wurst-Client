@@ -10,6 +10,7 @@ package tk.wurst_client.commands;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
+import tk.wurst_client.events.ChatOutputEvent;
 import net.minecraft.util.BlockPos;
 
 @Cmd.Info(help = "Shows your current position or copies it to the clipboard.",
@@ -33,5 +34,17 @@ public class GetPosCmd extends Cmd
 				.setContents(new StringSelection(pos), null);
 			wurst.chat.message("Position copied to clipboard.");
 		}
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Get Position";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".getpos", true));
 	}
 }
