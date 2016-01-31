@@ -15,9 +15,10 @@ import tk.wurst_client.navigator.gui.NavigatorMainScreen;
 public class NavigatorMod extends Mod
 {
 	@Override
-	public void onToggle()
+	public void onEnable()
 	{
 		if(!(mc.currentScreen instanceof NavigatorMainScreen))
 			mc.displayGuiScreen(new NavigatorMainScreen());
+		setEnabled(false);
 	}
 }
