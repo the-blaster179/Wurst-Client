@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 import tk.wurst_client.commands.Cmd.Info;
+import tk.wurst_client.events.ChatOutputEvent;
 import tk.wurst_client.hooks.ServerHook;
 
 @Info(help = "Shows the IP of the server you are currently playing on or copies it to the clipboard.",
@@ -33,5 +34,17 @@ public class IpCmd extends Cmd
 			wurst.chat.message("IP copied to clipboard.");
 		}else
 			syntaxError();
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Get IP";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".ip", true));
 	}
 }
