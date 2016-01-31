@@ -9,6 +9,7 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngameMenu;
 
 import org.lwjgl.input.Keyboard;
@@ -34,6 +35,7 @@ public class MenuWalkMod extends Mod
 		// check if player is viewing chat
 		if(mc.currentScreen instanceof GuiChat
 			|| mc.currentScreen instanceof GuiIngameMenu
+			|| mc.currentScreen instanceof GuiGameOver
 			|| mc.currentScreen instanceof NavigatorScreen)
 			return false;
 		
