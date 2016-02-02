@@ -35,6 +35,7 @@ public class CmdManager implements ChatOutputListener
 	public final BindsCmd bindsCmd = new BindsCmd();
 	public final BlinkCmd blinkCmd = new BlinkCmd();
 	public final ClearCmd clearCmd = new ClearCmd();
+	public final CopyItemCmd copyitemCmd = new CopyItemCmd();
 	public final DamageCmd damageCmd = new DamageCmd();
 	public final DropCmd dropCmd = new DropCmd();
 	public final EnchantCmd enchantCmd = new EnchantCmd();
