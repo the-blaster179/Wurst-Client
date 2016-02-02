@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,32 +13,34 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 
 import org.darkstorm.minecraft.gui.component.Frame;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.alts.Alt;
 import tk.wurst_client.alts.Encryption;
-import tk.wurst_client.alts.gui.GuiAltList;
+import tk.wurst_client.gui.alts.GuiAltList;
 import tk.wurst_client.mods.*;
 import tk.wurst_client.mods.Mod.Category;
-import tk.wurst_client.options.Friends;
-import tk.wurst_client.options.Options;
+import tk.wurst_client.navigator.Navigator;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
+import tk.wurst_client.options.FriendsList;
+import tk.wurst_client.options.OptionsManager;
+import tk.wurst_client.utils.JsonUtils;
 import tk.wurst_client.utils.XRayUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class FileManager
 {
@@ -55,13 +56,12 @@ public class FileManager
 	public final File friends = new File(wurstDir, "friends.json");
 	public final File gui = new File(wurstDir, "gui.json");
 	public final File modules = new File(wurstDir, "modules.json");
+	public final File navigatorData = new File(wurstDir, "navigator.json");
 	public final File keybinds = new File(wurstDir, "keybinds.json");
-	public final File sliders = new File(wurstDir, "sliders.json");
 	public final File options = new File(wurstDir, "options.json");
 	public final File autoMaximize = new File(
 		Minecraft.getMinecraft().mcDataDir + "/wurst/automaximize.json");
 	public final File xray = new File(wurstDir, "xray.json");
-	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	public void init()
 	{
@@ -89,6 +89,10 @@ public class FileManager
 			saveKeybinds();
 		else
 			loadKeybinds();
+		if(!navigatorData.exists())
+			saveNavigatorData();
+		else
+			loadNavigatorData();
 		if(!alts.exists())
 			saveAlts();
 		else
@@ -107,11 +111,12 @@ public class FileManager
 		if(autobuildFiles != null && autobuildFiles.length == 0)
 			createDefaultAutoBuildTemplates();
 		loadAutoBuildTemplates();
-		if(WurstClient.INSTANCE.options.autobuildMode >= AutoBuildMod.names
-			.size())
+		AutoBuildMod autoBuildMod = WurstClient.INSTANCE.mods.autoBuildMod;
+		autoBuildMod.initTemplateSetting();
+		if(autoBuildMod.getTemplate() >= AutoBuildMod.names.size())
 		{
-			WurstClient.INSTANCE.options.autobuildMode = 0;
-			saveOptions();
+			autoBuildMod.setTemplate(0);
+			saveNavigatorData();
 		}
 	}
 	
@@ -131,7 +136,7 @@ public class FileManager
 					json.add(frame.getTitle(), jsonFrame);
 				}
 			PrintWriter save = new PrintWriter(new FileWriter(gui));
-			save.println(gson.toJson(json));
+			save.println(JsonUtils.prettyGson.toJson(json));
 			save.close();
 		}catch(Exception e)
 		{
@@ -144,7 +149,7 @@ public class FileManager
 		try
 		{
 			BufferedReader load = new BufferedReader(new FileReader(gui));
-			JsonObject json = (JsonObject)new JsonParser().parse(load);
+			JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
 			load.close();
 			Iterator<Entry<String, JsonElement>> itr =
 				json.entrySet().iterator();
@@ -174,14 +179,14 @@ public class FileManager
 		try
 		{
 			JsonObject json = new JsonObject();
-			for(Mod mod : WurstClient.INSTANCE.modManager.getAllMods())
+			for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
 			{
 				JsonObject jsonMod = new JsonObject();
 				jsonMod.addProperty("enabled", mod.isEnabled());
 				json.add(mod.getName(), jsonMod);
 			}
 			PrintWriter save = new PrintWriter(new FileWriter(modules));
-			save.println(gson.toJson(json));
+			save.println(JsonUtils.prettyGson.toJson(json));
 			save.close();
 		}catch(Exception e)
 		{
@@ -189,21 +194,27 @@ public class FileManager
 		}
 	}
 	
-	private String[] moduleBlacklist = {AntiAfkMod.class.getName(),
+	private HashSet<String> modBlacklist = Sets.newHashSet(
+		AntiAfkMod.class.getName(), BlinkMod.class.getName(),
 		ArenaBrawlMod.class.getName(), AutoBuildMod.class.getName(),
 		AutoSignMod.class.getName(), FightBotMod.class.getName(),
 		FollowMod.class.getName(), ForceOpMod.class.getName(),
 		FreecamMod.class.getName(), InvisibilityMod.class.getName(),
 		LsdMod.class.getName(), MassTpaMod.class.getName(),
-		ProtectMod.class.getName(), RemoteViewMod.class.getName(),
-		SpammerMod.class.getName(),};
+		OpSignMod.class.getName(), ProtectMod.class.getName(),
+		RemoteViewMod.class.getName(), SpammerMod.class.getName());
+	
+	public boolean isModBlacklisted(Mod mod)
+	{
+		return modBlacklist.contains(mod.getClass().getName());
+	}
 	
 	public void loadMods()
 	{
 		try
 		{
 			BufferedReader load = new BufferedReader(new FileReader(modules));
-			JsonObject json = (JsonObject)new JsonParser().parse(load);
+			JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
 			load.close();
 			Iterator<Entry<String, JsonElement>> itr =
 				json.entrySet().iterator();
@@ -211,12 +222,9 @@ public class FileManager
 			{
 				Entry<String, JsonElement> entry = itr.next();
 				Mod mod =
-					WurstClient.INSTANCE.modManager
-						.getModByName(entry.getKey());
-				if(mod != null
-					&& mod.getCategory() != Category.HIDDEN
-					&& !Arrays.asList(moduleBlacklist).contains(
-						mod.getClass().getName()))
+					WurstClient.INSTANCE.mods.getModByName(entry.getKey());
+				if(mod != null && mod.getCategory() != Category.HIDDEN
+					&& !modBlacklist.contains(mod.getClass().getName()))
 				{
 					JsonObject jsonModule = (JsonObject)entry.getValue();
 					boolean enabled = jsonModule.get("enabled").getAsBoolean();
@@ -243,7 +251,7 @@ public class FileManager
 				json.addProperty(entry.getKey(), entry.getValue());
 			}
 			PrintWriter save = new PrintWriter(new FileWriter(keybinds));
-			save.println(gson.toJson(json));
+			save.println(JsonUtils.prettyGson.toJson(json));
 			save.close();
 		}catch(Exception e)
 		{
@@ -256,7 +264,7 @@ public class FileManager
 		try
 		{
 			BufferedReader load = new BufferedReader(new FileReader(keybinds));
-			JsonObject json = (JsonObject)new JsonParser().parse(load);
+			JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
 			load.close();
 			WurstClient.INSTANCE.keybinds.clear();
 			Iterator<Entry<String, JsonElement>> itr =
@@ -273,12 +281,105 @@ public class FileManager
 		}
 	}
 	
+	public void saveNavigatorData()
+	{
+		try
+		{
+			JsonObject json = new JsonObject();
+			
+			Navigator navigator = WurstClient.INSTANCE.navigator;
+			navigator.forEach(new Consumer<NavigatorItem>()
+			{
+				@Override
+				public void accept(NavigatorItem item)
+				{
+					JsonObject jsonFeature = new JsonObject();
+					
+					long preference = navigator.getPreference(item.getName());
+					if(preference != 0L)
+						jsonFeature.addProperty("preference", preference);
+					
+					if(!item.getSettings().isEmpty())
+					{
+						JsonObject jsonSettings = new JsonObject();
+						for(NavigatorSetting setting : item.getSettings())
+							try
+							{
+								setting.save(jsonSettings);
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+						jsonFeature.add("settings", jsonSettings);
+					}
+					
+					if(!jsonFeature.entrySet().isEmpty())
+						json.add(item.getName(), jsonFeature);
+				}
+			});
+			
+			PrintWriter save = new PrintWriter(new FileWriter(navigatorData));
+			save.println(JsonUtils.prettyGson.toJson(json));
+			save.close();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void loadNavigatorData()
+	{
+		try
+		{
+			BufferedReader load =
+				new BufferedReader(new FileReader(navigatorData));
+			JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
+			load.close();
+			
+			Navigator navigator = WurstClient.INSTANCE.navigator;
+			navigator.forEach(new Consumer<NavigatorItem>()
+			{
+				@Override
+				public void accept(NavigatorItem item)
+				{
+					String itemName = item.getName();
+					if(!json.has(itemName))
+						return;
+					JsonObject jsonFeature =
+						json.get(itemName).getAsJsonObject();
+					
+					if(jsonFeature.has("preference"))
+						navigator.setPreference(itemName,
+							jsonFeature.get("preference").getAsLong());
+					
+					if(jsonFeature.has("settings"))
+					{
+						JsonObject jsonSettings =
+							jsonFeature.get("settings").getAsJsonObject();
+						for(NavigatorSetting setting : item.getSettings())
+							try
+							{
+								setting.load(jsonSettings);
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+					}
+				}
+			});
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void saveOptions()
 	{
 		try
 		{
 			PrintWriter save = new PrintWriter(new FileWriter(options));
-			save.println(gson.toJson(WurstClient.INSTANCE.options));
+			save.println(JsonUtils.prettyGson
+				.toJson(WurstClient.INSTANCE.options));
 			save.close();
 		}catch(Exception e)
 		{
@@ -291,7 +392,8 @@ public class FileManager
 		try
 		{
 			BufferedReader load = new BufferedReader(new FileReader(options));
-			WurstClient.INSTANCE.options = gson.fromJson(load, Options.class);
+			WurstClient.INSTANCE.options =
+				JsonUtils.gson.fromJson(load, OptionsManager.class);
 			load.close();
 		}catch(Exception e)
 		{
@@ -309,7 +411,8 @@ public class FileManager
 			BufferedReader load =
 				new BufferedReader(new FileReader(autoMaximize));
 			autoMaximizeEnabled =
-				gson.fromJson(load, Boolean.class) && !Minecraft.isRunningOnMac;
+				JsonUtils.gson.fromJson(load, Boolean.class)
+					&& !Minecraft.isRunningOnMac;
 			load.close();
 		}catch(Exception e)
 		{
@@ -325,69 +428,8 @@ public class FileManager
 			if(!autoMaximize.getParentFile().exists())
 				autoMaximize.getParentFile().mkdirs();
 			PrintWriter save = new PrintWriter(new FileWriter(autoMaximize));
-			save.println(gson.toJson(autoMaximizeEnabled));
+			save.println(JsonUtils.prettyGson.toJson(autoMaximizeEnabled));
 			save.close();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void saveSliders()
-	{
-		try
-		{
-			JsonObject json = new JsonObject();
-			for(Mod mod : WurstClient.INSTANCE.modManager.getAllMods())
-			{
-				if(mod.getSliders().isEmpty())
-					continue;
-				JsonObject jsonModule = new JsonObject();
-				for(BasicSlider slider : mod.getSliders())
-					jsonModule.addProperty(slider.getText(),
-						(double)(Math.round(slider.getValue()
-							/ slider.getIncrement()) * 1000000 * (long)(slider
-							.getIncrement() * 1000000)) / 1000000 / 1000000);
-				json.add(mod.getName(), jsonModule);
-			}
-			PrintWriter save = new PrintWriter(new FileWriter(sliders));
-			save.println(gson.toJson(json));
-			save.close();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void loadSliders()
-	{
-		try
-		{
-			BufferedReader load = new BufferedReader(new FileReader(sliders));
-			JsonObject json = (JsonObject)new JsonParser().parse(load);
-			load.close();
-			Iterator<Entry<String, JsonElement>> itr =
-				json.entrySet().iterator();
-			while(itr.hasNext())
-			{
-				Entry<String, JsonElement> entry = itr.next();
-				Mod mod =
-					WurstClient.INSTANCE.modManager
-						.getModByName(entry.getKey());
-				if(mod != null)
-				{
-					JsonObject jsonModule = (JsonObject)entry.getValue();
-					for(BasicSlider slider : mod.getSliders())
-						try
-						{
-							slider.setValue(jsonModule.get(slider.getText())
-								.getAsDouble());
-						}catch(Exception e)
-						{
-							e.printStackTrace();
-						}
-				}
-			}
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -408,8 +450,10 @@ public class FileManager
 				jsonAlt.addProperty("starred", alt.isStarred());
 				json.add(alt.getEmail(), jsonAlt);
 			}
-			Files.write(alts.toPath(), Encryption.encrypt(gson.toJson(json))
-				.getBytes(Encryption.CHARSET));
+			Files.write(
+				alts.toPath(),
+				Encryption.encrypt(JsonUtils.prettyGson.toJson(json)).getBytes(
+					Encryption.CHARSET));
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -421,7 +465,7 @@ public class FileManager
 		try
 		{
 			JsonObject json =
-				(JsonObject)new JsonParser().parse(Encryption
+				(JsonObject)JsonUtils.jsonParser.parse(Encryption
 					.decrypt(new String(Files.readAllBytes(alts.toPath()),
 						Encryption.CHARSET)));
 			GuiAltList.alts.clear();
@@ -462,7 +506,8 @@ public class FileManager
 		try
 		{
 			PrintWriter save = new PrintWriter(new FileWriter(friends));
-			save.println(gson.toJson(WurstClient.INSTANCE.friends));
+			save.println(JsonUtils.prettyGson
+				.toJson(WurstClient.INSTANCE.friends));
 			save.close();
 		}catch(Exception e)
 		{
@@ -475,7 +520,8 @@ public class FileManager
 		try
 		{
 			BufferedReader load = new BufferedReader(new FileReader(friends));
-			WurstClient.INSTANCE.friends = gson.fromJson(load, Friends.class);
+			WurstClient.INSTANCE.friends =
+				JsonUtils.gson.fromJson(load, FriendsList.class);
 			load.close();
 		}catch(Exception e)
 		{
@@ -490,10 +536,10 @@ public class FileManager
 			XRayUtils.sortBlocks();
 			JsonArray json = new JsonArray();
 			for(int i = 0; i < XRayMod.xrayBlocks.size(); i++)
-				json.add(gson.toJsonTree(Block
+				json.add(JsonUtils.prettyGson.toJsonTree(Block
 					.getIdFromBlock(XRayMod.xrayBlocks.get(i))));
 			PrintWriter save = new PrintWriter(new FileWriter(xray));
-			save.println(gson.toJson(json));
+			save.println(JsonUtils.prettyGson.toJson(json));
 			save.close();
 		}catch(Exception e)
 		{
@@ -506,7 +552,7 @@ public class FileManager
 		try
 		{
 			BufferedReader load = new BufferedReader(new FileReader(xray));
-			JsonArray json = new JsonParser().parse(load).getAsJsonArray();
+			JsonArray json = JsonUtils.jsonParser.parse(load).getAsJsonArray();
 			load.close();
 			Iterator<JsonElement> itr = json.iterator();
 			while(itr.hasNext())
@@ -541,13 +587,14 @@ public class FileManager
 			{
 				Entry<String, int[][]> entry = itr.next();
 				JsonObject json = new JsonObject();
-				json.add("__comment", gson.toJsonTree(comment, String[].class));
-				json.add("blocks",
-					gson.toJsonTree(entry.getValue(), int[][].class));
+				json.add("__comment",
+					JsonUtils.prettyGson.toJsonTree(comment, String[].class));
+				json.add("blocks", JsonUtils.prettyGson.toJsonTree(
+					entry.getValue(), int[][].class));
 				PrintWriter save =
 					new PrintWriter(new FileWriter(new File(autobuildDir,
 						entry.getKey() + ".json")));
-				save.println(gson.toJson(json));
+				save.println(JsonUtils.prettyGson.toJson(json));
 				save.close();
 			}
 		}catch(Exception e)
@@ -566,10 +613,10 @@ public class FileManager
 			for(File file : files)
 			{
 				BufferedReader load = new BufferedReader(new FileReader(file));
-				JsonObject json = (JsonObject)new JsonParser().parse(load);
+				JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
 				load.close();
-				AutoBuildMod.templates.add(gson.fromJson(json.get("blocks"),
-					int[][].class));
+				AutoBuildMod.templates.add(JsonUtils.gson.fromJson(
+					json.get("blocks"), int[][].class));
 				AutoBuildMod.names.add(file.getName().substring(0,
 					file.getName().indexOf(".json")));
 			}

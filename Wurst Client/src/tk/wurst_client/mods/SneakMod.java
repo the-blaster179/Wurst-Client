@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +8,9 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.client.C0BPacketEntityAction.Action;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -24,28 +23,30 @@ public class SneakMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(WurstClient.INSTANCE.modManager.getModByClass(YesCheatMod.class)
-			.isActive())
-			Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed = true;
-		else
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C0BPacketEntityAction(Minecraft
-					.getMinecraft().thePlayer, Action.START_SNEAKING));
+		if(wurst.mods.yesCheatMod.isActive())
+		{
+			NetHandlerPlayClient sendQueue = mc.thePlayer.sendQueue;
+			sendQueue.addToSendQueue(new C0BPacketEntityAction(Minecraft
+				.getMinecraft().thePlayer, Action.START_SNEAKING));
+			sendQueue.addToSendQueue(new C0BPacketEntityAction(Minecraft
+				.getMinecraft().thePlayer, Action.STOP_SNEAKING));
+		}else
+			mc.thePlayer.sendQueue.addToSendQueue(new C0BPacketEntityAction(
+				Minecraft.getMinecraft().thePlayer, Action.START_SNEAKING));
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed = false;
-		Minecraft.getMinecraft().thePlayer.sendQueue
-			.addToSendQueue(new C0BPacketEntityAction(
-				Minecraft.getMinecraft().thePlayer, Action.STOP_SNEAKING));
+		wurst.events.remove(UpdateListener.class, this);
+		mc.gameSettings.keyBindSneak.pressed = false;
+		mc.thePlayer.sendQueue.addToSendQueue(new C0BPacketEntityAction(
+			mc.thePlayer, Action.STOP_SNEAKING));
 	}
 }

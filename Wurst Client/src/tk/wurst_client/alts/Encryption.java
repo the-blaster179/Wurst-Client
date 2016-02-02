@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,8 +37,8 @@ import tk.wurst_client.utils.MiscUtils;
 public class Encryption
 {
 	private static SecretKey aesKey;
-	private static File aesFile = new File(
-		WurstClient.INSTANCE.fileManager.wurstDir, "key");
+	private static File aesFile = new File(WurstClient.INSTANCE.files.wurstDir,
+		"key");
 	
 	private static KeyPair keypair;
 	private static File rsaKeyDir = System.getProperty("user.home") != null
@@ -117,6 +116,7 @@ public class Encryption
 			KeyPairGenerator keypairgen = KeyPairGenerator.getInstance("RSA");
 			keypairgen.initialize(1024);
 			keypair = keypairgen.generateKeyPair();
+			
 			if(publicFile == null || privateFile == null)
 			{
 				JOptionPane.showMessageDialog(null,
@@ -127,34 +127,31 @@ public class Encryption
 				Minecraft.getMinecraft().shutdown();
 				return;
 			}
-			if(!publicFile.exists())
-			{
-				if(!publicFile.getParentFile().exists())
-					publicFile.getParentFile().mkdirs();
-				ObjectOutputStream save =
-					new ObjectOutputStream(new FileOutputStream(publicFile));
-				save.writeObject(KeyFactory.getInstance("RSA")
-					.getKeySpec(keypair.getPublic(), RSAPublicKeySpec.class)
-					.getModulus());
-				save.writeObject(KeyFactory.getInstance("RSA")
-					.getKeySpec(keypair.getPublic(), RSAPublicKeySpec.class)
-					.getPublicExponent());
-				save.close();
-			}
-			if(!privateFile.exists())
-			{
-				if(!privateFile.getParentFile().exists())
-					privateFile.getParentFile().mkdirs();
-				ObjectOutputStream save =
-					new ObjectOutputStream(new FileOutputStream(privateFile));
-				save.writeObject(KeyFactory.getInstance("RSA")
-					.getKeySpec(keypair.getPrivate(), RSAPrivateKeySpec.class)
-					.getModulus());
-				save.writeObject(KeyFactory.getInstance("RSA")
-					.getKeySpec(keypair.getPrivate(), RSAPrivateKeySpec.class)
-					.getPrivateExponent());
-				save.close();
-			}
+			
+			if(!publicFile.getParentFile().exists())
+				publicFile.getParentFile().mkdirs();
+			ObjectOutputStream savePublic =
+				new ObjectOutputStream(new FileOutputStream(publicFile));
+			savePublic.writeObject(KeyFactory.getInstance("RSA")
+				.getKeySpec(keypair.getPublic(), RSAPublicKeySpec.class)
+				.getModulus());
+			savePublic.writeObject(KeyFactory.getInstance("RSA")
+				.getKeySpec(keypair.getPublic(), RSAPublicKeySpec.class)
+				.getPublicExponent());
+			savePublic.close();
+			
+			if(!privateFile.getParentFile().exists())
+				privateFile.getParentFile().mkdirs();
+			ObjectOutputStream savePrivate =
+				new ObjectOutputStream(new FileOutputStream(privateFile));
+			savePrivate.writeObject(KeyFactory.getInstance("RSA")
+				.getKeySpec(keypair.getPrivate(), RSAPrivateKeySpec.class)
+				.getModulus());
+			savePrivate.writeObject(KeyFactory.getInstance("RSA")
+				.getKeySpec(keypair.getPrivate(), RSAPrivateKeySpec.class)
+				.getPrivateExponent());
+			savePrivate.close();
+			
 			if(aesFile == null)
 			{
 				JOptionPane.showMessageDialog(null,
@@ -165,15 +162,12 @@ public class Encryption
 				Minecraft.getMinecraft().shutdown();
 				return;
 			}
-			if(!aesFile.exists())
-			{
-				if(!aesFile.getParentFile().exists())
-					aesFile.getParentFile().mkdirs();
-				Cipher rsaCipher = Cipher.getInstance("RSA");
-				rsaCipher.init(Cipher.ENCRYPT_MODE, keypair.getPublic());
-				Files.write(aesFile.toPath(),
-					rsaCipher.doFinal(aesKey.getEncoded()));
-			}
+			if(!aesFile.getParentFile().exists())
+				aesFile.getParentFile().mkdirs();
+			Cipher rsaCipher = Cipher.getInstance("RSA");
+			rsaCipher.init(Cipher.ENCRYPT_MODE, keypair.getPublic());
+			Files.write(aesFile.toPath(),
+				rsaCipher.doFinal(aesKey.getEncoded()));
 		}catch(Exception e)
 		{
 			e.printStackTrace();

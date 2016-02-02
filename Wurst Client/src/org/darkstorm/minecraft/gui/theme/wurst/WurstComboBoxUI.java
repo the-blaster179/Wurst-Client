@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +22,8 @@ import org.darkstorm.minecraft.gui.theme.AbstractComponentUI;
 import org.darkstorm.minecraft.gui.util.GuiManagerDisplayScreen;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 import org.lwjgl.input.Mouse;
+
+import tk.wurst_client.WurstClient;
 
 public class WurstComboBoxUI extends AbstractComponentUI<ComboBox>
 {
@@ -308,6 +309,7 @@ public class WurstComboBoxUI extends AbstractComponentUI<ComboBox>
 				{
 					component.setSelectedIndex(i);
 					component.setSelected(false);
+					WurstClient.INSTANCE.files.saveOptions();
 					break;
 				}
 				offset += theme.getFontRenderer().FONT_HEIGHT + 2;

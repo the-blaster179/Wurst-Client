@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +22,8 @@ import org.darkstorm.minecraft.gui.layout.Constraint;
 import org.darkstorm.minecraft.gui.theme.AbstractComponentUI;
 import org.darkstorm.minecraft.gui.util.GuiManagerDisplayScreen;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
+
+import tk.wurst_client.WurstClient;
 
 public class WurstFrameUI extends AbstractComponentUI<Frame>
 {
@@ -462,6 +463,8 @@ public class WurstFrameUI extends AbstractComponentUI<Frame>
 				&& location.y >= 2 && location.y <= textHeight + 2)
 			{
 				component.setPinned(!component.isPinned());
+				WurstClient.INSTANCE.files.saveGUI(WurstClient.INSTANCE.gui
+					.getFrames());
 				return;
 			}
 			offset -= textHeight + 2;
@@ -472,6 +475,8 @@ public class WurstFrameUI extends AbstractComponentUI<Frame>
 				&& location.y >= 2 && location.y <= textHeight + 2)
 			{
 				component.setMinimized(!component.isMinimized());
+				WurstClient.INSTANCE.files.saveGUI(WurstClient.INSTANCE.gui
+					.getFrames());
 				return;
 			}
 			offset -= textHeight + 2;

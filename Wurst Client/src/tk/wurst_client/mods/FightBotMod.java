@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +7,7 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -30,64 +27,52 @@ public class FightBotMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(EntityUtils.getClosestEntity(true) != null)
-			entity = EntityUtils.getClosestEntity(true);
+		entity = EntityUtils.getClosestEntity(true, false);
 		if(entity == null)
 			return;
 		if(entity.getHealth() <= 0 || entity.isDead
-			|| Minecraft.getMinecraft().thePlayer.getHealth() <= 0)
+			|| mc.thePlayer.getHealth() <= 0)
 		{
 			entity = null;
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
+			mc.gameSettings.keyBindForward.pressed = false;
 			return;
 		}
-		double xDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posX - entity.posX);
-		double zDist =
-			Math.abs(Minecraft.getMinecraft().thePlayer.posZ - entity.posZ);
+		double xDist = Math.abs(mc.thePlayer.posX - entity.posX);
+		double zDist = Math.abs(mc.thePlayer.posZ - entity.posZ);
 		EntityUtils.faceEntityClient(entity);
 		if(xDist > distance || zDist > distance)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			mc.gameSettings.keyBindForward.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
-		if(Minecraft.getMinecraft().thePlayer.isCollidedHorizontally
-			&& Minecraft.getMinecraft().thePlayer.onGround)
-			Minecraft.getMinecraft().thePlayer.jump();
-		if(Minecraft.getMinecraft().thePlayer.isInWater()
-			&& Minecraft.getMinecraft().thePlayer.posY < entity.posY)
-			Minecraft.getMinecraft().thePlayer.motionY += 0.04;
-		KillauraMod killaura =
-			(KillauraMod)WurstClient.INSTANCE.modManager
-				.getModByClass(KillauraMod.class);
-		if(WurstClient.INSTANCE.modManager.getModByClass(YesCheatMod.class)
-			.isActive())
-			speed = killaura.yesCheatSpeed;
+			mc.gameSettings.keyBindForward.pressed = false;
+		if(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)
+			mc.thePlayer.jump();
+		if(mc.thePlayer.isInWater() && mc.thePlayer.posY < entity.posY)
+			mc.thePlayer.motionY += 0.04;
+		if(wurst.mods.yesCheatMod.isActive())
+			speed = wurst.mods.killauraMod.yesCheatSpeed;
 		else
-			speed = killaura.normalSpeed;
+			speed = wurst.mods.killauraMod.normalSpeed;
 		updateMS();
 		if(hasTimePassedS(speed))
-			if(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(entity) <= range)
+			if(mc.thePlayer.getDistanceToEntity(entity) <= range)
 			{
-				if(WurstClient.INSTANCE.modManager.getModByClass(
-					AutoSwordMod.class).isActive())
+				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
 				CriticalsMod.doCritical();
+				wurst.mods.blockHitMod.doBlock();
 				if(EntityUtils.getDistanceFromMouse(entity) > 55)
 					EntityUtils.faceEntityClient(entity);
 				else
 				{
 					EntityUtils.faceEntityClient(entity);
-					Minecraft.getMinecraft().thePlayer.swingItem();
-					Minecraft.getMinecraft().playerController.attackEntity(
-						Minecraft.getMinecraft().thePlayer, entity);
+					mc.thePlayer.swingItem();
+					mc.playerController.attackEntity(mc.thePlayer, entity);
 				}
 				updateLastMS();
 			}
@@ -96,7 +81,7 @@ public class FightBotMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
+		wurst.events.remove(UpdateListener.class, this);
+		mc.gameSettings.keyBindForward.pressed = false;
 	}
 }

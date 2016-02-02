@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +10,6 @@ package tk.wurst_client.mods;
 import java.util.List;
 
 import net.minecraft.client.gui.ChatLine;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -25,7 +23,7 @@ public class AntiSpamMod extends Mod implements ChatInputListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(ChatInputListener.class, this);
+		wurst.events.add(ChatInputListener.class, this);
 	}
 	
 	@Override
@@ -98,6 +96,6 @@ public class AntiSpamMod extends Mod implements ChatInputListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(ChatInputListener.class, this);
+		wurst.events.remove(ChatInputListener.class, this);
 	}
 }

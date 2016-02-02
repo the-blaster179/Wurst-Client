@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,17 +13,26 @@ import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.passive.EntityAmbientCreature;
+import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.MathHelper;
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.special.TargetSpf;
 
 public class EntityUtils
 {
+	public static boolean lookChanged;
+	public static float yaw;
+	public static float pitch;
+	
 	public synchronized static void faceEntityClient(EntityLivingBase entity)
 	{
 		float[] rotations = getRotationsNeeded(entity);
@@ -44,11 +52,12 @@ public class EntityUtils
 		float[] rotations = getRotationsNeeded(entity);
 		if(rotations != null)
 		{
-			float yaw = rotations[0];
-			float pitch = rotations[1];
-			Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(yaw,
-					pitch, Minecraft.getMinecraft().thePlayer.onGround));
+			yaw =
+				limitAngleChange(
+					Minecraft.getMinecraft().thePlayer.prevRotationYaw,
+					rotations[0], 55);// NoCheat+
+			pitch = rotations[1];
+			lookChanged = true;
 		}
 	}
 	
@@ -99,7 +108,7 @@ public class EntityUtils
 		return current + change;
 	}
 	
-	public static int getDistanceFromMouse(EntityLivingBase entity)
+	public static int getDistanceFromMouse(Entity entity)
 	{
 		float[] neededRotations = getRotationsNeeded(entity);
 		if(neededRotations != null)
@@ -119,32 +128,87 @@ public class EntityUtils
 	
 	public static boolean isCorrectEntity(Object o, boolean ignoreFriends)
 	{
-		boolean condition;
-		if(WurstClient.INSTANCE.options.targetMode == 0)
-			condition = o instanceof EntityLivingBase;
-		else if(WurstClient.INSTANCE.options.targetMode == 1)
-			condition = o instanceof EntityPlayer;
-		else if(WurstClient.INSTANCE.options.targetMode == 2)
-			condition = o instanceof EntityLiving;
-		else if(WurstClient.INSTANCE.options.targetMode == 3)
-			condition = o instanceof EntityAnimal;
-		else if(WurstClient.INSTANCE.options.targetMode == 4)
-			condition = o instanceof EntityMob;
-		else
-			throw new IllegalArgumentException("Unknown target mode selected: "
-				+ WurstClient.INSTANCE.options.targetMode);
+		// non-entities
+		if(!(o instanceof Entity))
+			return false;
+		
+		// friends
 		if(ignoreFriends && o instanceof EntityPlayer)
 			if(WurstClient.INSTANCE.friends.contains(((EntityPlayer)o)
 				.getName()))
-				condition = false;
-		return condition;
+				return false;
+		
+		TargetSpf targetSpf = WurstClient.INSTANCE.special.targetSpf;
+		
+		// invisible entities
+		if(((Entity)o).isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
+			return targetSpf.invisibleMobs.isChecked()
+				&& o instanceof EntityLiving
+				|| targetSpf.invisiblePlayers.isChecked()
+				&& o instanceof EntityPlayer;
+		
+		// players
+		if(o instanceof EntityPlayer)
+			return (((EntityPlayer)o).isPlayerSleeping()
+				&& targetSpf.sleepingPlayers.isChecked() || !((EntityPlayer)o)
+				.isPlayerSleeping() && targetSpf.players.isChecked())
+				&& (!targetSpf.teams.isChecked() || checkName(((EntityPlayer)o)
+					.getDisplayName().getFormattedText()));
+		
+		// animals
+		if(o instanceof EntityAgeable || o instanceof EntityAmbientCreature
+			|| o instanceof EntityWaterMob)
+			return targetSpf.animals.isChecked()
+				&& (!targetSpf.teams.isChecked()
+					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
+						.getCustomNameTag()));
+		
+		// monsters
+		if(o instanceof EntityMob || o instanceof EntitySlime
+			|| o instanceof EntityFlying)
+			return targetSpf.monsters.isChecked()
+				&& (!targetSpf.teams.isChecked()
+					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
+						.getCustomNameTag()));
+		
+		// golems
+		if(o instanceof EntityGolem)
+			return targetSpf.golems.isChecked()
+				&& (!targetSpf.teams.isChecked()
+					|| !((Entity)o).hasCustomName() || checkName(((Entity)o)
+						.getCustomNameTag()));
+		
+		return false;
 	}
 	
-	public static EntityLivingBase getClosestEntity(boolean ignoreFriends)
+	private static boolean checkName(String name)
+	{
+		// check colors
+		String[] colors =
+			{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c",
+				"d", "e", "f"};
+		boolean[] teamColors =
+			WurstClient.INSTANCE.special.targetSpf.teamColors.getSelected();
+		boolean hasKnownColor = false;
+		for(int i = 0; i < 16; i++)
+			if(name.contains("§" + colors[i]))
+			{
+				hasKnownColor = true;
+				if(teamColors[i])
+					return true;
+			}
+		
+		// no known color => white
+		return !hasKnownColor && teamColors[15];
+	}
+	
+	public static EntityLivingBase getClosestEntity(boolean ignoreFriends,
+		boolean useFOV)
 	{
 		EntityLivingBase closestEntity = null;
 		for(Object o : Minecraft.getMinecraft().theWorld.loadedEntityList)
-			if(isCorrectEntity(o, ignoreFriends))
+			if(isCorrectEntity(o, ignoreFriends)
+				&& getDistanceFromMouse((Entity)o) <= WurstClient.INSTANCE.mods.killauraMod.fov / 2)
 			{
 				EntityLivingBase en = (EntityLivingBase)o;
 				if(!(o instanceof EntityPlayerSP)

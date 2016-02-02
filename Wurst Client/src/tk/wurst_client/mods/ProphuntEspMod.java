@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +13,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.MathHelper;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.RenderUtils;
 
 @Info(category = Category.RENDER,
@@ -26,23 +25,29 @@ import tk.wurst_client.utils.RenderUtils;
 public class ProphuntEspMod extends Mod implements RenderListener
 {
 	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.playerEspMod,
+			wurst.mods.mobEspMod, wurst.mods.tracersMod};
+	}
+	
+	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(RenderListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onRender()
 	{
-		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		for(Object entity : mc.theWorld.loadedEntityList)
 			if(entity instanceof EntityLiving && ((Entity)entity).isInvisible())
 			{
 				double x = ((Entity)entity).posX;
 				double y = ((Entity)entity).posY;
 				double z = ((Entity)entity).posZ;
 				Color color;
-				if(Minecraft.getMinecraft().thePlayer
-					.getDistanceToEntity((Entity)entity) >= 0.5)
+				if(mc.thePlayer.getDistanceToEntity((Entity)entity) >= 0.5)
 					color =
 						new Color(1F, 0F, 0F, 0.5F - MathHelper.abs(MathHelper
 							.sin(Minecraft.getSystemTime() % 1000L / 1000.0F
@@ -57,6 +62,6 @@ public class ProphuntEspMod extends Mod implements RenderListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(RenderListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 }

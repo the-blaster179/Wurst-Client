@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +7,10 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
+import tk.wurst_client.events.ChatOutputEvent;
 
 @Info(help = "Enchants items with everything.",
 	name = "enchant",
@@ -22,12 +20,11 @@ public class EnchantCmd extends Cmd
 	@Override
 	public void execute(String[] args) throws Error
 	{
-		if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+		if(!mc.thePlayer.capabilities.isCreativeMode)
 			error("Creative mode only.");
 		if(args.length == 0)
 		{
-			ItemStack currentItem =
-				Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
+			ItemStack currentItem = mc.thePlayer.inventory.getCurrentItem();
 			if(currentItem == null)
 				error("There is no item in your hand.");
 			for(Enchantment enchantment : Enchantment.enchantmentsList)
@@ -46,8 +43,7 @@ public class EnchantCmd extends Cmd
 			for(int i = 0; i < 40; i++)
 			{
 				ItemStack currentItem =
-					Minecraft.getMinecraft().thePlayer.inventory
-						.getStackInSlot(i);
+					mc.thePlayer.inventory.getStackInSlot(i);
 				if(currentItem == null)
 					continue;
 				items++;
@@ -63,11 +59,22 @@ public class EnchantCmd extends Cmd
 					}
 			}
 			if(items == 1)
-				WurstClient.INSTANCE.chat.message("Enchanted 1 item.");
+				wurst.chat.message("Enchanted 1 item.");
 			else
-				WurstClient.INSTANCE.chat.message("Enchanted " + items
-					+ " items.");
+				wurst.chat.message("Enchanted " + items + " items.");
 		}else
 			syntaxError();
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Enchant Current Item";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".enchant", true));
 	}
 }

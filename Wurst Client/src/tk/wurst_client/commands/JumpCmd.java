@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +7,7 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
+import tk.wurst_client.events.ChatOutputEvent;
 
 @Cmd.Info(help = "Makes you jump once.", name = "jump", syntax = {})
 public class JumpCmd extends Cmd
@@ -18,8 +17,20 @@ public class JumpCmd extends Cmd
 	{
 		if(args.length != 0)
 			syntaxError();
-		if(!Minecraft.getMinecraft().thePlayer.onGround)
+		if(!mc.thePlayer.onGround)
 			error("Can't jump in mid-air.");
-		Minecraft.getMinecraft().thePlayer.jump();
+		mc.thePlayer.jump();
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Jump";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".jump", true));
 	}
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +8,6 @@
 package tk.wurst_client.commands;
 
 import net.minecraft.block.Block;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.mods.NukerMod;
 import tk.wurst_client.utils.MiscUtils;
@@ -21,62 +19,57 @@ public class NukerCmd extends Cmd
 	@Override
 	public void execute(String[] args) throws Error
 	{
+		NukerMod nuker = wurst.mods.nukerMod;
 		if(args.length != 2)
 			syntaxError();
 		else if(args[0].toLowerCase().equals("mode"))
-		{// 0=normal, 1=id, 2=flat, 3=smash
-			if(args[1].toLowerCase().equals("normal"))
+		{
+			// search mode by name
+			String[] modeNames = nuker.getModes();
+			String newModeName = args[1];
+			int newMode = -1;
+			for(int i = 0; i < modeNames.length; i++)
+				if(newModeName.equals(modeNames[i].toLowerCase()))
+					newMode = i;
+			
+			// syntax error if mode does not exist
+			if(newMode == -1)
+				syntaxError("Invalid mode");
+			
+			if(newMode != nuker.getMode())
 			{
-				WurstClient.INSTANCE.options.nukerMode = 0;
-				NukerMod.id = 0;
-			}else if(args[1].toLowerCase().equals("id"))
-			{
-				WurstClient.INSTANCE.options.nukerMode = 1;
-				NukerMod.id = 0;
-			}else if(args[1].toLowerCase().equals("flat"))
-			{
-				WurstClient.INSTANCE.options.nukerMode = 2;
-				NukerMod.id = 0;
-			}else if(args[1].toLowerCase().equals("smash"))
-			{
-				WurstClient.INSTANCE.options.nukerMode = 3;
-				NukerMod.id = 0;
-			}else
-				syntaxError();
-			WurstClient.INSTANCE.fileManager.saveOptions();
-			WurstClient.INSTANCE.chat.message("Nuker mode set to \"" + args[1]
-				+ "\".");
+				nuker.setMode(newMode);
+				wurst.files.saveNavigatorData();
+			}
+			
+			wurst.chat.message("Nuker mode set to \"" + args[1] + "\".");
 		}else if(args[0].equalsIgnoreCase("id") && MiscUtils.isInteger(args[1]))
 		{
-			if(WurstClient.INSTANCE.options.nukerMode != 1)
+			if(nuker.getMode() != 1)
 			{
-				WurstClient.INSTANCE.options.nukerMode = 1;
-				WurstClient.INSTANCE.chat.message("Nuker mode set to \""
-					+ args[0] + "\".");
+				nuker.setMode(1);
+				wurst.files.saveNavigatorData();
+				wurst.chat.message("Nuker mode set to \"" + args[0] + "\".");
 			}
+			
 			NukerMod.id = Integer.valueOf(args[1]);
-			WurstClient.INSTANCE.fileManager.saveOptions();
-			WurstClient.INSTANCE.chat.message("Nuker ID set to " + args[1]
-				+ ".");
+			wurst.chat.message("Nuker ID set to \"" + args[1] + "\".");
 		}else if(args[0].equalsIgnoreCase("name"))
 		{
-			if(WurstClient.INSTANCE.options.nukerMode != 1)
+			if(nuker.getMode() != 1)
 			{
-				WurstClient.INSTANCE.options.nukerMode = 1;
-				WurstClient.INSTANCE.chat.message("Nuker mode set to \""
-					+ args[0] + "\".");
+				nuker.setMode(1);
+				wurst.files.saveNavigatorData();
+				wurst.chat.message("Nuker mode set to \"" + args[0] + "\".");
 			}
-			int newID = Block.getIdFromBlock(Block.getBlockFromName(args[1]));
-			if(newID == -1)
-			{
-				WurstClient.INSTANCE.chat.message("The block \"" + args[1]
-					+ "\" could not be found.");
-				return;
-			}
-			NukerMod.id = Integer.valueOf(newID);
-			WurstClient.INSTANCE.fileManager.saveOptions();
-			WurstClient.INSTANCE.chat.message("Nuker ID set to " + newID + " ("
-				+ args[1] + ").");
+			
+			int newId = Block.getIdFromBlock(Block.getBlockFromName(args[1]));
+			if(newId == -1)
+				error("The block \"" + args[1] + "\" could not be found.");
+			
+			NukerMod.id = newId;
+			wurst.chat.message("Nuker ID set to " + newId + " (" + args[1]
+				+ ").");
 		}else
 			syntaxError();
 	}

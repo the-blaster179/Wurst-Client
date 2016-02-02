@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,18 +9,17 @@ package tk.wurst_client.mods;
 
 import java.awt.Color;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S28PacketEffect;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
 import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.PacketInputEvent;
 import tk.wurst_client.events.listeners.PacketInputListener;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
 
@@ -34,11 +32,18 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	private BlockPos blockPos;
 	
 	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.playerEspMod,
+			wurst.mods.tracersMod};
+	}
+	
+	@Override
 	public void onEnable()
 	{
 		blockPos = null;
-		WurstClient.INSTANCE.eventManager.add(PacketInputListener.class, this);
-		WurstClient.INSTANCE.eventManager.add(RenderListener.class, this);
+		wurst.events.add(PacketInputListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
@@ -66,15 +71,14 @@ public class PlayerFinderMod extends Mod implements PacketInputListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(PacketInputListener.class,
-			this);
-		WurstClient.INSTANCE.eventManager.remove(RenderListener.class, this);
+		wurst.events.remove(PacketInputListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onReceivedPacket(PacketInputEvent event)
 	{
-		if(Minecraft.getMinecraft().thePlayer == null)
+		if(mc.thePlayer == null)
 			return;
 		Packet packet = event.getPacket();
 		if(packet instanceof S28PacketEffect)

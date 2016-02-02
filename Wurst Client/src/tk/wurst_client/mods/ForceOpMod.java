@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,12 +28,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.ChatInputEvent;
 import tk.wurst_client.events.listeners.ChatInputListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.CHAT,
 	description = "Cracks AuthMe passwords. Can be used to get OP.\n"
@@ -42,7 +40,10 @@ import tk.wurst_client.mods.Mod.Info;
 		+ "\"How to use\" button. That will open an online\n"
 		+ "tutorial explaining exactly how to use it.\n"
 		+ "Don't message me on this!",
-	name = "ForceOP")
+	name = "ForceOP",
+	tags = "Force OP,AuthMe Cracker,AuthMeCracker,auth me cracker,admin hack,"
+		+ "AuthMe password cracker",
+	tutorial = "Mods/Force_OP_(AuthMeCracker)")
 public class ForceOpMod extends Mod implements ChatInputListener
 {
 	private String[] defaultList = {"password", "passwort", "password1",
@@ -79,6 +80,13 @@ public class ForceOpMod extends Mod implements ChatInputListener
 	private JLabel lAttempts;
 	
 	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.opSignMod,
+			wurst.special.bookHackSpf, wurst.special.sessionStealerSpf};
+	}
+	
+	@Override
 	public void onEnable()
 	{
 		new Thread()
@@ -87,7 +95,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 			public void run()
 			{
 				lastPW = -1;
-				WurstClient.INSTANCE.fileManager.loadOptions();
+				wurst.files.loadOptions();
 				dialog =
 					new JDialog((JFrame)null, ForceOpMod.this.getName(), false);
 				dialog.setAlwaysOnTop(true);
@@ -104,8 +112,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 					@Override
 					public void windowClosing(WindowEvent e)
 					{
-						WurstClient.INSTANCE.modManager.getModByClass(
-							ForceOpMod.class).setEnabled(false);
+						wurst.mods.forceOpMod.setEnabled(false);
 					}
 				});
 				
@@ -116,9 +123,8 @@ public class ForceOpMod extends Mod implements ChatInputListener
 				
 				rbDefaultList =
 					new JRadioButton("default",
-						WurstClient.INSTANCE.options.forceOPList
-							.equals(WurstClient.INSTANCE.fileManager.wurstDir
-								.getPath()));
+						wurst.options.forceOPList.equals(wurst.files.wurstDir
+							.getPath()));
 				rbDefaultList.setLocation(4, 24);
 				rbDefaultList.setSize(rbDefaultList.getPreferredSize());
 				dialog.add(rbDefaultList);
@@ -136,10 +142,9 @@ public class ForceOpMod extends Mod implements ChatInputListener
 						bTXTList.setEnabled(rbTXTList.isSelected());
 						if(!rbTXTList.isSelected())
 						{
-							WurstClient.INSTANCE.options.forceOPList =
-								WurstClient.INSTANCE.fileManager.wurstDir
-									.getPath();
-							WurstClient.INSTANCE.fileManager.saveOptions();
+							wurst.options.forceOPList =
+								wurst.files.wurstDir.getPath();
+							wurst.files.saveOptions();
 						}
 						loadPWList();
 						update();
@@ -168,7 +173,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 								"TXT files", new String[]{"txt"}));
 						fsTXTList.setFileSelectionMode(JFileChooser.FILES_ONLY);
 						fsTXTList.setCurrentDirectory(new File(
-							WurstClient.INSTANCE.options.forceOPList));
+							wurst.options.forceOPList));
 						int action = fsTXTList.showOpenDialog(dialog);
 						if(action == JFileChooser.APPROVE_OPTION)
 							if(!fsTXTList.getSelectedFile().exists())
@@ -177,9 +182,9 @@ public class ForceOpMod extends Mod implements ChatInputListener
 									JOptionPane.ERROR_MESSAGE);
 							else
 							{
-								WurstClient.INSTANCE.options.forceOPList =
+								wurst.options.forceOPList =
 									fsTXTList.getSelectedFile().getPath();
-								WurstClient.INSTANCE.fileManager.saveOptions();
+								wurst.files.saveOptions();
 							}
 						loadPWList();
 						update();
@@ -233,7 +238,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 						+ "10.000ms: slowest, bypasses all AntiSpam plugins"
 						+ "</html>");
 				spDelay.setModel(new SpinnerNumberModel(
-					WurstClient.INSTANCE.options.forceOPDelay, 50, 10000, 50));
+					wurst.options.forceOPDelay, 50, 10000, 50));
 				spDelay
 					.setLocation(lDelay1.getX() + lDelay1.getWidth() + 4, 84);
 				spDelay
@@ -243,9 +248,9 @@ public class ForceOpMod extends Mod implements ChatInputListener
 					@Override
 					public void stateChanged(ChangeEvent e)
 					{
-						WurstClient.INSTANCE.options.forceOPDelay =
+						wurst.options.forceOPDelay =
 							(Integer)spDelay.getValue();
-						WurstClient.INSTANCE.fileManager.saveOptions();
+						wurst.files.saveOptions();
 						update();
 					}
 				});
@@ -260,7 +265,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 				cbDontWait =
 					new JCheckBox(
 						"<html>Don't wait for \"<span style=\"color: rgb(192, 0, 0);\"><b>Wrong password!</b></span>\" messages</html>",
-						WurstClient.INSTANCE.options.forceOPDontWait);
+						wurst.options.forceOPDontWait);
 				cbDontWait
 					.setToolTipText("Increases the speed but can cause inaccuracy.");
 				cbDontWait.setLocation(4, 104);
@@ -270,9 +275,8 @@ public class ForceOpMod extends Mod implements ChatInputListener
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						WurstClient.INSTANCE.options.forceOPDontWait =
-							cbDontWait.isSelected();
-						WurstClient.INSTANCE.fileManager.saveOptions();
+						wurst.options.forceOPDontWait = cbDontWait.isSelected();
+						wurst.files.saveOptions();
 						update();
 					}
 				});
@@ -283,9 +287,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 				sepSpeedStart.setSize(498, 4);
 				dialog.add(sepSpeedStart);
 				
-				lName =
-					new JLabel("Username: "
-						+ Minecraft.getMinecraft().session.getUsername());
+				lName = new JLabel("Username: " + mc.session.getUsername());
 				lName.setLocation(4, 140);
 				lName.setSize(lName.getPreferredSize());
 				dialog.add(lName);
@@ -335,28 +337,22 @@ public class ForceOpMod extends Mod implements ChatInputListener
 							@Override
 							public void run()
 							{
-								Minecraft.getMinecraft().thePlayer
-									.sendChatMessage("/login "
-										+ Minecraft.getMinecraft().session
-											.getUsername());
+								mc.thePlayer.sendChatMessage("/login "
+									+ mc.session.getUsername());
 								lastPW = 0;
 								loadPWList();
 								update();
 								for(int i = 0; i < passwords.length; i++)
 								{
-									if(!WurstClient.INSTANCE.modManager
-										.getModByClass(ForceOpMod.class)
-										.isActive())
+									if(!wurst.mods.forceOpMod.isActive())
 										return;
 									if(!cbDontWait.isSelected())
 										gotWrongPWMSG = false;
 									while(!cbDontWait.isSelected()
 										&& !hasGotWrongPWMSG()
-										|| Minecraft.getMinecraft().thePlayer == null)
+										|| mc.thePlayer == null)
 									{
-										if(!WurstClient.INSTANCE.modManager
-											.getModByClass(ForceOpMod.class)
-											.isActive())
+										if(!wurst.mods.forceOpMod.isActive())
 											return;
 										try
 										{
@@ -365,7 +361,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 										{
 											e.printStackTrace();
 										}
-										if(Minecraft.getMinecraft().thePlayer == null)
+										if(mc.thePlayer == null)
 											gotWrongPWMSG = true;// If you get
 										// kicked,
 										// it won't
@@ -375,7 +371,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 									try
 									{
 										Thread
-											.sleep(WurstClient.INSTANCE.options.forceOPDelay);
+											.sleep(wurst.options.forceOPDelay);
 									}catch(InterruptedException e)
 									{
 										e.printStackTrace();
@@ -384,7 +380,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 									while(!sent)
 										try
 										{
-											Minecraft.getMinecraft().thePlayer
+											mc.thePlayer
 												.sendChatMessage("/login "
 													+ passwords[i]);
 											sent = true;
@@ -401,8 +397,8 @@ public class ForceOpMod extends Mod implements ChatInputListener
 									lastPW = i + 1;
 									update();
 								}
-								WurstClient.INSTANCE.chat.failure("Tried "
-									+ (lastPW + 1) + " passwords. Giving up.");
+								wurst.chat.failure("Tried " + (lastPW + 1)
+									+ " passwords. Giving up.");
 							}
 						}, "AuthMeCracker").start();
 					}
@@ -411,23 +407,22 @@ public class ForceOpMod extends Mod implements ChatInputListener
 				
 				loadPWList();
 				update();
-				Minecraft.getMinecraft().setIngameNotInFocus();
+				mc.setIngameNotInFocus();
 				dialog.setVisible(true);
 				dialog.toFront();
 			}
 		}.start();
-		WurstClient.INSTANCE.eventManager.add(ChatInputListener.class, this);
+		wurst.events.add(ChatInputListener.class, this);
 	}
 	
 	private void loadPWList()
 	{
 		if(rbTXTList.isSelected()
-			&& !WurstClient.INSTANCE.options.forceOPList
-				.equals(WurstClient.INSTANCE.fileManager.wurstDir.getPath()))
+			&& !wurst.options.forceOPList
+				.equals(wurst.files.wurstDir.getPath()))
 			try
 			{
-				File pwList =
-					new File(WurstClient.INSTANCE.options.forceOPList);
+				File pwList = new File(wurst.options.forceOPList);
 				BufferedReader load =
 					new BufferedReader(new FileReader(pwList));
 				ArrayList<String> loadedPWs = new ArrayList<String>();
@@ -498,21 +493,19 @@ public class ForceOpMod extends Mod implements ChatInputListener
 			if(lastPW == -1)
 				return;
 			else if(lastPW == 0)
-				password = Minecraft.getMinecraft().session.getUsername();
+				password = mc.session.getUsername();
 			else
 				password = passwords[lastPW - 1];
-			WurstClient.INSTANCE.chat.success("The password \"" + password
-				+ "\" worked.");
+			wurst.chat.success("The password \"" + password + "\" worked.");
 			setEnabled(false);
 		}else if(message.toLowerCase().contains("/help")
 			|| message.toLowerCase().contains("permission"))
-			WurstClient.INSTANCE.chat
+			wurst.chat
 				.warning("It looks like this server doesn't have AuthMe.");
 		else if(message.toLowerCase().contains("logged in")
 			|| message.toLowerCase().contains("eingeloggt")
 			|| message.toLowerCase().contains("eingelogt"))
-			WurstClient.INSTANCE.chat
-				.warning("It looks like you are already logged in.");
+			wurst.chat.warning("It looks like you are already logged in.");
 	}
 	
 	private boolean hasGotWrongPWMSG()
@@ -523,7 +516,7 @@ public class ForceOpMod extends Mod implements ChatInputListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(ChatInputListener.class, this);
+		wurst.events.remove(ChatInputListener.class, this);
 		new Thread()
 		{
 			@Override

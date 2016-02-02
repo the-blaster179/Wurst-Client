@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,27 +11,28 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.settings.ModeSetting;
 import tk.wurst_client.utils.BuildUtils;
 import tk.wurst_client.utils.RenderUtils;
 
 @Info(category = Category.AUTOBUILD,
 	description = "Automatically builds the selected template whenever\n"
-		+ "you place a block. Use the combo box below to select\n"
-		+ "a template.\n" + "This mod can bypass NoCheat+ while YesCheat+ is\n"
-		+ "enabled.",
+		+ "you place a block.\n"
+		+ "This mod can bypass NoCheat+ while YesCheat+ is\n" + "enabled.",
 	name = "AutoBuild")
 public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 {
 	public static ArrayList<String> names = new ArrayList<String>();
 	public static ArrayList<int[][]> templates = new ArrayList<int[][]>();
+	private int template = 1;
+	
 	private float speed = 5;
 	private int blockIndex;
 	private boolean shouldBuild;
@@ -42,21 +42,40 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public String getRenderName()
 	{
-		return getName() + " ["
-			+ names.get(WurstClient.INSTANCE.options.autobuildMode) + "]";
+		return getName() + " [" + names.get(template) + "]";
+	}
+	
+	public void initTemplateSetting()
+	{
+		settings.add(new ModeSetting("Template", names.toArray(new String[names
+			.size()]), template)
+		{
+			@Override
+			public void update()
+			{
+				template = getSelected();
+			}
+		});
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.buildRandomMod,
+			wurst.mods.fastPlaceMod};
 	}
 	
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
-		WurstClient.INSTANCE.eventManager.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
 	public void onRender()
 	{
-		if(templates.get(WurstClient.INSTANCE.options.autobuildMode)[0].length == 4)
+		if(templates.get(template)[0].length == 4)
 			renderAdvanced();
 		else
 			renderSimple();
@@ -65,7 +84,7 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public void onUpdate()
 	{
-		if(templates.get(WurstClient.INSTANCE.options.autobuildMode)[0].length == 4)
+		if(templates.get(template)[0].length == 4)
 			buildAdvanced();
 		else
 			buildSimple();
@@ -74,127 +93,79 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
-		WurstClient.INSTANCE.eventManager.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 		shouldBuild = false;
 	}
 	
+	// TODO: Clean up
+	
 	private void renderAdvanced()
 	{
-		if(shouldBuild
-			&& blockIndex < templates
-				.get(WurstClient.INSTANCE.options.autobuildMode).length
+		if(shouldBuild && blockIndex < templates.get(template).length
 			&& blockIndex >= 0)
 			if(playerYaw > -45 && playerYaw <= 45)
 			{// F: 0 South
 				double renderX =
 					BuildUtils.convertPosNext(1, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(1, blockIndex,
+							templates.get(template));
 				double renderY =
 					BuildUtils.convertPosNext(2, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(2, blockIndex,
+							templates.get(template));
 				double renderZ =
 					BuildUtils.convertPosNext(3, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(3, blockIndex,
+							templates.get(template));
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}else if(playerYaw > 45 && playerYaw <= 135)
 			{// F: 1 West
 				double renderX =
 					BuildUtils.convertPosNext(1, mouseOver)
-						- BuildUtils
-							.convertPosInAdvancedBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						- BuildUtils.convertPosInAdvancedBuiling(3, blockIndex,
+							templates.get(template));
 				double renderY =
 					BuildUtils.convertPosNext(2, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(2, blockIndex,
+							templates.get(template));
 				double renderZ =
 					BuildUtils.convertPosNext(3, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(1, blockIndex,
+							templates.get(template));
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}else if(playerYaw > 135 || playerYaw <= -135)
 			{// F: 2 North
 				double renderX =
 					BuildUtils.convertPosNext(1, mouseOver)
-						- BuildUtils
-							.convertPosInAdvancedBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						- BuildUtils.convertPosInAdvancedBuiling(1, blockIndex,
+							templates.get(template));
 				double renderY =
 					BuildUtils.convertPosNext(2, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(2, blockIndex,
+							templates.get(template));
 				double renderZ =
 					BuildUtils.convertPosNext(3, mouseOver)
-						- BuildUtils
-							.convertPosInAdvancedBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						- BuildUtils.convertPosInAdvancedBuiling(3, blockIndex,
+							templates.get(template));
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}else if(playerYaw > -135 && playerYaw <= -45)
 			{// F: 3 East
 				double renderX =
 					BuildUtils.convertPosNext(1, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(3, blockIndex,
+							templates.get(template));
 				double renderY =
 					BuildUtils.convertPosNext(2, mouseOver)
-						+ BuildUtils
-							.convertPosInAdvancedBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						+ BuildUtils.convertPosInAdvancedBuiling(2, blockIndex,
+							templates.get(template));
 				double renderZ =
 					BuildUtils.convertPosNext(3, mouseOver)
-						- BuildUtils
-							.convertPosInAdvancedBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode));
+						- BuildUtils.convertPosInAdvancedBuiling(1, blockIndex,
+							templates.get(template));
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}
@@ -206,119 +177,70 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 			RenderUtils
 				.emptyBlockESPBox(new BlockPos(renderX, renderY, renderZ));
 		}
-		for(int i = 0; i < templates
-			.get(WurstClient.INSTANCE.options.autobuildMode).length; i++)
+		for(int i = 0; i < templates.get(template).length; i++)
 			if(shouldBuild && mouseOver != null)
 				if(playerYaw > -45 && playerYaw <= 45)
 				{// F: 0 South
 					double renderX =
 						BuildUtils.convertPosNext(1, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(1, i,
+								templates.get(template));
 					double renderY =
 						BuildUtils.convertPosNext(2, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+								templates.get(template));
 					double renderZ =
 						BuildUtils.convertPosNext(3, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(3, i,
+								templates.get(template));
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}else if(playerYaw > 45 && playerYaw <= 135)
 				{// F: 1 West
 					double renderX =
 						BuildUtils.convertPosNext(1, mouseOver)
-							- BuildUtils
-								.convertPosInAdvancedBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							- BuildUtils.convertPosInAdvancedBuiling(3, i,
+								templates.get(template));
 					double renderY =
 						BuildUtils.convertPosNext(2, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+								templates.get(template));
 					double renderZ =
 						BuildUtils.convertPosNext(3, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(1, i,
+								templates.get(template));
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}else if(playerYaw > 135 || playerYaw <= -135)
 				{// F: 2 North
 					double renderX =
 						BuildUtils.convertPosNext(1, mouseOver)
-							- BuildUtils
-								.convertPosInAdvancedBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							- BuildUtils.convertPosInAdvancedBuiling(1, i,
+								templates.get(template));
 					double renderY =
 						BuildUtils.convertPosNext(2, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+								templates.get(template));
 					double renderZ =
 						BuildUtils.convertPosNext(3, mouseOver)
-							- BuildUtils
-								.convertPosInAdvancedBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							- BuildUtils.convertPosInAdvancedBuiling(3, i,
+								templates.get(template));
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}else if(playerYaw > -135 && playerYaw <= -45)
 				{// F: 3 East
 					double renderX =
 						BuildUtils.convertPosNext(1, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(3, i,
+								templates.get(template));
 					double renderY =
 						BuildUtils.convertPosNext(2, mouseOver)
-							+ BuildUtils
-								.convertPosInAdvancedBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+								templates.get(template));
 					double renderZ =
 						BuildUtils.convertPosNext(3, mouseOver)
-							- BuildUtils
-								.convertPosInAdvancedBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode));
+							- BuildUtils.convertPosInAdvancedBuiling(1, i,
+								templates.get(template));
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}
@@ -326,132 +248,70 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 	
 	private void renderSimple()
 	{
-		if(shouldBuild
-			&& blockIndex < templates
-				.get(WurstClient.INSTANCE.options.autobuildMode).length
+		if(shouldBuild && blockIndex < templates.get(template).length
 			&& blockIndex >= 0)
 			if(playerYaw > -45 && playerYaw <= 45)
 			{// F: 0 South
 				double renderX =
 					mouseOver.getBlockPos().getX()
-						+ BuildUtils
-							.convertPosInBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(1, blockIndex,
+							templates.get(template), mouseOver);
 				double renderY =
 					mouseOver.getBlockPos().getY()
-						+ BuildUtils
-							.convertPosInBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(2, blockIndex,
+							templates.get(template), mouseOver);
 				double renderZ =
 					mouseOver.getBlockPos().getZ()
-						+ BuildUtils
-							.convertPosInBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(3, blockIndex,
+							templates.get(template), mouseOver);
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}else if(playerYaw > 45 && playerYaw <= 135)
 			{// F: 1 West
 				double renderX =
 					mouseOver.getBlockPos().getX()
-						- BuildUtils
-							.convertPosInBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						- BuildUtils.convertPosInBuiling(3, blockIndex,
+							templates.get(template), mouseOver);
 				double renderY =
 					mouseOver.getBlockPos().getY()
-						+ BuildUtils
-							.convertPosInBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(2, blockIndex,
+							templates.get(template), mouseOver);
 				double renderZ =
 					mouseOver.getBlockPos().getZ()
-						+ BuildUtils
-							.convertPosInBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(1, blockIndex,
+							templates.get(template), mouseOver);
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}else if(playerYaw > 135 || playerYaw <= -135)
 			{// F: 2 North
 				double renderX =
 					mouseOver.getBlockPos().getX()
-						- BuildUtils
-							.convertPosInBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						- BuildUtils.convertPosInBuiling(1, blockIndex,
+							templates.get(template), mouseOver);
 				double renderY =
 					mouseOver.getBlockPos().getY()
-						+ BuildUtils
-							.convertPosInBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(2, blockIndex,
+							templates.get(template), mouseOver);
 				double renderZ =
 					mouseOver.getBlockPos().getZ()
-						- BuildUtils
-							.convertPosInBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						- BuildUtils.convertPosInBuiling(3, blockIndex,
+							templates.get(template), mouseOver);
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}else if(playerYaw > -135 && playerYaw <= -45)
 			{// F: 3 East
 				double renderX =
 					mouseOver.getBlockPos().getX()
-						+ BuildUtils
-							.convertPosInBuiling(
-								3,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(3, blockIndex,
+							templates.get(template), mouseOver);
 				double renderY =
 					mouseOver.getBlockPos().getY()
-						+ BuildUtils
-							.convertPosInBuiling(
-								2,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						+ BuildUtils.convertPosInBuiling(2, blockIndex,
+							templates.get(template), mouseOver);
 				double renderZ =
 					mouseOver.getBlockPos().getZ()
-						- BuildUtils
-							.convertPosInBuiling(
-								1,
-								blockIndex,
-								templates
-									.get(WurstClient.INSTANCE.options.autobuildMode),
-								mouseOver);
+						- BuildUtils.convertPosInBuiling(1, blockIndex,
+							templates.get(template), mouseOver);
 				RenderUtils
 					.blockESPBox(new BlockPos(renderX, renderY, renderZ));
 			}
@@ -463,131 +323,70 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 			RenderUtils
 				.emptyBlockESPBox(new BlockPos(renderX, renderY, renderZ));
 		}
-		for(int i = 0; i < templates
-			.get(WurstClient.INSTANCE.options.autobuildMode).length; i++)
+		for(int i = 0; i < templates.get(template).length; i++)
 			if(shouldBuild && mouseOver != null)
 				if(playerYaw > -45 && playerYaw <= 45)
 				{// F: 0 South
 					double renderX =
 						mouseOver.getBlockPos().getX()
-							+ BuildUtils
-								.convertPosInBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(1, i,
+								templates.get(template), mouseOver);
 					double renderY =
 						mouseOver.getBlockPos().getY()
-							+ BuildUtils
-								.convertPosInBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(2, i,
+								templates.get(template), mouseOver);
 					double renderZ =
 						mouseOver.getBlockPos().getZ()
-							+ BuildUtils
-								.convertPosInBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(3, i,
+								templates.get(template), mouseOver);
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}else if(playerYaw > 45 && playerYaw <= 135)
 				{// F: 1 West
 					double renderX =
 						mouseOver.getBlockPos().getX()
-							- BuildUtils
-								.convertPosInBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							- BuildUtils.convertPosInBuiling(3, i,
+								templates.get(template), mouseOver);
 					double renderY =
 						mouseOver.getBlockPos().getY()
-							+ BuildUtils
-								.convertPosInBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(2, i,
+								templates.get(template), mouseOver);
 					double renderZ =
 						mouseOver.getBlockPos().getZ()
-							+ BuildUtils
-								.convertPosInBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(1, i,
+								templates.get(template), mouseOver);
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}else if(playerYaw > 135 || playerYaw <= -135)
 				{// F: 2 North
 					double renderX =
 						mouseOver.getBlockPos().getX()
-							- BuildUtils
-								.convertPosInBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							- BuildUtils.convertPosInBuiling(1, i,
+								templates.get(template), mouseOver);
 					double renderY =
 						mouseOver.getBlockPos().getY()
-							+ BuildUtils
-								.convertPosInBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(2, i,
+								templates.get(template), mouseOver);
 					double renderZ =
 						mouseOver.getBlockPos().getZ()
-							- BuildUtils
-								.convertPosInBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							- BuildUtils.convertPosInBuiling(3, i,
+								templates.get(template), mouseOver);
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}else if(playerYaw > -135 && playerYaw <= -45)
 				{// F: 3 East
 					double renderX =
 						mouseOver.getBlockPos().getX()
-							+ BuildUtils
-								.convertPosInBuiling(
-									3,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(3, i,
+								templates.get(template), mouseOver);
 					double renderY =
 						mouseOver.getBlockPos().getY()
-							+ BuildUtils
-								.convertPosInBuiling(
-									2,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							+ BuildUtils.convertPosInBuiling(2, i,
+								templates.get(template), mouseOver);
 					double renderZ =
 						mouseOver.getBlockPos().getZ()
-							- BuildUtils
-								.convertPosInBuiling(
-									1,
-									i,
-									templates
-										.get(WurstClient.INSTANCE.options.autobuildMode),
-									mouseOver);
+							- BuildUtils.convertPosInBuiling(1, i,
+								templates.get(template), mouseOver);
 					RenderUtils.emptyBlockESPBox(new BlockPos(renderX, renderY,
 						renderZ));
 				}
@@ -597,170 +396,113 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 	{
 		updateMS();
 		if(!shouldBuild
-			&& (Minecraft.getMinecraft().rightClickDelayTimer == 4 || WurstClient.INSTANCE.modManager
-				.getModByClass(FastPlaceMod.class).isActive())
-			&& Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed
-			&& Minecraft.getMinecraft().objectMouseOver != null
-			&& Minecraft.getMinecraft().objectMouseOver.getBlockPos() != null
-			&& Minecraft.getMinecraft().theWorld
-				.getBlockState(
-					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+			&& (mc.rightClickDelayTimer == 4 || wurst.mods.fastPlaceMod
+				.isActive())
+			&& mc.gameSettings.keyBindUseItem.pressed
+			&& mc.objectMouseOver != null
+			&& mc.objectMouseOver.getBlockPos() != null
+			&& mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 				.getBlock().getMaterial() != Material.air)
 		{
-			if(WurstClient.INSTANCE.modManager
-				.getModByClass(FastPlaceMod.class).isActive())
+			if(wurst.mods.fastPlaceMod.isActive())
 				speed = 1000000000;
 			else
 				speed = 5;
-			if(WurstClient.INSTANCE.modManager.getModByClass(YesCheatMod.class)
-				.isActive())
+			if(wurst.mods.yesCheatMod.isActive())
 			{
 				blockIndex = 0;
 				shouldBuild = true;
-				mouseOver = Minecraft.getMinecraft().objectMouseOver;
-				playerYaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
+				mouseOver = mc.objectMouseOver;
+				playerYaw = mc.thePlayer.rotationYaw;
 				while(playerYaw > 180)
 					playerYaw -= 360;
 				while(playerYaw < -180)
 					playerYaw += 360;
 			}else
-				BuildUtils.advancedBuild(templates
-					.get(WurstClient.INSTANCE.options.autobuildMode));
+				BuildUtils.advancedBuild(templates.get(template));
 			updateLastMS();
 			return;
 		}
 		if(shouldBuild)
-			if((hasTimePassedS(speed) || WurstClient.INSTANCE.modManager
-				.getModByClass(FastPlaceMod.class).isActive())
-				&& blockIndex < templates
-					.get(WurstClient.INSTANCE.options.autobuildMode).length)
+			if((hasTimePassedS(speed) || wurst.mods.fastPlaceMod.isActive())
+				&& blockIndex < templates.get(template).length)
 			{
-				BuildUtils.advancedBuildNext(
-					templates.get(WurstClient.INSTANCE.options.autobuildMode),
+				BuildUtils.advancedBuildNext(templates.get(template),
 					mouseOver, playerYaw, blockIndex);
 				if(playerYaw > -45 && playerYaw <= 45)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										BuildUtils.convertPosNext(1, mouseOver)
-											+ BuildUtils
-												.convertPosInAdvancedBuiling(
-													1,
-													blockIndex,
-													templates
-														.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(2, mouseOver)
-											+ BuildUtils.convertPosInAdvancedBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(3, mouseOver)
-											+ BuildUtils.convertPosInAdvancedBuiling(
-												3,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode))))
-								.getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(BuildUtils
+								.convertPosNext(1, mouseOver)
+								+ BuildUtils.convertPosInAdvancedBuiling(1,
+									blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(2, mouseOver)
+									+ BuildUtils.convertPosInAdvancedBuiling(2,
+										blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(3, mouseOver)
+									+ BuildUtils.convertPosInAdvancedBuiling(3,
+										blockIndex, templates.get(template))))
+							.getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > 45 && playerYaw <= 135)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										BuildUtils.convertPosNext(1, mouseOver)
-											- BuildUtils
-												.convertPosInAdvancedBuiling(
-													3,
-													blockIndex,
-													templates
-														.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(2, mouseOver)
-											+ BuildUtils.convertPosInAdvancedBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(3, mouseOver)
-											+ BuildUtils.convertPosInAdvancedBuiling(
-												1,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode))))
-								.getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(BuildUtils
+								.convertPosNext(1, mouseOver)
+								- BuildUtils.convertPosInAdvancedBuiling(3,
+									blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(2, mouseOver)
+									+ BuildUtils.convertPosInAdvancedBuiling(2,
+										blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(3, mouseOver)
+									+ BuildUtils.convertPosInAdvancedBuiling(1,
+										blockIndex, templates.get(template))))
+							.getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > 135 || playerYaw <= -135)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										BuildUtils.convertPosNext(1, mouseOver)
-											- BuildUtils
-												.convertPosInAdvancedBuiling(
-													1,
-													blockIndex,
-													templates
-														.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(2, mouseOver)
-											+ BuildUtils.convertPosInAdvancedBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(3, mouseOver)
-											- BuildUtils.convertPosInAdvancedBuiling(
-												3,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode))))
-								.getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(BuildUtils
+								.convertPosNext(1, mouseOver)
+								- BuildUtils.convertPosInAdvancedBuiling(1,
+									blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(2, mouseOver)
+									+ BuildUtils.convertPosInAdvancedBuiling(2,
+										blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(3, mouseOver)
+									- BuildUtils.convertPosInAdvancedBuiling(3,
+										blockIndex, templates.get(template))))
+							.getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > -135 && playerYaw <= -45)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										BuildUtils.convertPosNext(1, mouseOver)
-											+ BuildUtils
-												.convertPosInAdvancedBuiling(
-													3,
-													blockIndex,
-													templates
-														.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(2, mouseOver)
-											+ BuildUtils.convertPosInAdvancedBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode)),
-										BuildUtils.convertPosNext(3, mouseOver)
-											- BuildUtils.convertPosInAdvancedBuiling(
-												1,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode))))
-								.getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(BuildUtils
+								.convertPosNext(1, mouseOver)
+								+ BuildUtils.convertPosInAdvancedBuiling(3,
+									blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(2, mouseOver)
+									+ BuildUtils.convertPosInAdvancedBuiling(2,
+										blockIndex, templates.get(template)),
+								BuildUtils.convertPosNext(3, mouseOver)
+									- BuildUtils.convertPosInAdvancedBuiling(1,
+										blockIndex, templates.get(template))))
+							.getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				updateLastMS();
-			}else if(blockIndex == templates
-				.get(WurstClient.INSTANCE.options.autobuildMode).length)
+			}else if(blockIndex == templates.get(template).length)
 				shouldBuild = false;
 	}
 	
@@ -768,174 +510,123 @@ public class AutoBuildMod extends Mod implements UpdateListener, RenderListener
 	{
 		updateMS();
 		if(!shouldBuild
-			&& (Minecraft.getMinecraft().rightClickDelayTimer == 4 || WurstClient.INSTANCE.modManager
-				.getModByClass(FastPlaceMod.class).isActive())
-			&& Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed
-			&& Minecraft.getMinecraft().objectMouseOver != null
-			&& Minecraft.getMinecraft().objectMouseOver.getBlockPos() != null
-			&& Minecraft.getMinecraft().theWorld
-				.getBlockState(
-					Minecraft.getMinecraft().objectMouseOver.getBlockPos())
+			&& (mc.rightClickDelayTimer == 4 || wurst.mods.fastPlaceMod
+				.isActive())
+			&& mc.gameSettings.keyBindUseItem.pressed
+			&& mc.objectMouseOver != null
+			&& mc.objectMouseOver.getBlockPos() != null
+			&& mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos())
 				.getBlock().getMaterial() != Material.air)
 		{
-			if(WurstClient.INSTANCE.modManager
-				.getModByClass(FastPlaceMod.class).isActive())
+			if(wurst.mods.fastPlaceMod.isActive())
 				speed = 1000000000;
 			else
 				speed = 5;
-			if(WurstClient.INSTANCE.modManager.getModByClass(YesCheatMod.class)
-				.isActive())
+			if(wurst.mods.yesCheatMod.isActive())
 			{
 				blockIndex = 0;
 				shouldBuild = true;
-				mouseOver = Minecraft.getMinecraft().objectMouseOver;
-				playerYaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
+				mouseOver = mc.objectMouseOver;
+				playerYaw = mc.thePlayer.rotationYaw;
 				while(playerYaw > 180)
 					playerYaw -= 360;
 				while(playerYaw < -180)
 					playerYaw += 360;
 			}else
-				BuildUtils.build(templates
-					.get(WurstClient.INSTANCE.options.autobuildMode));
+				BuildUtils.build(templates.get(template));
 			updateLastMS();
 			return;
 		}
 		if(shouldBuild)
-			if((hasTimePassedS(speed) || WurstClient.INSTANCE.modManager
-				.getModByClass(FastPlaceMod.class).isActive())
-				&& blockIndex < templates
-					.get(WurstClient.INSTANCE.options.autobuildMode).length)
+			if((hasTimePassedS(speed) || wurst.mods.fastPlaceMod.isActive())
+				&& blockIndex < templates.get(template).length)
 			{
-				BuildUtils.buildNext(
-					templates.get(WurstClient.INSTANCE.options.autobuildMode),
-					mouseOver, playerYaw, blockIndex);
+				BuildUtils.buildNext(templates.get(template), mouseOver,
+					playerYaw, blockIndex);
 				if(playerYaw > -45 && playerYaw <= 45)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										mouseOver.getBlockPos().getX()
-											+ BuildUtils.convertPosInBuiling(
-												1,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getY()
-											+ BuildUtils.convertPosInBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getZ()
-											+ BuildUtils.convertPosInBuiling(
-												3,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(mouseOver.getBlockPos().getX()
+								+ BuildUtils.convertPosInBuiling(1, blockIndex,
+									templates.get(template), mouseOver),
+								mouseOver.getBlockPos().getY()
+									+ BuildUtils.convertPosInBuiling(2,
+										blockIndex, templates.get(template),
+										mouseOver), mouseOver.getBlockPos()
+									.getZ()
+									+ BuildUtils.convertPosInBuiling(3,
+										blockIndex, templates.get(template),
+										mouseOver))).getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > 45 && playerYaw <= 135)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										mouseOver.getBlockPos().getX()
-											- BuildUtils.convertPosInBuiling(
-												3,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getY()
-											+ BuildUtils.convertPosInBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getZ()
-											+ BuildUtils.convertPosInBuiling(
-												1,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(mouseOver.getBlockPos().getX()
+								- BuildUtils.convertPosInBuiling(3, blockIndex,
+									templates.get(template), mouseOver),
+								mouseOver.getBlockPos().getY()
+									+ BuildUtils.convertPosInBuiling(2,
+										blockIndex, templates.get(template),
+										mouseOver), mouseOver.getBlockPos()
+									.getZ()
+									+ BuildUtils.convertPosInBuiling(1,
+										blockIndex, templates.get(template),
+										mouseOver))).getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > 135 || playerYaw <= -135)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										mouseOver.getBlockPos().getX()
-											- BuildUtils.convertPosInBuiling(
-												1,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getY()
-											+ BuildUtils.convertPosInBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getZ()
-											- BuildUtils.convertPosInBuiling(
-												3,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(mouseOver.getBlockPos().getX()
+								- BuildUtils.convertPosInBuiling(1, blockIndex,
+									templates.get(template), mouseOver),
+								mouseOver.getBlockPos().getY()
+									+ BuildUtils.convertPosInBuiling(2,
+										blockIndex, templates.get(template),
+										mouseOver), mouseOver.getBlockPos()
+									.getZ()
+									- BuildUtils.convertPosInBuiling(3,
+										blockIndex, templates.get(template),
+										mouseOver))).getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > -135 && playerYaw <= -45)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos(
-										mouseOver.getBlockPos().getX()
-											+ BuildUtils.convertPosInBuiling(
-												3,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getY()
-											+ BuildUtils.convertPosInBuiling(
-												2,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver),
-										mouseOver.getBlockPos().getZ()
-											- BuildUtils.convertPosInBuiling(
-												1,
-												blockIndex,
-												templates
-													.get(WurstClient.INSTANCE.options.autobuildMode),
-												mouseOver))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos(mouseOver.getBlockPos().getX()
+								+ BuildUtils.convertPosInBuiling(3, blockIndex,
+									templates.get(template), mouseOver),
+								mouseOver.getBlockPos().getY()
+									+ BuildUtils.convertPosInBuiling(2,
+										blockIndex, templates.get(template),
+										mouseOver), mouseOver.getBlockPos()
+									.getZ()
+									- BuildUtils.convertPosInBuiling(1,
+										blockIndex, templates.get(template),
+										mouseOver))).getBlock()) != 0)
 							blockIndex += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				updateLastMS();
-			}else if(blockIndex == templates
-				.get(WurstClient.INSTANCE.options.autobuildMode).length)
+			}else if(blockIndex == templates.get(template).length)
 				shouldBuild = false;
+	}
+	
+	public int getTemplate()
+	{
+		return template;
+	}
+	
+	public void setTemplate(int template)
+	{
+		((ModeSetting)settings.get(0)).setSelected(template);
 	}
 }

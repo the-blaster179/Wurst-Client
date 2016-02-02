@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +7,6 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +14,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.network.play.client.C10PacketCreativeInventoryAction;
 import net.minecraft.util.ResourceLocation;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -104,18 +101,17 @@ public class GiveCmd extends Cmd
 		// validate input
 		if(args.length < 1)
 			syntaxError();
-		if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+		if(!mc.thePlayer.capabilities.isCreativeMode)
 			error("Creative mode only.");
 		
 		// list all templates
 		if(args[0].equalsIgnoreCase("templates"))
 		{
-			WurstClient.INSTANCE.chat.message("§cItem templates:");
+			wurst.chat.message("§cItem templates:");
 			for(int i = 0; i < templates.length; i++)
 			{
 				ItemTemplate template = templates[i];
-				WurstClient.INSTANCE.chat.message("§c" + (i + 1) + "§c: §6"
-					+ template.name);
+				wurst.chat.message("§c" + (i + 1) + "§c: §6" + template.name);
 			}
 			return;
 		}
@@ -191,13 +187,13 @@ public class GiveCmd extends Cmd
 		
 		// give item
 		for(int i = 0; i < 9; i++)
-			if(Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(i) == null)
+			if(mc.thePlayer.inventory.getStackInSlot(i) == null)
 			{
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C10PacketCreativeInventoryAction(
 						36 + i, stack));
-				WurstClient.INSTANCE.chat.message("Item"
-					+ (amount > 1 ? "s" : "") + " created.");
+				wurst.chat.message("Item" + (amount > 1 ? "s" : "")
+					+ " created.");
 				return;
 			}
 		error("Please clear a slot of your hotbar.");

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,60 +7,70 @@
  */
 package tk.wurst_client;
 
-import net.minecraft.client.gui.ServerListEntryNormal;
-
 import org.darkstorm.minecraft.gui.theme.wurst.WurstTheme;
 
-import tk.wurst_client.analytics.Analytics;
-import tk.wurst_client.chat.ChatMessenger;
+import tk.wurst_client.analytics.AnalyticsManager;
+import tk.wurst_client.chat.ChatManager;
 import tk.wurst_client.commands.CmdManager;
 import tk.wurst_client.events.EventManager;
 import tk.wurst_client.files.FileManager;
+import tk.wurst_client.font.Fonts;
 import tk.wurst_client.gui.GuiManager;
+import tk.wurst_client.hooks.FrameHook;
 import tk.wurst_client.mods.ModManager;
-import tk.wurst_client.options.Friends;
-import tk.wurst_client.options.Keybinds;
-import tk.wurst_client.options.Options;
+import tk.wurst_client.navigator.Navigator;
+import tk.wurst_client.options.FriendsList;
+import tk.wurst_client.options.KeybindManager;
+import tk.wurst_client.options.OptionsManager;
+import tk.wurst_client.special.SpfManager;
 import tk.wurst_client.update.Updater;
 
 public enum WurstClient
 {
 	INSTANCE;
 	
-	public static final String VERSION = "2.3";
-	public String currentServerIP = "127.0.0.1:25565";
-	public ServerListEntryNormal lastServer;
+	public static final String VERSION = "2.15";
 	public boolean startupMessageDisabled = false;
 	
-	public ChatMessenger chat;
-	public CmdManager cmdManager;
-	public EventManager eventManager;
-	public FileManager fileManager;
-	public Friends friends;
-	public GuiManager guiManager;
-	public ModManager modManager;
-	public Keybinds keybinds;
-	public Options options;
+	public AnalyticsManager analytics;
+	public ChatManager chat;
+	public CmdManager commands;
+	public EventManager events;
+	public FileManager files;
+	public FriendsList friends;
+	public GuiManager gui;
+	public ModManager mods;
+	public Navigator navigator;
+	public KeybindManager keybinds;
+	public OptionsManager options;
+	public SpfManager special;
 	public Updater updater;
-	public Analytics analytics;
 	
 	public void startClient()
 	{
-		eventManager = new EventManager();
-		modManager = new ModManager();
-		guiManager = new GuiManager();
-		cmdManager = new CmdManager();
-		fileManager = new FileManager();
+		events = new EventManager();
+		mods = new ModManager();
+		gui = new GuiManager();
+		commands = new CmdManager();
+		special = new SpfManager();
+		files = new FileManager();
 		updater = new Updater();
-		chat = new ChatMessenger();
-		keybinds = new Keybinds();
-		options = new Options();
-		friends = new Friends();
+		chat = new ChatManager();
+		keybinds = new KeybindManager();
+		options = new OptionsManager();
+		friends = new FriendsList();
+		navigator = new Navigator();
 		
-		fileManager.init();
-		guiManager.setTheme(new WurstTheme());
-		guiManager.setup();
+		files.init();
+		navigator.sortFeatures();
+		Fonts.loadFonts();
+		gui.setTheme(new WurstTheme());
+		gui.setup();
 		updater.checkForUpdate();
-		analytics = new Analytics("UA-52838431-5", "client.wurst-client.tk");
+		analytics =
+			new AnalyticsManager("UA-52838431-5", "client.wurst-client.tk");
+		files.saveOptions();
+		
+		FrameHook.maximize();
 	}
 }

@@ -1,15 +1,11 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package tk.wurst_client.commands;
-
-import tk.wurst_client.WurstClient;
-import tk.wurst_client.mods.BlinkMod;
 
 @Cmd.Info(help = "Enables, disables or cancels Blink.",
 	name = "blink",
@@ -21,18 +17,19 @@ public class BlinkCmd extends Cmd
 	{
 		if(args.length > 1)
 			syntaxError();
-		BlinkMod blink =
-			(BlinkMod)WurstClient.INSTANCE.modManager
-				.getModByClass(BlinkMod.class);
 		if(args.length == 0)
-			blink.toggle();
+			wurst.mods.blinkMod.toggle();
 		else if(args[0].equalsIgnoreCase("on"))
-			blink.setEnabled(true);
-		else if(args[0].equalsIgnoreCase("off"))
-			blink.setEnabled(false);
+		{
+			if(!wurst.mods.blinkMod.isEnabled())
+				wurst.mods.blinkMod.setEnabled(true);
+		}else if(args[0].equalsIgnoreCase("off"))
+			wurst.mods.blinkMod.setEnabled(false);
 		else if(args[0].equalsIgnoreCase("cancel"))
-			blink.cancel();
-		else
+		{
+			if(wurst.mods.blinkMod.isEnabled())
+				wurst.mods.blinkMod.cancel();
+		}else
 			syntaxError();
 	}
 }

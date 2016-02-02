@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,5 +16,5 @@ import tk.wurst_client.mods.Mod.Info;
 	noCheatCompatible = false)
 public class HighJumpMod extends Mod
 {
-	public static double jumpHeight = 0.41999998688697815D * 6;
+	public double jumpHeight = 0.41999998688697815D * 6;
 }

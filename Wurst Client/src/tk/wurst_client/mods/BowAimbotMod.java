@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +11,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,12 +19,12 @@ import net.minecraft.item.ItemBow;
 import org.darkstorm.minecraft.gui.theme.wurst.WurstTheme;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.GUIRenderListener;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.EntityUtils;
 import tk.wurst_client.utils.RenderUtils;
 
@@ -41,11 +39,17 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	private float velocity;
 	
 	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.fastBowMod};
+	}
+	
+	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(GUIRenderListener.class, this);
-		WurstClient.INSTANCE.eventManager.add(RenderListener.class, this);
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
+		wurst.events.add(GUIRenderListener.class, this);
+		wurst.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -67,42 +71,36 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		RenderUtil.setColor(new Color(8, 8, 8, 128));
 		ScaledResolution sr =
-			new ScaledResolution(Minecraft.getMinecraft(),
-				Minecraft.getMinecraft().displayWidth,
-				Minecraft.getMinecraft().displayHeight);
+			new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		int width = sr.getScaledWidth();
 		int height = sr.getScaledHeight();
 		String targetLocked = "Target locked";
 		glBegin(GL_QUADS);
 		{
 			glVertex2d(width / 2 + 1, height / 2 + 1);
+			glVertex2d(width
+				/ 2
+				+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer()
+					.getStringWidth(targetLocked) + 4, height / 2 + 1);
 			glVertex2d(
 				width
 					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.guiManager.getTheme())
-						.getFontRenderer().getStringWidth(targetLocked) + 4,
-				height / 2 + 1);
-			glVertex2d(
-				width
-					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.guiManager.getTheme())
-						.getFontRenderer().getStringWidth(targetLocked) + 4,
+					+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer()
+						.getStringWidth(targetLocked) + 4,
 				height
 					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.guiManager.getTheme())
-						.getFontRenderer().FONT_HEIGHT);
+					+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer().FONT_HEIGHT);
 			glVertex2d(
 				width / 2 + 1,
 				height
 					/ 2
-					+ ((WurstTheme)WurstClient.INSTANCE.guiManager.getTheme())
-						.getFontRenderer().FONT_HEIGHT);
+					+ ((WurstTheme)wurst.gui.getTheme()).getFontRenderer().FONT_HEIGHT);
 		}
 		glEnd();
 		glEnable(GL_TEXTURE_2D);
-		((WurstTheme)WurstClient.INSTANCE.guiManager.getTheme())
-			.getFontRenderer().drawStringWithShadow(targetLocked,
-				width / 2 + 2, height / 2, RenderUtil.toRGBA(Color.WHITE));
+		((WurstTheme)wurst.gui.getTheme()).getFontRenderer()
+			.drawStringWithShadow(targetLocked, width / 2 + 2, height / 2,
+				RenderUtil.toRGBA(Color.WHITE));
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 	}
@@ -111,12 +109,11 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	public void onUpdate()
 	{
 		target = null;
-		if(Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem() != null
-			&& Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem()
-				.getItem() instanceof ItemBow
-			&& Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed)
+		if(mc.thePlayer.inventory.getCurrentItem() != null
+			&& mc.thePlayer.inventory.getCurrentItem().getItem() instanceof ItemBow
+			&& mc.gameSettings.keyBindUseItem.pressed)
 		{
-			target = EntityUtils.getClosestEntity(true);
+			target = EntityUtils.getClosestEntity(true, true);
 			aimAtTarget();
 		}
 	}
@@ -124,21 +121,19 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(GUIRenderListener.class, this);
-		WurstClient.INSTANCE.eventManager.remove(RenderListener.class, this);
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
+		wurst.events.remove(GUIRenderListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 	
 	private void aimAtTarget()
 	{
 		if(target == null)
 			return;
-		int bowCharge =
-			Minecraft.getMinecraft().thePlayer.getItemInUseDuration();
+		int bowCharge = mc.thePlayer.getItemInUseDuration();
 		velocity = bowCharge / 20;
 		velocity = (velocity * velocity + velocity * 2) / 3;
-		if(WurstClient.INSTANCE.modManager.getModByClass(FastBowMod.class)
-			.isActive())
+		if(wurst.mods.fastBowMod.isActive())
 			velocity = 1;
 		if(velocity < 0.1)
 		{
@@ -148,12 +143,16 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 		}
 		if(velocity > 1)
 			velocity = 1;
-		double posX = target.posX - Minecraft.getMinecraft().thePlayer.posX;
+		double posX =
+			target.posX + (target.posX - target.prevPosX) * 5
+				- mc.thePlayer.posX;
 		double posY =
-			target.posY + target.getEyeHeight() - 0.15
-				- Minecraft.getMinecraft().thePlayer.posY
-				- Minecraft.getMinecraft().thePlayer.getEyeHeight();
-		double posZ = target.posZ - Minecraft.getMinecraft().thePlayer.posZ;
+			target.posY + (target.posY - target.prevPosY) * 5
+				+ target.getEyeHeight() - 0.15 - mc.thePlayer.posY
+				- mc.thePlayer.getEyeHeight();
+		double posZ =
+			target.posZ + (target.posZ - target.prevPosZ) * 5
+				- mc.thePlayer.posZ;
 		float yaw = (float)(Math.atan2(posZ, posX) * 180 / Math.PI) - 90;
 		double y2 = Math.sqrt(posX * posX + posZ * posZ);
 		float g = 0.006F;
@@ -163,7 +162,7 @@ public class BowAimbotMod extends Mod implements UpdateListener,
 		float pitch =
 			(float)-Math.toDegrees(Math.atan((velocity * velocity - Math
 				.sqrt(tmp)) / (g * y2)));
-		Minecraft.getMinecraft().thePlayer.rotationYaw = yaw;
-		Minecraft.getMinecraft().thePlayer.rotationPitch = pitch;
+		mc.thePlayer.rotationYaw = yaw;
+		mc.thePlayer.rotationPitch = pitch;
 	}
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,8 +12,8 @@ import java.util.EventListener;
 import javax.swing.event.EventListenerList;
 
 import net.minecraft.client.Minecraft;
-import tk.wurst_client.error.gui.GuiError;
 import tk.wurst_client.events.listeners.*;
+import tk.wurst_client.gui.error.GuiError;
 
 public final class EventManager
 {

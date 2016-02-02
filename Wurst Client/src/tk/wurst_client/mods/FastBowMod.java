@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +14,10 @@ import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C07PacketPlayerDigging.Action;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 
 @Info(category = Category.COMBAT,
 	description = "Turns your bow into a machine gun.\n"
@@ -28,36 +27,35 @@ import tk.wurst_client.mods.Mod.Info;
 public class FastBowMod extends Mod implements UpdateListener
 {
 	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.bowAimbotMod};
+	}
+	
+	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.getHealth() > 0
-			&& (Minecraft.getMinecraft().thePlayer.onGround || Minecraft
-				.getMinecraft().thePlayer.capabilities.isCreativeMode)
-			&& Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem() != null
-			&& Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem()
-				.getItem() instanceof ItemBow
-			&& Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed)
+		if(mc.thePlayer.getHealth() > 0
+			&& (mc.thePlayer.onGround || Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+			&& mc.thePlayer.inventory.getCurrentItem() != null
+			&& mc.thePlayer.inventory.getCurrentItem().getItem() instanceof ItemBow
+			&& mc.gameSettings.keyBindUseItem.pressed)
 		{
-			Minecraft.getMinecraft().playerController.sendUseItem(
-				Minecraft.getMinecraft().thePlayer,
-				Minecraft.getMinecraft().theWorld,
-				Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem());
-			Minecraft.getMinecraft().thePlayer.inventory
+			mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld,
+				mc.thePlayer.inventory.getCurrentItem());
+			mc.thePlayer.inventory
 				.getCurrentItem()
 				.getItem()
-				.onItemRightClick(
-					Minecraft.getMinecraft().thePlayer.inventory
-						.getCurrentItem(),
-					Minecraft.getMinecraft().theWorld,
-					Minecraft.getMinecraft().thePlayer);
+				.onItemRightClick(mc.thePlayer.inventory.getCurrentItem(),
+					mc.theWorld, mc.thePlayer);
 			for(int i = 0; i < 20; i++)
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer(false));
 			Minecraft
 				.getMinecraft()
@@ -65,20 +63,17 @@ public class FastBowMod extends Mod implements UpdateListener
 				.addToSendQueue(
 					new C07PacketPlayerDigging(Action.RELEASE_USE_ITEM,
 						new BlockPos(0, 0, 0), EnumFacing.DOWN));
-			Minecraft.getMinecraft().thePlayer.inventory
+			mc.thePlayer.inventory
 				.getCurrentItem()
 				.getItem()
-				.onPlayerStoppedUsing(
-					Minecraft.getMinecraft().thePlayer.inventory
-						.getCurrentItem(),
-					Minecraft.getMinecraft().theWorld,
-					Minecraft.getMinecraft().thePlayer, 10);
+				.onPlayerStoppedUsing(mc.thePlayer.inventory.getCurrentItem(),
+					mc.theWorld, mc.thePlayer, 10);
 		}
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +9,6 @@ package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C01PacketChatMessage;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -25,7 +23,7 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 	public String getRenderName()
 	{
 		String name = getName() + "[";
-		switch(WurstClient.INSTANCE.options.autoLeaveMode)
+		switch(wurst.options.autoLeaveMode)
 		{
 			case 0:
 				name += "Quit";
@@ -43,25 +41,24 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.getHealth() <= 8.0
-			&& !Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-			&& (!Minecraft.getMinecraft().isIntegratedServerRunning() || Minecraft
-				.getMinecraft().thePlayer.sendQueue.getPlayerInfo().size() > 1))
+		if(mc.thePlayer.getHealth() <= 8.0
+			&& !mc.thePlayer.capabilities.isCreativeMode
+			&& (!mc.isIntegratedServerRunning() || Minecraft.getMinecraft().thePlayer.sendQueue
+				.getPlayerInfo().size() > 1))
 		{
-			switch(WurstClient.INSTANCE.options.autoLeaveMode)
+			switch(wurst.options.autoLeaveMode)
 			{
 				case 0:
-					Minecraft.getMinecraft().theWorld
-						.sendQuittingDisconnectingPacket();
+					mc.theWorld.sendQuittingDisconnectingPacket();
 					break;
 				case 1:
-					Minecraft.getMinecraft().thePlayer.sendQueue
+					mc.thePlayer.sendQueue
 						.addToSendQueue(new C01PacketChatMessage("§"));
 					break;
 				default:
@@ -74,6 +71,6 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

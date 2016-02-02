@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +9,6 @@ package tk.wurst_client.commands;
 
 import java.util.Iterator;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.utils.MiscUtils;
 
@@ -27,33 +25,29 @@ public class HelpCmd extends Cmd
 			execute(new String[]{"1"});
 			return;
 		}
-		int pages =
-			(int)Math
-				.ceil(WurstClient.INSTANCE.cmdManager.countCommands() / 8D);
+		int pages = (int)Math.ceil(wurst.commands.countCommands() / 8D);
 		if(MiscUtils.isInteger(args[0]))
 		{
 			int page = Integer.valueOf(args[0]);
 			if(page > pages || page < 1)
 				syntaxError("Invalid page: " + page);
-			WurstClient.INSTANCE.chat.message("Available commands: "
-				+ WurstClient.INSTANCE.cmdManager.countCommands());
-			WurstClient.INSTANCE.chat.message("Command list (page " + page
-				+ "/" + pages + "):");
-			Iterator<Cmd> itr =
-				WurstClient.INSTANCE.cmdManager.getAllCommands().iterator();
+			wurst.chat.message("Available commands: "
+				+ wurst.commands.countCommands());
+			wurst.chat.message("Command list (page " + page + "/" + pages
+				+ "):");
+			Iterator<Cmd> itr = wurst.commands.getAllCommands().iterator();
 			for(int i = 0; itr.hasNext(); i++)
 			{
 				Cmd cmd = itr.next();
 				if(i >= (page - 1) * 8 && i < (page - 1) * 8 + 8)
-					WurstClient.INSTANCE.chat.message(cmd.getName());
+					wurst.chat.message(cmd.getCmdName());
 			}
 		}else
 		{
-			Cmd cmd = WurstClient.INSTANCE.cmdManager.getCommandByName(args[0]);
+			Cmd cmd = wurst.commands.getCommandByName(args[0]);
 			if(cmd != null)
 			{
-				WurstClient.INSTANCE.chat.message("Available help for ."
-					+ args[0] + ":");
+				wurst.chat.message("Available help for ." + args[0] + ":");
 				cmd.printHelp();
 				cmd.printSyntax();
 			}else

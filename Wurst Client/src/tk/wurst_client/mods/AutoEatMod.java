@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,17 +7,15 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.MISC,
 	description = "Automatically eats food when necessary.",
-	name = "AutoEat")
+	name = "AutoEat", tags = "AutoSoup,auto eat,auto soup")
 public class AutoEatMod extends Mod implements UpdateListener
 {
 	private int oldSlot;
@@ -28,22 +25,20 @@ public class AutoEatMod extends Mod implements UpdateListener
 	public void onEnable()
 	{
 		oldSlot = -1;
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(oldSlot != -1
-			|| Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-			|| Minecraft.getMinecraft().thePlayer.getFoodStats().getFoodLevel() >= 20)
+		if(oldSlot != -1 || mc.thePlayer.capabilities.isCreativeMode
+			|| mc.thePlayer.getFoodStats().getFoodLevel() >= 20)
 			return;
 		float bestSaturation = 0F;
 		bestSlot = -1;
 		for(int i = 0; i < 9; i++)
 		{
-			ItemStack item =
-				Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(i);
+			ItemStack item = mc.thePlayer.inventory.getStackInSlot(i);
 			if(item == null)
 				continue;
 			float saturation = 0;
@@ -58,55 +53,46 @@ public class AutoEatMod extends Mod implements UpdateListener
 		}
 		if(bestSlot == -1)
 			return;
-		oldSlot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-		WurstClient.INSTANCE.eventManager.add(UpdateListener.class,
-			new UpdateListener()
+		oldSlot = mc.thePlayer.inventory.currentItem;
+		wurst.events.add(UpdateListener.class, new UpdateListener()
+		{
+			@Override
+			public void onUpdate()
 			{
-				@Override
-				public void onUpdate()
+				if(!AutoEatMod.this.isActive()
+					|| mc.thePlayer.capabilities.isCreativeMode
+					|| mc.thePlayer.getFoodStats().getFoodLevel() >= 20)
 				{
-					if(!AutoEatMod.this.isActive()
-						|| Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-						|| Minecraft.getMinecraft().thePlayer.getFoodStats()
-							.getFoodLevel() >= 20)
-					{
-						stop();
-						return;
-					}
-					ItemStack item =
-						Minecraft.getMinecraft().thePlayer.inventory
-							.getStackInSlot(bestSlot);
-					if(item == null || !(item.getItem() instanceof ItemFood))
-					{
-						stop();
-						return;
-					}
-					Minecraft.getMinecraft().thePlayer.inventory.currentItem =
-						bestSlot;
-					Minecraft.getMinecraft().playerController.sendUseItem(
-						Minecraft.getMinecraft().thePlayer,
-						Minecraft.getMinecraft().theWorld, item);
-					Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed =
-						true;
+					stop();
+					return;
 				}
-				
-				private void stop()
+				ItemStack item =
+					mc.thePlayer.inventory.getStackInSlot(bestSlot);
+				if(item == null || !(item.getItem() instanceof ItemFood))
 				{
-					Minecraft.getMinecraft().gameSettings.keyBindUseItem.pressed =
-						false;
-					Minecraft.getMinecraft().thePlayer.inventory.currentItem =
-						oldSlot;
-					oldSlot = -1;
-					WurstClient.INSTANCE.eventManager.remove(
-						UpdateListener.class, this);
+					stop();
+					return;
 				}
-			});
+				mc.thePlayer.inventory.currentItem = bestSlot;
+				mc.playerController
+					.sendUseItem(mc.thePlayer, mc.theWorld, item);
+				mc.gameSettings.keyBindUseItem.pressed = true;
+			}
+			
+			private void stop()
+			{
+				mc.gameSettings.keyBindUseItem.pressed = false;
+				mc.thePlayer.inventory.currentItem = oldSlot;
+				oldSlot = -1;
+				wurst.events.remove(UpdateListener.class, this);
+			}
+		});
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.eventManager.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 	
 	public boolean isEating()
