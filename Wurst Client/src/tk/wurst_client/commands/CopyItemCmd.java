@@ -7,77 +7,70 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C10PacketCreativeInventoryAction;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 
-@Info(help = "Allows you to copy items from other's hand and armor",
+@Info(help = "Allows you to copy items that other people are holding\n"
+	+ "or wearing. Requires creative mode.",
 	name = "copyitem",
-	syntax = {"<player> <head/chest/leg/foot>"})
+	syntax = {"<player> (hand|head|chest|legs|feet)"})
 public class CopyItemCmd extends Cmd
 {
-	private String playerName;
-	private ItemStack item;
-	private boolean found = false;
-	
 	@Override
 	public void execute(String[] args) throws Error
 	{
-		found = false;
-		if(args.length < 1)
+		if(args.length != 2)
 			syntaxError();
-		if(!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
-		{
-			WurstClient.INSTANCE.chat.error("Creative mode only.");
-			return;
-		}
-		playerName = args[0];
+		if(!mc.thePlayer.capabilities.isCreativeMode)
+			error("Creative mode only.");
 		
-		for(Object entity : Minecraft.getMinecraft().theWorld.loadedEntityList)
+		// find item
+		ItemStack item = null;
+		for(Object entity : mc.theWorld.loadedEntityList)
 			if(entity instanceof EntityOtherPlayerMP)
 			{
 				EntityOtherPlayerMP player = (EntityOtherPlayerMP)entity;
-				if(player.getName().equals(playerName))
+				if(player.getName().equalsIgnoreCase(args[0]))
 				{
-					if(args.length > 1)
+					switch(args[1].toLowerCase())
 					{
-						if(args[1].equalsIgnoreCase("head"))
+						case "hand":
+							item = player.inventory.getCurrentItem();
+							break;
+						case "head":
 							item = player.inventory.armorItemInSlot(3);
-						if(args[1].equalsIgnoreCase("chest"))
+							break;
+						case "chest":
 							item = player.inventory.armorItemInSlot(2);
-						if(args[1].equalsIgnoreCase("leg"))
+							break;
+						case "legs":
 							item = player.inventory.armorItemInSlot(1);
-						if(args[1].equalsIgnoreCase("foot"))
+							break;
+						case "feet":
 							item = player.inventory.armorItemInSlot(0);
-					}else
-						item = player.inventory.getCurrentItem();
-					found = true;
-					WurstClient.INSTANCE.chat.message("Copyed "
-						+ player.getName() + " item.");
+							break;
+						default:
+							syntaxError();
+							break;
+					}
+					break;
 				}
 			}
+		if(item == null)
+			error("Player \"" + args[0] + "\" could not be found.");
 		
-		if(!found)
-		{
-			WurstClient.INSTANCE.chat.error("Player not found.");
-			playerName = null;
-			item = null;
-			return;
-		}
-		
+		// copy item
 		for(int i = 0; i < 9; i++)
-			if(Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(i) == null)
+			if(mc.thePlayer.inventory.getStackInSlot(i) == null)
 			{
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C10PacketCreativeInventoryAction(
 						36 + i, item));
-				item = null;
+				wurst.chat.message("Item copied.");
 				return;
 			}
-		error("Please clear a slot of your hotbar.");
-		
+		error("Please clear a slot in your hotbar.");
 	}
 }
