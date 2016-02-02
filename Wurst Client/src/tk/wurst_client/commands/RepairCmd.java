@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +7,7 @@
  */
 package tk.wurst_client.commands;
 
-import net.minecraft.client.Minecraft;
+import tk.wurst_client.events.ChatOutputEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C10PacketCreativeInventoryAction;
@@ -25,7 +24,7 @@ public class RepairCmd extends Cmd
 			syntaxError();
 		
 		// check for creative mode
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP player = mc.thePlayer;
 		if(!player.capabilities.isCreativeMode)
 			error("Creative mode only.");
 		
@@ -42,5 +41,17 @@ public class RepairCmd extends Cmd
 		item.setItemDamage(0);
 		player.sendQueue.addToSendQueue(new C10PacketCreativeInventoryAction(
 			36 + player.inventory.currentItem, item));
+	}
+	
+	@Override
+	public String getPrimaryAction()
+	{
+		return "Repair Current Item";
+	}
+	
+	@Override
+	public void doPrimaryAction()
+	{
+		wurst.commands.onSentMessage(new ChatOutputEvent(".repair", true));
 	}
 }

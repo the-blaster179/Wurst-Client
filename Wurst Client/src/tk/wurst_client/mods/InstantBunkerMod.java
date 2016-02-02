@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +8,8 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -54,26 +51,26 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.fastPlaceMod.isActive())
+		if(wurst.mods.fastPlaceMod.isActive())
 			speed = 1000000000;
 		else
 			speed = 5;
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive())
+		if(wurst.mods.yesCheatMod.isActive())
 		{
 			i = 0;
 			shouldBuild = true;
-			MouseOver = Minecraft.getMinecraft().objectMouseOver;
-			posX = Minecraft.getMinecraft().thePlayer.posX;
-			posY = Minecraft.getMinecraft().thePlayer.posY;
-			posZ = Minecraft.getMinecraft().thePlayer.posZ;
-			playerYaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
+			MouseOver = mc.objectMouseOver;
+			posX = mc.thePlayer.posX;
+			posY = mc.thePlayer.posY;
+			posZ = mc.thePlayer.posZ;
+			playerYaw = mc.thePlayer.rotationYaw;
 			while(playerYaw > 180)
 				playerYaw -= 360;
 			while(playerYaw < -180)
 				playerYaw += 360;
 		}
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
@@ -225,93 +222,73 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().objectMouseOver == null)
+		if(mc.objectMouseOver == null)
 			return;
 		updateMS();
 		if(shouldBuild)
 		{
-			if((hasTimePassedS(speed) || WurstClient.INSTANCE.mods.fastPlaceMod
-				.isActive()) && i < building.length)
+			if((hasTimePassedS(speed) || wurst.mods.fastPlaceMod.isActive())
+				&& i < building.length)
 			{
 				BuildUtils.advancedInstantBuildNext(building, MouseOver,
 					playerYaw, posX + 1, posY, posZ, i);
 				if(playerYaw > -45 && playerYaw <= 45)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos((int)posX
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(1, i,
-												building), (int)posY
-										- 2
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(2, i,
-												building), (int)posZ
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(3, i,
-												building))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos((int)posX
+								+ BuildUtils.convertPosInAdvancedBuiling(1, i,
+									building), (int)posY
+								- 2
+								+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+									building), (int)posZ
+								+ BuildUtils.convertPosInAdvancedBuiling(3, i,
+									building))).getBlock()) != 0)
 							i += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > 45 && playerYaw <= 135)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos((int)posX
-										- BuildUtils
-											.convertPosInAdvancedBuiling(3, i,
-												building), (int)posY
-										- 2
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(2, i,
-												building), (int)posZ
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(1, i,
-												building))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos((int)posX
+								- BuildUtils.convertPosInAdvancedBuiling(3, i,
+									building), (int)posY
+								- 2
+								+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+									building), (int)posZ
+								+ BuildUtils.convertPosInAdvancedBuiling(1, i,
+									building))).getBlock()) != 0)
 							i += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > 135 || playerYaw <= -135)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos((int)posX
-										- BuildUtils
-											.convertPosInAdvancedBuiling(1, i,
-												building), (int)posY
-										- 2
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(2, i,
-												building), (int)posZ
-										- BuildUtils
-											.convertPosInAdvancedBuiling(3, i,
-												building))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos((int)posX
+								- BuildUtils.convertPosInAdvancedBuiling(1, i,
+									building), (int)posY
+								- 2
+								+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+									building), (int)posZ
+								- BuildUtils.convertPosInAdvancedBuiling(3, i,
+									building))).getBlock()) != 0)
 							i += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
 				else if(playerYaw > -135 && playerYaw <= -45)
 					try
 					{
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(
-									new BlockPos((int)posX
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(3, i,
-												building), (int)posY
-										- 2
-										+ BuildUtils
-											.convertPosInAdvancedBuiling(2, i,
-												building), (int)posZ
-										- BuildUtils
-											.convertPosInAdvancedBuiling(1, i,
-												building))).getBlock()) != 0)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(
+							new BlockPos((int)posX
+								+ BuildUtils.convertPosInAdvancedBuiling(3, i,
+									building), (int)posY
+								- 2
+								+ BuildUtils.convertPosInAdvancedBuiling(2, i,
+									building), (int)posZ
+								- BuildUtils.convertPosInAdvancedBuiling(1, i,
+									building))).getBlock()) != 0)
 							i += 1;
 					}catch(NullPointerException e)
 					{}// If the current item is null.
@@ -331,8 +308,8 @@ public class InstantBunkerMod extends Mod implements UpdateListener,
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 		shouldBuild = false;
 	}
 }

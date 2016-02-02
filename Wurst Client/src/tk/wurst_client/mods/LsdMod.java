@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +7,11 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -28,53 +25,48 @@ public class LsdMod extends Mod implements UpdateListener
 	public void onToggle()
 	{
 		if(!OpenGlHelper.shadersSupported)
-			Minecraft.getMinecraft().renderGlobal.loadRenderers();
+			mc.renderGlobal.loadRenderers();
 	}
 	
 	@Override
 	public void onEnable()
 	{
 		if(OpenGlHelper.shadersSupported)
-			if(Minecraft.getMinecraft().func_175606_aa() instanceof EntityPlayer)
+			if(mc.func_175606_aa() instanceof EntityPlayer)
 			{
-				if(Minecraft.getMinecraft().entityRenderer.theShaderGroup != null)
-					Minecraft.getMinecraft().entityRenderer.theShaderGroup
-						.deleteShaderGroup();
+				if(mc.entityRenderer.theShaderGroup != null)
+					mc.entityRenderer.theShaderGroup.deleteShaderGroup();
 				
-				Minecraft.getMinecraft().entityRenderer.shaderIndex = 19;
+				mc.entityRenderer.shaderIndex = 19;
 				
-				if(Minecraft.getMinecraft().entityRenderer.shaderIndex != EntityRenderer.shaderCount)
-					Minecraft.getMinecraft().entityRenderer
+				if(mc.entityRenderer.shaderIndex != EntityRenderer.shaderCount)
+					mc.entityRenderer
 						.func_175069_a(EntityRenderer.shaderResourceLocations[19]);
 				else
-					Minecraft.getMinecraft().entityRenderer.theShaderGroup =
-						null;
+					mc.entityRenderer.theShaderGroup = null;
 			}
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
 		if(!OpenGlHelper.shadersSupported)
-			Minecraft.getMinecraft().thePlayer
-				.addPotionEffect(new PotionEffect(Potion.confusion.getId(),
-					10801220));
-		Minecraft.getMinecraft().gameSettings.smoothCamera = isEnabled();
+			mc.thePlayer.addPotionEffect(new PotionEffect(Potion.confusion
+				.getId(), 10801220));
+		mc.gameSettings.smoothCamera = isEnabled();
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().thePlayer.removePotionEffect(Potion.confusion
-			.getId());
-		if(Minecraft.getMinecraft().entityRenderer.theShaderGroup != null)
+		wurst.events.remove(UpdateListener.class, this);
+		mc.thePlayer.removePotionEffect(Potion.confusion.getId());
+		if(mc.entityRenderer.theShaderGroup != null)
 		{
-			Minecraft.getMinecraft().entityRenderer.theShaderGroup
-				.deleteShaderGroup();
-			Minecraft.getMinecraft().entityRenderer.theShaderGroup = null;
+			mc.entityRenderer.theShaderGroup.deleteShaderGroup();
+			mc.entityRenderer.theShaderGroup = null;
 		}
-		Minecraft.getMinecraft().gameSettings.smoothCamera = false;
+		mc.gameSettings.smoothCamera = false;
 	}
 }

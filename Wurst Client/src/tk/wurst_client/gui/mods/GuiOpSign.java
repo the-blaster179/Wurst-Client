@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,10 +39,10 @@ public class GuiOpSign extends GuiScreen
 		Keyboard.enableRepeatEvents(true);
 		buttonList.add(new GuiButton(0, width / 2 - 100, height / 3 * 2, 98,
 			20, "Done"));
-		buttonList.add(new GuiButton(1, width / 2 - 100, height / 3 * 2 + 24, 200, 20,
-			"Cancel"));
-		buttonList.add(new GuiButton(2, width / 2 + 2, height / 3 * 2,
-			98, 20, "Tutorial"));
+		buttonList.add(new GuiButton(1, width / 2 - 100, height / 3 * 2 + 24,
+			200, 20, "Cancel"));
+		buttonList.add(new GuiButton(2, width / 2 + 2, height / 3 * 2, 98, 20,
+			"Tutorial"));
 		commandBox =
 			new GuiTextField(0, fontRendererObj, width / 2 - 100, 60, 200, 20);
 		commandBox.setMaxStringLength(100);

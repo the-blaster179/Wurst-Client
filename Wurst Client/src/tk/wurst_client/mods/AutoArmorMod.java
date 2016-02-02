@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +12,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -28,15 +26,15 @@ public class AutoArmorMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode
-			|| (Minecraft.getMinecraft().currentScreen instanceof GuiContainer && !(Minecraft
-				.getMinecraft().currentScreen instanceof GuiInventory)))
+		if(mc.thePlayer.capabilities.isCreativeMode
+			|| mc.currentScreen instanceof GuiContainer
+			&& !(mc.currentScreen instanceof GuiInventory))
 			return;
 		updateMS();
 		if(hasTimePassedM(3000))
@@ -46,9 +44,7 @@ public class AutoArmorMod extends Mod implements UpdateListener
 				bestArmor[i] = -1;
 			for(int i = 0; i < 36; i++)
 			{
-				ItemStack itemstack =
-					Minecraft.getMinecraft().thePlayer.inventory
-						.getStackInSlot(i);
+				ItemStack itemstack = mc.thePlayer.inventory.getStackInSlot(i);
 				if(itemstack != null
 					&& itemstack.getItem() instanceof ItemArmor)
 				{
@@ -59,9 +55,7 @@ public class AutoArmorMod extends Mod implements UpdateListener
 			}
 			for(int i = 0; i < 4; i++)
 			{
-				ItemStack itemstack =
-					Minecraft.getMinecraft().thePlayer.inventory
-						.armorItemInSlot(i);
+				ItemStack itemstack = mc.thePlayer.inventory.armorItemInSlot(i);
 				ItemArmor currentArmor;
 				if(itemstack != null
 					&& itemstack.getItem() instanceof ItemArmor)
@@ -72,21 +66,21 @@ public class AutoArmorMod extends Mod implements UpdateListener
 				try
 				{
 					bestArmor =
-						(ItemArmor)Minecraft.getMinecraft().thePlayer.inventory
-							.getStackInSlot(this.bestArmor[i]).getItem();
+						(ItemArmor)mc.thePlayer.inventory.getStackInSlot(
+							this.bestArmor[i]).getItem();
 				}catch(Exception e)
 				{
 					bestArmor = null;
 				}
 				if(bestArmor != null
 					&& (currentArmor == null || bestArmor.damageReduceAmount > currentArmor.damageReduceAmount))
-					if(Minecraft.getMinecraft().thePlayer.inventory
-						.getFirstEmptyStack() != -1 || currentArmor == null)
+					if(mc.thePlayer.inventory.getFirstEmptyStack() != -1
+						|| currentArmor == null)
 					{
-						Minecraft.getMinecraft().playerController.windowClick(
-							0, 8 - i, 0, 1, Minecraft.getMinecraft().thePlayer);
-						Minecraft.getMinecraft().playerController.windowClick(
-							0, this.bestArmor[i] < 9 ? 36 + this.bestArmor[i]
+						mc.playerController.windowClick(0, 8 - i, 0, 1,
+							mc.thePlayer);
+						mc.playerController.windowClick(0,
+							this.bestArmor[i] < 9 ? 36 + this.bestArmor[i]
 								: this.bestArmor[i], 0, 1, Minecraft
 								.getMinecraft().thePlayer);
 					}
@@ -98,6 +92,6 @@ public class AutoArmorMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

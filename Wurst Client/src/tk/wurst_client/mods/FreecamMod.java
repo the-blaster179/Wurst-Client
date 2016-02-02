@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +7,7 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -29,46 +26,39 @@ public class FreecamMod extends Mod implements UpdateListener
 	@Override
 	public void onEnable()
 	{
-		oldX = Minecraft.getMinecraft().thePlayer.posX;
-		oldY = Minecraft.getMinecraft().thePlayer.posY;
-		oldZ = Minecraft.getMinecraft().thePlayer.posZ;
+		oldX = mc.thePlayer.posX;
+		oldY = mc.thePlayer.posY;
+		oldZ = mc.thePlayer.posZ;
 		fakePlayer =
-			new EntityOtherPlayerMP(Minecraft.getMinecraft().theWorld,
-				Minecraft.getMinecraft().thePlayer.getGameProfile());
-		fakePlayer.clonePlayer(Minecraft.getMinecraft().thePlayer, true);
-		fakePlayer
-			.copyLocationAndAnglesFrom(Minecraft.getMinecraft().thePlayer);
-		fakePlayer.rotationYawHead =
-			Minecraft.getMinecraft().thePlayer.rotationYawHead;
-		Minecraft.getMinecraft().theWorld.addEntityToWorld(-69, fakePlayer);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+			new EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.getGameProfile());
+		fakePlayer.clonePlayer(mc.thePlayer, true);
+		fakePlayer.copyLocationAndAnglesFrom(mc.thePlayer);
+		fakePlayer.rotationYawHead = mc.thePlayer.rotationYawHead;
+		mc.theWorld.addEntityToWorld(-69, fakePlayer);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		Minecraft.getMinecraft().thePlayer.motionX = 0;
-		Minecraft.getMinecraft().thePlayer.motionY = 0;
-		Minecraft.getMinecraft().thePlayer.motionZ = 0;
-		Minecraft.getMinecraft().thePlayer.jumpMovementFactor =
-			WurstClient.INSTANCE.mods.flightMod.speed / 10;
-		if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed)
-			Minecraft.getMinecraft().thePlayer.motionY +=
-				WurstClient.INSTANCE.mods.flightMod.speed;
-		if(Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed)
-			Minecraft.getMinecraft().thePlayer.motionY -=
-				WurstClient.INSTANCE.mods.flightMod.speed;
+		mc.thePlayer.motionX = 0;
+		mc.thePlayer.motionY = 0;
+		mc.thePlayer.motionZ = 0;
+		mc.thePlayer.jumpMovementFactor = wurst.mods.flightMod.speed / 10;
+		if(mc.gameSettings.keyBindJump.pressed)
+			mc.thePlayer.motionY += wurst.mods.flightMod.speed;
+		if(mc.gameSettings.keyBindSneak.pressed)
+			mc.thePlayer.motionY -= wurst.mods.flightMod.speed;
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().thePlayer.setPositionAndRotation(oldX, oldY,
-			oldZ, Minecraft.getMinecraft().thePlayer.rotationYaw,
-			Minecraft.getMinecraft().thePlayer.rotationPitch);
-		Minecraft.getMinecraft().theWorld.removeEntityFromWorld(-69);
+		wurst.events.remove(UpdateListener.class, this);
+		mc.thePlayer.setPositionAndRotation(oldX, oldY, oldZ,
+			mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch);
+		mc.theWorld.removeEntityFromWorld(-69);
 		fakePlayer = null;
-		Minecraft.getMinecraft().renderGlobal.loadRenderers();
+		mc.renderGlobal.loadRenderers();
 	}
 }

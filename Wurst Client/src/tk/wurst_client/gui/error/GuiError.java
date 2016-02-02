@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -145,7 +144,8 @@ public class GuiError extends GuiScreen
 					@Override
 					public void run()
 					{
-						switch(JOptionPane.showOptionDialog(FrameHook.getFrame(), report, "Stacktrace",
+						switch(JOptionPane.showOptionDialog(
+							FrameHook.getFrame(), report, "Stacktrace",
 							JOptionPane.DEFAULT_OPTION,
 							JOptionPane.INFORMATION_MESSAGE, null,
 							new String[]{"Close", "Copy to Clipboard",
@@ -179,7 +179,8 @@ public class GuiError extends GuiScreen
 									.addChoosableFileFilter(new FileNameExtensionFilter(
 										"Markdown files", "md"));
 								int action =
-									fileChooser.showSaveDialog(FrameHook.getFrame());
+									fileChooser.showSaveDialog(FrameHook
+										.getFrame());
 								if(action == JFileChooser.APPROVE_OPTION)
 									try
 									{
@@ -243,7 +244,7 @@ public class GuiError extends GuiScreen
 		if(cause instanceof Mod)
 			title += "in `" + ((Mod)cause).getName() + "` ";
 		else if(cause instanceof Cmd)
-			title += "in `." + ((Cmd)cause).getName() + "` ";
+			title += "in `." + ((Cmd)cause).getCmdName() + "` ";
 		title += "while " + action + ".";
 		return title;
 	}

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +7,6 @@
  */
 package tk.wurst_client.commands;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.Info;
 import tk.wurst_client.mods.Mod;
 
@@ -27,7 +25,7 @@ public class TCmd extends Cmd
 			mode = 2;
 		else
 			syntaxError();
-		Mod mod = WurstClient.INSTANCE.mods.getModByName(args[0]);
+		Mod mod = wurst.mods.getModByName(args[0]);
 		if(mod == null)
 			error("Could not find mod \"" + args[0] + "\".");
 		if(mode == 0)

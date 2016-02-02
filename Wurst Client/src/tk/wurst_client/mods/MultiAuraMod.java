@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +7,13 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
+import java.util.ArrayList;
+
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.EntityUtils;
 
 @Info(category = Category.COMBAT,
@@ -25,18 +25,26 @@ public class MultiAuraMod extends Mod implements UpdateListener
 	private float range = 6F;
 	
 	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.special.targetSpf,
+			wurst.mods.killauraMod, wurst.mods.killauraLegitMod,
+			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod};
+	}
+	
+	@Override
 	public void onEnable()
 	{
 		// TODO: Clean up this mess!
-		if(WurstClient.INSTANCE.mods.killauraMod.isEnabled())
-			WurstClient.INSTANCE.mods.killauraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.killauraLegitMod.isEnabled())
-			WurstClient.INSTANCE.mods.killauraLegitMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.clickAuraMod.isEnabled())
-			WurstClient.INSTANCE.mods.clickAuraMod.setEnabled(false);
-		if(WurstClient.INSTANCE.mods.triggerBotMod.isEnabled())
-			WurstClient.INSTANCE.mods.triggerBotMod.setEnabled(false);
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		if(wurst.mods.killauraMod.isEnabled())
+			wurst.mods.killauraMod.setEnabled(false);
+		if(wurst.mods.killauraLegitMod.isEnabled())
+			wurst.mods.killauraLegitMod.setEnabled(false);
+		if(wurst.mods.clickAuraMod.isEnabled())
+			wurst.mods.clickAuraMod.setEnabled(false);
+		if(wurst.mods.triggerBotMod.isEnabled())
+			wurst.mods.triggerBotMod.setEnabled(false);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -45,18 +53,18 @@ public class MultiAuraMod extends Mod implements UpdateListener
 		updateMS();
 		if(EntityUtils.getClosestEntity(true, false) != null)
 		{
-			for(int i = 0; i < Math.min(
-				EntityUtils.getCloseEntities(true, range).size(), 64); i++)
+			if(wurst.mods.autoSwordMod.isActive())
+				AutoSwordMod.setSlot();
+			CriticalsMod.doCritical();
+			wurst.mods.blockHitMod.doBlock();
+			ArrayList<EntityLivingBase> entities =
+				EntityUtils.getCloseEntities(true, range);
+			for(int i = 0; i < Math.min(entities.size(), 64); i++)
 			{
-				EntityLivingBase en =
-					EntityUtils.getCloseEntities(true, range).get(i);
-				if(WurstClient.INSTANCE.mods.autoSwordMod.isActive())
-					AutoSwordMod.setSlot();
-				CriticalsMod.doCritical();
+				EntityLivingBase en = entities.get(i);
 				EntityUtils.faceEntityPacket(en);
-				Minecraft.getMinecraft().thePlayer.swingItem();
-				Minecraft.getMinecraft().playerController.attackEntity(
-					Minecraft.getMinecraft().thePlayer, en);
+				mc.thePlayer.swingItem();
+				mc.playerController.attackEntity(mc.thePlayer, en);
 			}
 			updateLastMS();
 		}
@@ -65,6 +73,6 @@ public class MultiAuraMod extends Mod implements UpdateListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

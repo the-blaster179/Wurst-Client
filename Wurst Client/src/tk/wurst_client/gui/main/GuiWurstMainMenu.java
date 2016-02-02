@@ -27,6 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -189,6 +190,90 @@ public class GuiWurstMainMenu extends GuiMainMenu
 				MiscUtils.openLink("https://www.wurst-client.tk/fanshop");
 				break;
 		}
+	}
+	
+	@Override
+	public void confirmClicked(boolean result, int id)
+	{
+		super.confirmClicked(result, id);
+		
+		// changelog
+		if(id == 64)
+		{
+			if(result)
+				WurstClient.INSTANCE.analytics.trackEvent("changelog",
+					"go play");
+			else
+			{
+				MiscUtils.openLink("https://www.wurst-client.tk/changelog/");
+				WurstClient.INSTANCE.analytics.trackEvent("changelog",
+					"view changelog");
+			}
+			mc.displayGuiScreen(this);
+		}
+	}
+	
+	@Override
+	public void updateScreen()
+	{
+		super.updateScreen();
+		
+		// updater
+		if(WurstClient.INSTANCE.startupMessageDisabled)
+			return;
+		if(WurstClient.INSTANCE.updater.isOutdated())
+		{
+			WurstClient.INSTANCE.analytics.trackEvent("updater", "update to v"
+				+ WurstClient.INSTANCE.updater.getLatestVersion(), "from "
+				+ WurstClient.INSTANCE.updater.getCurrentVersion());
+			WurstClient.INSTANCE.updater.update();
+			WurstClient.INSTANCE.startupMessageDisabled = true;
+		}
+		
+		// emergency message
+		if(WurstClient.INSTANCE.startupMessageDisabled)
+			return;
+		try
+		{
+			HttpsURLConnection connection =
+				(HttpsURLConnection)new URL(
+					"https://www.wurst-client.tk/api/v1/messages.json")
+					.openConnection();
+			connection.connect();
+			
+			JsonObject json =
+				JsonUtils.jsonParser
+					.parse(
+						new InputStreamReader(connection.getInputStream(),
+							"UTF-8")).getAsJsonObject();
+			
+			if(json.get(WurstClient.VERSION) != null)
+			{
+				System.out.println("Emergency message found!");
+				mc.displayGuiScreen(new GuiMessage(json
+					.get(WurstClient.VERSION).getAsJsonObject()));
+				WurstClient.INSTANCE.startupMessageDisabled = true;
+			}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		// changelog
+		if(WurstClient.INSTANCE.startupMessageDisabled)
+			return;
+		if(!WurstClient.VERSION
+			.equals(WurstClient.INSTANCE.options.lastLaunchedVersion))
+		{
+			mc.displayGuiScreen(new GuiYesNo(this,
+				"Successfully updated to Wurst v" + WurstClient.VERSION, "",
+				"Go Play", "View Changelog", 64));
+			WurstClient.INSTANCE.options.lastLaunchedVersion =
+				WurstClient.VERSION;
+			WurstClient.INSTANCE.files.saveOptions();
+		}
+		
+		WurstClient.INSTANCE.startupMessageDisabled = true;
 	}
 	
 	@Override
@@ -364,46 +449,6 @@ public class GuiWurstMainMenu extends GuiMainMenu
 				drawHoveringText(tooltip, mouseX, mouseY);
 				break;
 			}
-		}
-		
-		if(!WurstClient.INSTANCE.startupMessageDisabled)
-		{
-			if(WurstClient.INSTANCE.updater.isOutdated())
-			{
-				// updater
-				WurstClient.INSTANCE.analytics.trackEvent(
-					"updater",
-					"update to v"
-						+ WurstClient.INSTANCE.updater.getLatestVersion(),
-					"from " + WurstClient.INSTANCE.updater.getCurrentVersion());
-				WurstClient.INSTANCE.updater.update();
-			}else
-				// emergency message
-				try
-				{
-					HttpsURLConnection connection =
-						(HttpsURLConnection)new URL(
-							"https://www.wurst-client.tk/api/v1/messages.json")
-							.openConnection();
-					connection.connect();
-					
-					JsonObject json =
-						JsonUtils.jsonParser.parse(
-							new InputStreamReader(connection.getInputStream(),
-								"UTF-8")).getAsJsonObject();
-					
-					if(json.get(WurstClient.VERSION) != null)
-					{
-						System.out.println("Emergency message found!");
-						mc.displayGuiScreen(new GuiMessage(json.get(
-							WurstClient.VERSION).getAsJsonObject()));
-					}
-				}catch(Exception e)
-				{
-					e.printStackTrace();
-				}
-			
-			WurstClient.INSTANCE.startupMessageDisabled = true;
 		}
 	}
 	

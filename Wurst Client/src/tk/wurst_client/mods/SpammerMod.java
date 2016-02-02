@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,8 +28,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 
-import net.minecraft.client.Minecraft;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.hooks.FrameHook;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -69,7 +66,7 @@ public class SpammerMod extends Mod
 					@Override
 					public void windowClosing(WindowEvent e)
 					{
-						WurstClient.INSTANCE.mods.spammerMod.setEnabled(false);
+						wurst.mods.spammerMod.setEnabled(false);
 					}
 				});
 				JPanel panel = new JPanel();
@@ -85,7 +82,7 @@ public class SpammerMod extends Mod
 					public void actionPerformed(ActionEvent e)
 					{
 						JFileChooser fileChooser =
-							new JFileChooser(WurstClient.INSTANCE.files.spamDir)
+							new JFileChooser(wurst.files.spamDir)
 							{
 								@Override
 								protected JDialog createDialog(Component parent)
@@ -137,7 +134,7 @@ public class SpammerMod extends Mod
 					public void actionPerformed(ActionEvent e)
 					{
 						JFileChooser fileChooser =
-							new JFileChooser(WurstClient.INSTANCE.files.spamDir)
+							new JFileChooser(wurst.files.spamDir)
 							{
 								@Override
 								protected JDialog createDialog(Component parent)
@@ -183,7 +180,7 @@ public class SpammerMod extends Mod
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						MiscUtils.openFile(WurstClient.INSTANCE.files.spamDir);
+						MiscUtils.openFile(wurst.files.spamDir);
 					}
 				});
 				fileMenu.add(fileOpenFolder);
@@ -258,15 +255,14 @@ public class SpammerMod extends Mod
 				JMenu viewMenu = new JMenu("View");
 				JCheckBoxMenuItem viewFont =
 					new JCheckBoxMenuItem("Simulate ingame font",
-						WurstClient.INSTANCE.options.spamFont);
+						wurst.options.spamFont);
 				viewFont.addActionListener(new ActionListener()
 				{
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						WurstClient.INSTANCE.options.spamFont =
-							!WurstClient.INSTANCE.options.spamFont;
-						WurstClient.INSTANCE.files.saveOptions();
+						wurst.options.spamFont = !wurst.options.spamFont;
+						wurst.files.saveOptions();
 						updateFont();
 					}
 				});
@@ -373,15 +369,15 @@ public class SpammerMod extends Mod
 				delayPanel.add(delayLabel);
 				delaySpinner =
 					new JSpinner(new SpinnerNumberModel(
-						WurstClient.INSTANCE.options.spamDelay, 0, 3600000, 50));
+						wurst.options.spamDelay, 0, 3600000, 50));
 				delaySpinner.addChangeListener(new ChangeListener()
 				{
 					@Override
 					public void stateChanged(ChangeEvent e)
 					{
-						WurstClient.INSTANCE.options.spamDelay =
+						wurst.options.spamDelay =
 							(Integer)delaySpinner.getValue();
-						WurstClient.INSTANCE.files.saveOptions();
+						wurst.files.saveOptions();
 					}
 				});
 				delaySpinner.setEditor(new JSpinner.NumberEditor(delaySpinner,
@@ -443,10 +439,9 @@ public class SpammerMod extends Mod
 									for(int i = 0; i < spam.split("\n").length; i++)
 									{
 										String message = spam.split("\n")[i];
-										Minecraft.getMinecraft().thePlayer
+										mc.thePlayer
 											.sendAutomaticChatMessage(message);
-										Thread
-											.sleep(WurstClient.INSTANCE.options.spamDelay);
+										Thread.sleep(wurst.options.spamDelay);
 									}
 								}catch(Exception e)
 								{
@@ -463,7 +458,7 @@ public class SpammerMod extends Mod
 				dialog.pack();
 				dialog.setLocationRelativeTo(FrameHook.getFrame());
 				dialog.setAlwaysOnTop(true);
-				Minecraft.getMinecraft().setIngameNotInFocus();
+				mc.setIngameNotInFocus();
 				dialog.setVisible(true);
 			}
 		}.start();
@@ -509,8 +504,7 @@ public class SpammerMod extends Mod
 						.getResourceAsStream("assets/minecraft/font/mcfont.ttf"));
 			mcfont = mcfont.deriveFont(12F);
 			Font defaultFont = new Font("Monospaced", Font.PLAIN, 14);
-			spamArea.setFont(WurstClient.INSTANCE.options.spamFont ? mcfont
-				: defaultFont);
+			spamArea.setFont(wurst.options.spamFont ? mcfont : defaultFont);
 		}catch(Exception e1)
 		{
 			e1.printStackTrace();
@@ -520,7 +514,7 @@ public class SpammerMod extends Mod
 	public static void updateDelaySpinner()
 	{
 		if(delaySpinner != null)
-			delaySpinner.setValue(WurstClient.INSTANCE.options.spamDelay);
+			delaySpinner.setValue(wurst.options.spamDelay);
 	}
 	
 	public JDialog getDialog()

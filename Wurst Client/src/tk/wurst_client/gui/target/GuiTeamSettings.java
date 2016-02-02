@@ -18,6 +18,7 @@ import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
 import tk.wurst_client.WurstClient;
+import tk.wurst_client.navigator.settings.ColorsSetting;
 
 public class GuiTeamSettings extends GuiScreen
 {
@@ -72,7 +73,7 @@ public class GuiTeamSettings extends GuiScreen
 				/ 3 + offsetY, "§" + colors[i] + colors[i]));
 		}
 		boolean[] team_colors =
-			WurstClient.INSTANCE.options.target.getTeamColorsSafely();
+			WurstClient.INSTANCE.special.targetSpf.teamColors.getSelected();
 		for(int i = 0; i < 16; i++)
 			((TeamColorButton)buttonList.get(i)).setFakeHover(team_colors[i]);
 		
@@ -96,13 +97,14 @@ public class GuiTeamSettings extends GuiScreen
 			WurstClient.INSTANCE.analytics.trackEvent("team settings", "done");
 		}else
 		{
+			ColorsSetting teamColors =
+				WurstClient.INSTANCE.special.targetSpf.teamColors;
 			switch(button.id)
 			{
 				case 16:
 					for(int i = 0; i < 16; i++)
 					{
-						WurstClient.INSTANCE.options.target.team_colors[i] =
-							true;
+						teamColors.setSelected(i, true);
 						((TeamColorButton)buttonList.get(i)).setFakeHover(true);
 					}
 					WurstClient.INSTANCE.analytics.trackEvent("team settings",
@@ -111,8 +113,7 @@ public class GuiTeamSettings extends GuiScreen
 				case 17:
 					for(int i = 0; i < 16; i++)
 					{
-						WurstClient.INSTANCE.options.target.team_colors[i] =
-							false;
+						teamColors.setSelected(i, false);
 						((TeamColorButton)buttonList.get(i))
 							.setFakeHover(false);
 					}
@@ -120,10 +121,8 @@ public class GuiTeamSettings extends GuiScreen
 						"all off");
 					break;
 				default:
-					boolean onOff =
-						!WurstClient.INSTANCE.options.target.team_colors[button.id];
-					WurstClient.INSTANCE.options.target.team_colors[button.id] =
-						onOff;
+					boolean onOff = !teamColors.getSelected()[button.id];
+					teamColors.setSelected(button.id, onOff);
 					((TeamColorButton)buttonList.get(button.id))
 						.setFakeHover(onOff);
 					WurstClient.INSTANCE.analytics.trackEvent("team settings",
@@ -149,7 +148,7 @@ public class GuiTeamSettings extends GuiScreen
 		ArrayList<String> tooltip = new ArrayList<>();
 		for(int i = 0; i < buttonList.size(); i++)
 		{
-			GuiButton button = ((GuiButton)buttonList.get(i));
+			GuiButton button = (GuiButton)buttonList.get(i);
 			button.drawButton(mc, mouseX, mouseY);
 			
 			if(!button.isMouseOver())

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +9,7 @@ package tk.wurst_client.mods;
 
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -33,13 +30,13 @@ public class AntiAfkMod extends Mod implements UpdateListener
 	{
 		try
 		{
-			block = new BlockPos(Minecraft.getMinecraft().thePlayer);
+			block = new BlockPos(mc.thePlayer);
 		}catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		random = new Random();
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
@@ -56,16 +53,15 @@ public class AntiAfkMod extends Mod implements UpdateListener
 		}
 		BlockUtils.faceBlockClientHorizontally(nextBlock);
 		if(BlockUtils.getHorizontalPlayerBlockDistance(nextBlock) > 0.75)
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = true;
+			mc.gameSettings.keyBindForward.pressed = true;
 		else
-			Minecraft.getMinecraft().gameSettings.keyBindForward.pressed =
-				false;
+			mc.gameSettings.keyBindForward.pressed = false;
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		Minecraft.getMinecraft().gameSettings.keyBindForward.pressed = false;
+		wurst.events.remove(UpdateListener.class, this);
+		mc.gameSettings.keyBindForward.pressed = false;
 	}
 }

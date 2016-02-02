@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -122,9 +121,10 @@ public class SessionStealerScreen extends GuiScreen
 				try
 				{
 					rawJson =
-						JsonUtils.jsonParser.parse(new InputStreamReader(new URL(
-							"https://api.mojang.com/user/profiles/" + uuid
-								+ "/names").openConnection().getInputStream()));
+						JsonUtils.jsonParser.parse(new InputStreamReader(
+							new URL("https://api.mojang.com/user/profiles/"
+								+ uuid + "/names").openConnection()
+								.getInputStream()));
 				}catch(JsonIOException | JsonSyntaxException | IOException e)
 				{
 					e.printStackTrace();

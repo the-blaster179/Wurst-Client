@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,7 +38,6 @@ package tk.wurst_client.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,6 +68,7 @@ import tk.wurst_client.gui.target.TargetFrame;
 import tk.wurst_client.mods.AutoBuildMod;
 import tk.wurst_client.mods.Mod;
 import tk.wurst_client.mods.Mod.Category;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
 /**
  * Minecraft GUI API
@@ -109,14 +108,14 @@ public final class GuiManager extends AbstractGuiManager
 		if(!setup.compareAndSet(false, true))
 			return;
 		
-		ModuleFrame settings = new ModuleFrame("Settings");
-		settings.setTheme(theme);
-		settings.setLayoutManager(new GridLayoutManager(1, 0));
-		settings.setVisible(true);
-		settings.setClosable(false);
-		settings.setMinimized(true);
-		settings.setPinnable(true);
-		addFrame(settings);
+		ModuleFrame settingsFrame = new ModuleFrame("Settings");
+		settingsFrame.setTheme(theme);
+		settingsFrame.setLayoutManager(new GridLayoutManager(1, 0));
+		settingsFrame.setVisible(true);
+		settingsFrame.setClosable(false);
+		settingsFrame.setMinimized(true);
+		settingsFrame.setPinnable(true);
+		addFrame(settingsFrame);
 		for(final Mod mod : WurstClient.INSTANCE.mods.getAllMods())
 		{
 			ModuleFrame frame = categoryFrames.get(mod.getCategory());
@@ -139,19 +138,15 @@ public final class GuiManager extends AbstractGuiManager
 				addFrame(frame);
 				categoryFrames.put(mod.getCategory(), frame);
 			}
-			String moduleDescription = mod.getDescription();
-			if(moduleDescription.equals(""))
-				moduleDescription = "Error! This is a bug. Please report it.";
-			final Mod updateModule = mod;
-			Button button = new BasicButton(mod.getName(), moduleDescription)
+			Button button = new BasicButton(mod)
 			{
 				@Override
 				public void update()
 				{
-					setForegroundColor(updateModule.isEnabled() ? Color.BLACK
+					setForegroundColor(mod.isEnabled() ? Color.BLACK
 						: Color.WHITE);
-					if(updateModule.isEnabled())
-						if(updateModule.isBlocked())
+					if(mod.isEnabled())
+						if(mod.isBlocked())
 							setBackgroundColor(new Color(255, 0, 0, 96));
 						else
 							setBackgroundColor(new Color(0, 255, 0, 96));
@@ -164,30 +159,24 @@ public final class GuiManager extends AbstractGuiManager
 				@Override
 				public void onButtonPress(Button button)
 				{
-					updateModule.toggle();
+					mod.toggle();
 				}
 			});
 			frame.add(button);
-			if(!mod.getSliders().isEmpty())
-				for(BasicSlider slider : mod.getSliders())
+			for(NavigatorSetting setting : mod.getSettings())
+				if(setting instanceof BasicSlider)
 				{
+					BasicSlider slider = (BasicSlider)setting;
 					slider.addSliderListener(new SliderListener()
 					{
 						@Override
 						public void onSliderValueChanged(Slider slider)
 						{
-							ArrayList<BasicSlider> moduleSliders =
-								mod.getSliders();
-							if(moduleSliders.contains(slider))
-							{
-								int id = moduleSliders.indexOf(slider);
-								moduleSliders.set(id, (BasicSlider)slider);
-							}
-							mod.setSliders(moduleSliders);
-							mod.updateSettings();
+							mod.updateSliders();
 						}
 					});
-					settings.add(slider);
+					slider.setModNamePrefix(mod.getName());
+					settingsFrame.add(slider);
 				}
 		}
 		
@@ -201,22 +190,18 @@ public final class GuiManager extends AbstractGuiManager
 			@Override
 			public void onComboBoxSelectionChanged(ComboBox comboBox)
 			{
-				WurstClient.INSTANCE.options.autobuildMode =
-					comboBox.getSelectedIndex();
+				WurstClient.INSTANCE.mods.autoBuildMod.setTemplate(comboBox
+					.getSelectedIndex());
 			}
 		});
-		autoBuildBox
-			.setSelectedIndex(WurstClient.INSTANCE.options.autobuildMode);
+		autoBuildBox.setSelectedIndex(WurstClient.INSTANCE.mods.autoBuildMod
+			.getTemplate());
 		autobuild.add(autoBuildBox, HorizontalGridConstraint.CENTER);
 		categoryFrames.remove(Category.AUTOBUILD);
 		
 		// Target
 		addFrame(new TargetFrame());
 		
-		if(!WurstClient.INSTANCE.files.sliders.exists())
-			WurstClient.INSTANCE.files.saveSliders();
-		else
-			WurstClient.INSTANCE.files.loadSliders();
 		resizeComponents();
 		Minecraft minecraft = Minecraft.getMinecraft();
 		int offsetX = 5, offsetY = 5;

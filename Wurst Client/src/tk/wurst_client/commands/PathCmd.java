@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +8,6 @@
 package tk.wurst_client.commands;
 
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.ai.PathFinder;
 import tk.wurst_client.ai.PathPoint;
 import tk.wurst_client.commands.Cmd.Info;
@@ -30,8 +28,7 @@ public class PathCmd extends Cmd implements RenderListener
 		path = null;
 		if(enabled)
 		{
-			WurstClient.INSTANCE.events
-				.remove(RenderListener.class, this);
+			wurst.events.remove(RenderListener.class, this);
 			enabled = false;
 			return;
 		}
@@ -50,10 +47,9 @@ public class PathCmd extends Cmd implements RenderListener
 				{
 					path = pathFinder.getRawPath();
 					enabled = true;
-					WurstClient.INSTANCE.events.add(RenderListener.class,
-						PathCmd.this);
+					wurst.events.add(RenderListener.class, PathCmd.this);
 				}else
-					WurstClient.INSTANCE.chat.error("Could not find a path.");
+					wurst.chat.error("Could not find a path.");
 				System.out.println("Done after "
 					+ (System.nanoTime() - startTime) / 1e6 + "ms");
 			}

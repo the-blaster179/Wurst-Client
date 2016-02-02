@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -179,8 +178,8 @@ public abstract class AltEditorScreen extends GuiScreen
 		drawDefaultBackground();
 		AltRenderer.drawAltBack(emailBox.getText(), (width / 2 - 100) / 2 - 64,
 			height / 2 - 128, 128, 256);
-		AltRenderer.drawAltBody(emailBox.getText(), width - (width / 2 - 100) / 2 - 64,
-			height / 2 - 128, 128, 256);
+		AltRenderer.drawAltBody(emailBox.getText(), width - (width / 2 - 100)
+			/ 2 - 64, height / 2 - 128, 128, 256);
 		drawCenteredString(fontRendererObj, getTitle(), width / 2, 20, 16777215);
 		drawString(fontRendererObj, "Name or E-Mail", width / 2 - 100, 47,
 			10526880);

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,8 +22,9 @@ public class KeybindManager extends TreeMap<String, String>
 		put("J", ".t phase");
 		put("K", ".t multiaura");
 		put("L", ".t nuker");
-		put("LCONTROL", ".t clickgui");
+		put("LCONTROL", ".t navigator");
 		put("R", ".t killaura");
+		put("RSHIFT", ".t navigator");
 		put("U", ".t freecam");
 		put("X", ".t x-ray");
 		put("Z", ".t sneak");

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,9 +10,7 @@ package tk.wurst_client.mods;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.RenderListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -35,15 +32,15 @@ public class SearchMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public String getRenderName()
 	{
-		return getName() + " [" + WurstClient.INSTANCE.options.searchID + "]";
+		return getName() + " [" + wurst.options.searchID + "]";
 	}
 	
 	@Override
 	public void onEnable()
 	{
 		notify = true;
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.add(RenderListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(RenderListener.class, this);
 	}
 	
 	@Override
@@ -66,16 +63,12 @@ public class SearchMod extends Mod implements UpdateListener, RenderListener
 				{
 					for(int z = range; z >= -range; z--)
 					{
-						int posX =
-							(int)(Minecraft.getMinecraft().thePlayer.posX + x);
-						int posY =
-							(int)(Minecraft.getMinecraft().thePlayer.posY + y);
-						int posZ =
-							(int)(Minecraft.getMinecraft().thePlayer.posZ + z);
+						int posX = (int)(mc.thePlayer.posX + x);
+						int posY = (int)(mc.thePlayer.posY + y);
+						int posZ = (int)(mc.thePlayer.posZ + z);
 						BlockPos pos = new BlockPos(posX, posY, posZ);
-						if(Block
-							.getIdFromBlock(Minecraft.getMinecraft().theWorld
-								.getBlockState(pos).getBlock()) == WurstClient.INSTANCE.options.searchID)
+						if(Block.getIdFromBlock(mc.theWorld.getBlockState(pos)
+							.getBlock()) == wurst.options.searchID)
 							matchingBlocks.add(pos);
 						if(matchingBlocks.size() >= maxBlocks)
 							break;
@@ -88,9 +81,8 @@ public class SearchMod extends Mod implements UpdateListener, RenderListener
 			}
 			if(matchingBlocks.size() >= maxBlocks && notify)
 			{
-				WurstClient.INSTANCE.chat.warning(getName()
-					+ " found §lA LOT§r of blocks.");
-				WurstClient.INSTANCE.chat
+				wurst.chat.warning(getName() + " found §lA LOT§r of blocks.");
+				wurst.chat
 					.message("To prevent lag, it will only show the first "
 						+ maxBlocks + " blocks.");
 				notify = false;
@@ -103,7 +95,7 @@ public class SearchMod extends Mod implements UpdateListener, RenderListener
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
-		WurstClient.INSTANCE.events.remove(RenderListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.remove(RenderListener.class, this);
 	}
 }

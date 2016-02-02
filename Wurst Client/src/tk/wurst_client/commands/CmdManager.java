@@ -1,6 +1,5 @@
 /*
- * Copyright Â© 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -54,6 +53,7 @@ public class CmdManager implements ChatOutputListener
 	public final IpCmd ipCmd = new IpCmd();
 	public final JumpCmd jumpCmd = new JumpCmd();
 	public final LeaveCmd leaveCmd = new LeaveCmd();
+	public final ModifyCmd modifyCmd = new ModifyCmd();
 	public final NothingCmd nothingCmd = new NothingCmd();
 	public final NukerCmd nukerCmd = new NukerCmd();
 	public final PathCmd pathCmd = new PathCmd();
@@ -65,6 +65,9 @@ public class CmdManager implements ChatOutputListener
 	public final SvCmd svCmd = new SvCmd();
 	public final SayCmd sayCmd = new SayCmd();
 	public final SearchCmd searchCmd = new SearchCmd();
+	public final SetCheckboxCmd setCheckboxCmd = new SetCheckboxCmd();
+	public final SetModeCmd setModeCmd = new SetModeCmd();
+	public final SetSliderCmd setSliderCmd = new SetSliderCmd();
 	public final SpammerCmd spammerCmd = new SpammerCmd();
 	public final TacoCmd tacoCmd = new TacoCmd();
 	public final TCmd tCmd = new TCmd();
@@ -79,13 +82,11 @@ public class CmdManager implements ChatOutputListener
 		try
 		{
 			for(Field field : CmdManager.class.getFields())
-			{
 				if(field.getName().endsWith("Cmd"))
 				{
 					Cmd cmd = (Cmd)field.get(this);
-					cmds.put(cmd.getName(), cmd);
+					cmds.put(cmd.getCmdName(), cmd);
 				}
-			}
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -114,10 +115,10 @@ public class CmdManager implements ChatOutputListener
 				}catch(SyntaxError e)
 				{
 					if(e.getMessage() != null)
-						WurstClient.INSTANCE.chat.message("Â§4Syntax error:Â§r "
+						WurstClient.INSTANCE.chat.message("§4Syntax error:§r "
 							+ e.getMessage());
 					else
-						WurstClient.INSTANCE.chat.message("Â§4Syntax error!Â§r");
+						WurstClient.INSTANCE.chat.message("§4Syntax error!§r");
 					cmd.printSyntax();
 				}catch(Cmd.Error e)
 				{

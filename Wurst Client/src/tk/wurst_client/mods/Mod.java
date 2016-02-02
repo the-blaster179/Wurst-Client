@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,27 +10,34 @@ package tk.wurst_client.mods;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
-
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
-
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.error.GuiError;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.PossibleKeybind;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 
-public class Mod
+public class Mod implements NavigatorItem
 {
 	private final String name = getClass().getAnnotation(Info.class).name();
 	private final String description = getClass().getAnnotation(Info.class)
 		.description();
 	private final Category category = getClass().getAnnotation(Info.class)
 		.category();
+	private final String tags = getClass().getAnnotation(Info.class).tags();
+	private final String tutorial = getClass().getAnnotation(Info.class)
+		.tutorial();
 	private boolean enabled;
 	private boolean blocked;
 	private boolean active;
-	protected ArrayList<BasicSlider> sliders = new ArrayList<BasicSlider>();
+	protected ArrayList<NavigatorSetting> settings = new ArrayList<>();
 	private long currentMS = 0L;
 	protected long lastMS = -1L;
+	
+	protected static final WurstClient wurst = WurstClient.INSTANCE;
+	protected static final Minecraft mc = Minecraft.getMinecraft();
 	
 	public enum Category
 	{
@@ -57,11 +63,22 @@ public class Mod
 		Category category();
 		
 		boolean noCheatCompatible() default true;
+		
+		String tags() default "";
+		
+		String tutorial() default "";
 	}
 	
+	@Override
 	public final String getName()
 	{
 		return name;
+	}
+	
+	@Override
+	public final String getType()
+	{
+		return "Mod";
 	}
 	
 	public String getRenderName()
@@ -69,9 +86,63 @@ public class Mod
 		return name;
 	}
 	
+	@Override
 	public final String getDescription()
 	{
 		return description;
+	}
+	
+	@Override
+	public final String getTags()
+	{
+		return tags;
+	}
+	
+	@Override
+	public final ArrayList<NavigatorSetting> getSettings()
+	{
+		return settings;
+	}
+	
+	@Override
+	public final ArrayList<PossibleKeybind> getPossibleKeybinds()
+	{
+		// mod keybinds
+		String dotT = ".t " + name.toLowerCase();
+		ArrayList<PossibleKeybind> possibleKeybinds =
+			new ArrayList<>(Arrays.asList(new PossibleKeybind(dotT, "Toggle "
+				+ name), new PossibleKeybind(dotT + " on", "Enable " + name),
+				new PossibleKeybind(dotT + " off", "Disable " + name)));
+		
+		// settings keybinds
+		for(NavigatorSetting setting : settings)
+			possibleKeybinds.addAll(setting.getPossibleKeybinds(name));
+		
+		return possibleKeybinds;
+	}
+	
+	@Override
+	public final String getPrimaryAction()
+	{
+		return enabled ? "Disable" : "Enable";
+	}
+	
+	@Override
+	public final void doPrimaryAction()
+	{
+		toggle();
+	}
+	
+	@Override
+	public final String getTutorialPage()
+	{
+		return tutorial;
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[0];
 	}
 	
 	public final Category getCategory()
@@ -79,6 +150,7 @@ public class Mod
 		return category;
 	}
 	
+	@Override
 	public final boolean isEnabled()
 	{
 		return enabled;
@@ -122,7 +194,7 @@ public class Mod
 				Minecraft.getMinecraft().displayGuiScreen(
 					new GuiError(e, this, "disabling", ""));
 			}
-		if(!WurstClient.INSTANCE.files.isModBlacklited(this))
+		if(!WurstClient.INSTANCE.files.isModBlacklisted(this))
 			WurstClient.INSTANCE.files.saveMods();
 	}
 	
@@ -154,6 +226,7 @@ public class Mod
 		setEnabled(!isEnabled());
 	}
 	
+	@Override
 	public boolean isBlocked()
 	{
 		return blocked;
@@ -187,16 +260,6 @@ public class Mod
 						""));
 			}
 		}
-	}
-	
-	public final ArrayList<BasicSlider> getSliders()
-	{
-		return sliders;
-	}
-	
-	public final void setSliders(ArrayList<BasicSlider> newSliders)
-	{
-		sliders = newSliders;
 	}
 	
 	public final void noCheatMessage()
@@ -233,9 +296,9 @@ public class Mod
 	public void onDisable()
 	{}
 	
-	public void initSliders()
+	public void initSettings()
 	{}
 	
-	public void updateSettings()
+	public void updateSliders()
 	{}
 }

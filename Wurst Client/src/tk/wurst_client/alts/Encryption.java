@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,8 +37,8 @@ import tk.wurst_client.utils.MiscUtils;
 public class Encryption
 {
 	private static SecretKey aesKey;
-	private static File aesFile = new File(
-		WurstClient.INSTANCE.files.wurstDir, "key");
+	private static File aesFile = new File(WurstClient.INSTANCE.files.wurstDir,
+		"key");
 	
 	private static KeyPair keypair;
 	private static File rsaKeyDir = System.getProperty("user.home") != null

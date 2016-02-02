@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +9,6 @@ package tk.wurst_client.mods;
 
 import java.util.HashSet;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
@@ -25,12 +23,12 @@ public class YesCheatMod extends Mod
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.antiMacMod.isEnabled())
-			WurstClient.INSTANCE.mods.antiMacMod.setEnabled(false);
+		if(wurst.mods.antiMacMod.isEnabled())
+			wurst.mods.antiMacMod.setEnabled(false);
 		if(blockedMods == null)
 		{
 			blockedMods = new HashSet<>();
-			for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
+			for(Mod mod : wurst.mods.getAllMods())
 				if(!mod.getClass().getAnnotation(Mod.Info.class)
 					.noCheatCompatible())
 					blockedMods.add(mod);

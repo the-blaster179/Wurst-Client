@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +34,8 @@ public class PathUtils
 	{
 		return Minecraft.getMinecraft().theWorld.getBlockState(pos).getBlock()
 			.getMaterial().blocksMovement()
-			|| getMaterial(pos) == Material.water && WurstClient.INSTANCE.mods.jesusMod.isEnabled();
+			|| getMaterial(pos) == Material.water
+			&& WurstClient.INSTANCE.mods.jesusMod.isEnabled();
 	}
 	
 	public static boolean isFallable(BlockPos pos)
@@ -48,7 +48,8 @@ public class PathUtils
 	
 	public static boolean isClimbable(BlockPos pos)
 	{
-		if(isSolid(pos.add(0, -1, 0)) || WurstClient.INSTANCE.mods.spiderMod.isEnabled()
+		if(isSolid(pos.add(0, -1, 0))
+			|| WurstClient.INSTANCE.mods.spiderMod.isEnabled()
 			|| getID(pos) == 65 || isFlyable(pos))
 			if(isSolid(pos.add(0, 0, -1)) || isSolid(pos.add(0, 0, 1))
 				|| isSolid(pos.add(1, 0, 0)) || isSolid(pos.add(-1, 0, 0)))
@@ -72,8 +73,10 @@ public class PathUtils
 	{
 		if(playerCaps == null)
 			playerCaps = Minecraft.getMinecraft().thePlayer.capabilities;
-		return WurstClient.INSTANCE.mods.flightMod.isEnabled() || playerCaps.isFlying
-			|| !WurstClient.INSTANCE.mods.noSlowdownMod.isEnabled() && getMaterial(pos) == Material.water;
+		return WurstClient.INSTANCE.mods.flightMod.isEnabled()
+			|| playerCaps.isFlying
+			|| !WurstClient.INSTANCE.mods.noSlowdownMod.isEnabled()
+			&& getMaterial(pos) == Material.water;
 	}
 	
 	public static int getCost(BlockPos current, BlockPos next)

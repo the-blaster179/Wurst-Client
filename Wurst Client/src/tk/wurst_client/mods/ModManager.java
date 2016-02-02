@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -50,6 +49,7 @@ public class ModManager
 	public final AutoWalkMod autoWalkMod = new AutoWalkMod();
 	public final BaseFinderMod baseFinderMod = new BaseFinderMod();
 	public final BlinkMod blinkMod = new BlinkMod();
+	public final BlockHitMod blockHitMod = new BlockHitMod();
 	public final BowAimbotMod bowAimbotMod = new BowAimbotMod();
 	public final BuildRandomMod buildRandomMod = new BuildRandomMod();
 	public final BunnyHopMod bunnyHopMod = new BunnyHopMod();
@@ -63,6 +63,7 @@ public class ModManager
 	public final CriticalsMod criticalsMod = new CriticalsMod();
 	public final DerpMod derpMod = new DerpMod();
 	public final DolphinMod dolphinMod = new DolphinMod();
+	public final FancyChatMod fancyChatMod = new FancyChatMod();
 	public final FastBreakMod fastBreakMod = new FastBreakMod();
 	public final FastBowMod fastBowMod = new FastBowMod();
 	public final FastEatMod fastEatMod = new FastEatMod();
@@ -100,8 +101,9 @@ public class ModManager
 	public final MobEspMod mobEspMod = new MobEspMod();
 	public final MultiAuraMod multiAuraMod = new MultiAuraMod();
 	public final NameProtectMod nameProtectMod = new NameProtectMod();
-	public final NoClipMod noClipMod = new NoClipMod();
 	public final NameTagsMod nameTagsMod = new NameTagsMod();
+	public final NavigatorMod navigatorMod = new NavigatorMod();
+	public final NoClipMod noClipMod = new NoClipMod();
 	public final NoFallMod noFallMod = new NoFallMod();
 	public final NoHurtcamMod noHurtcamMod = new NoHurtcamMod();
 	public final NoSlowdownMod noSlowdownMod = new NoSlowdownMod();
@@ -144,14 +146,12 @@ public class ModManager
 		try
 		{
 			for(Field field : ModManager.class.getFields())
-			{
 				if(field.getName().endsWith("Mod"))
 				{
 					Mod mod = (Mod)field.get(this);
 					mods.put(mod.getName(), mod);
-					mod.initSliders();
+					mod.initSettings();
 				}
-			}
 		}catch(Exception e)
 		{
 			e.printStackTrace();

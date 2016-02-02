@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,12 +16,12 @@ import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 
 import org.darkstorm.minecraft.gui.component.Frame;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.alts.Alt;
@@ -30,6 +29,9 @@ import tk.wurst_client.alts.Encryption;
 import tk.wurst_client.gui.alts.GuiAltList;
 import tk.wurst_client.mods.*;
 import tk.wurst_client.mods.Mod.Category;
+import tk.wurst_client.navigator.Navigator;
+import tk.wurst_client.navigator.NavigatorItem;
+import tk.wurst_client.navigator.settings.NavigatorSetting;
 import tk.wurst_client.options.FriendsList;
 import tk.wurst_client.options.OptionsManager;
 import tk.wurst_client.utils.JsonUtils;
@@ -54,8 +56,8 @@ public class FileManager
 	public final File friends = new File(wurstDir, "friends.json");
 	public final File gui = new File(wurstDir, "gui.json");
 	public final File modules = new File(wurstDir, "modules.json");
+	public final File navigatorData = new File(wurstDir, "navigator.json");
 	public final File keybinds = new File(wurstDir, "keybinds.json");
-	public final File sliders = new File(wurstDir, "sliders.json");
 	public final File options = new File(wurstDir, "options.json");
 	public final File autoMaximize = new File(
 		Minecraft.getMinecraft().mcDataDir + "/wurst/automaximize.json");
@@ -87,6 +89,10 @@ public class FileManager
 			saveKeybinds();
 		else
 			loadKeybinds();
+		if(!navigatorData.exists())
+			saveNavigatorData();
+		else
+			loadNavigatorData();
 		if(!alts.exists())
 			saveAlts();
 		else
@@ -105,11 +111,12 @@ public class FileManager
 		if(autobuildFiles != null && autobuildFiles.length == 0)
 			createDefaultAutoBuildTemplates();
 		loadAutoBuildTemplates();
-		if(WurstClient.INSTANCE.options.autobuildMode >= AutoBuildMod.names
-			.size())
+		AutoBuildMod autoBuildMod = WurstClient.INSTANCE.mods.autoBuildMod;
+		autoBuildMod.initTemplateSetting();
+		if(autoBuildMod.getTemplate() >= AutoBuildMod.names.size())
 		{
-			WurstClient.INSTANCE.options.autobuildMode = 0;
-			saveOptions();
+			autoBuildMod.setTemplate(0);
+			saveNavigatorData();
 		}
 	}
 	
@@ -197,7 +204,7 @@ public class FileManager
 		OpSignMod.class.getName(), ProtectMod.class.getName(),
 		RemoteViewMod.class.getName(), SpammerMod.class.getName());
 	
-	public boolean isModBlacklited(Mod mod)
+	public boolean isModBlacklisted(Mod mod)
 	{
 		return modBlacklist.contains(mod.getClass().getName());
 	}
@@ -274,6 +281,98 @@ public class FileManager
 		}
 	}
 	
+	public void saveNavigatorData()
+	{
+		try
+		{
+			JsonObject json = new JsonObject();
+			
+			Navigator navigator = WurstClient.INSTANCE.navigator;
+			navigator.forEach(new Consumer<NavigatorItem>()
+			{
+				@Override
+				public void accept(NavigatorItem item)
+				{
+					JsonObject jsonFeature = new JsonObject();
+					
+					long preference = navigator.getPreference(item.getName());
+					if(preference != 0L)
+						jsonFeature.addProperty("preference", preference);
+					
+					if(!item.getSettings().isEmpty())
+					{
+						JsonObject jsonSettings = new JsonObject();
+						for(NavigatorSetting setting : item.getSettings())
+							try
+							{
+								setting.save(jsonSettings);
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+						jsonFeature.add("settings", jsonSettings);
+					}
+					
+					if(!jsonFeature.entrySet().isEmpty())
+						json.add(item.getName(), jsonFeature);
+				}
+			});
+			
+			PrintWriter save = new PrintWriter(new FileWriter(navigatorData));
+			save.println(JsonUtils.prettyGson.toJson(json));
+			save.close();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void loadNavigatorData()
+	{
+		try
+		{
+			BufferedReader load =
+				new BufferedReader(new FileReader(navigatorData));
+			JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
+			load.close();
+			
+			Navigator navigator = WurstClient.INSTANCE.navigator;
+			navigator.forEach(new Consumer<NavigatorItem>()
+			{
+				@Override
+				public void accept(NavigatorItem item)
+				{
+					String itemName = item.getName();
+					if(!json.has(itemName))
+						return;
+					JsonObject jsonFeature =
+						json.get(itemName).getAsJsonObject();
+					
+					if(jsonFeature.has("preference"))
+						navigator.setPreference(itemName,
+							jsonFeature.get("preference").getAsLong());
+					
+					if(jsonFeature.has("settings"))
+					{
+						JsonObject jsonSettings =
+							jsonFeature.get("settings").getAsJsonObject();
+						for(NavigatorSetting setting : item.getSettings())
+							try
+							{
+								setting.load(jsonSettings);
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+					}
+				}
+			});
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void saveOptions()
 	{
 		try
@@ -331,66 +430,6 @@ public class FileManager
 			PrintWriter save = new PrintWriter(new FileWriter(autoMaximize));
 			save.println(JsonUtils.prettyGson.toJson(autoMaximizeEnabled));
 			save.close();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void saveSliders()
-	{
-		try
-		{
-			JsonObject json = new JsonObject();
-			for(Mod mod : WurstClient.INSTANCE.mods.getAllMods())
-			{
-				if(mod.getSliders().isEmpty())
-					continue;
-				JsonObject jsonModule = new JsonObject();
-				for(BasicSlider slider : mod.getSliders())
-					jsonModule.addProperty(slider.getText(),
-						(double)(Math.round(slider.getValue()
-							/ slider.getIncrement()) * 1000000 * (long)(slider
-							.getIncrement() * 1000000)) / 1000000 / 1000000);
-				json.add(mod.getName(), jsonModule);
-			}
-			PrintWriter save = new PrintWriter(new FileWriter(sliders));
-			save.println(JsonUtils.prettyGson.toJson(json));
-			save.close();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void loadSliders()
-	{
-		try
-		{
-			BufferedReader load = new BufferedReader(new FileReader(sliders));
-			JsonObject json = (JsonObject)JsonUtils.jsonParser.parse(load);
-			load.close();
-			Iterator<Entry<String, JsonElement>> itr =
-				json.entrySet().iterator();
-			while(itr.hasNext())
-			{
-				Entry<String, JsonElement> entry = itr.next();
-				Mod mod =
-					WurstClient.INSTANCE.mods.getModByName(entry.getKey());
-				if(mod != null)
-				{
-					JsonObject jsonModule = (JsonObject)entry.getValue();
-					for(BasicSlider slider : mod.getSliders())
-						try
-						{
-							slider.setValue(jsonModule.get(slider.getText())
-								.getAsDouble());
-						}catch(Exception e)
-						{
-							e.printStackTrace();
-						}
-				}
-			}
 		}catch(Exception e)
 		{
 			e.printStackTrace();

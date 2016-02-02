@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +8,6 @@
 package tk.wurst_client.commands;
 
 import net.minecraft.entity.EntityLivingBase;
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.utils.EntityUtils;
 
 @Cmd.Info(help = "Toggles Follow or makes it target a specific entity.",
@@ -23,16 +21,16 @@ public class FollowCmd extends Cmd
 		if(args.length > 1)
 			syntaxError();
 		if(args.length == 0)
-			WurstClient.INSTANCE.mods.followMod.toggle();
+			wurst.mods.followMod.toggle();
 		else
 		{
-			if(WurstClient.INSTANCE.mods.followMod.isEnabled())
-				WurstClient.INSTANCE.mods.followMod.setEnabled(false);
+			if(wurst.mods.followMod.isEnabled())
+				wurst.mods.followMod.setEnabled(false);
 			EntityLivingBase entity = EntityUtils.searchEntityByName(args[0]);
 			if(entity == null)
 				error("Entity \"" + args[0] + "\" could not be found.");
-			WurstClient.INSTANCE.mods.followMod.setEnabled(true);
-			WurstClient.INSTANCE.mods.followMod.setEntity(entity);
+			wurst.mods.followMod.setEnabled(true);
+			wurst.mods.followMod.setEntity(entity);
 		}
 	}
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,16 +7,14 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-import org.darkstorm.minecraft.gui.component.basic.BasicSlider;
 
-import tk.wurst_client.WurstClient;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.MOVEMENT, description = "Allows you to you fly.\n"
 	+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
@@ -28,89 +25,86 @@ public class FlightMod extends Mod implements UpdateListener
 	private double startY;
 	
 	@Override
-	public void initSliders()
+	public void initSettings()
 	{
-		sliders.add(new BasicSlider("Flight speed", speed, 0.05, 5, 0.05,
+		settings.add(new SliderSetting("Speed", speed, 0.05, 5, 0.05,
 			ValueDisplay.DECIMAL));
 	}
 	
 	@Override
-	public void updateSettings()
+	public void updateSliders()
 	{
-		speed = (float)sliders.get(0).getValue();
+		speed = (float)((SliderSetting)settings.get(0)).getValue();
 	}
 	
 	@Override
 	public void onEnable()
 	{
-		if(WurstClient.INSTANCE.mods.jetpackMod.isEnabled())
-			WurstClient.INSTANCE.mods.jetpackMod.setEnabled(false);
+		if(wurst.mods.jetpackMod.isEnabled())
+			wurst.mods.jetpackMod.setEnabled(false);
 		
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive()
-			|| WurstClient.INSTANCE.mods.antiMacMod.isActive())
+		if(wurst.mods.yesCheatMod.isActive()
+			|| wurst.mods.antiMacMod.isActive())
 		{
-			double startX = Minecraft.getMinecraft().thePlayer.posX;
-			startY = Minecraft.getMinecraft().thePlayer.posY;
-			double startZ = Minecraft.getMinecraft().thePlayer.posZ;
+			double startX = mc.thePlayer.posX;
+			startY = mc.thePlayer.posY;
+			double startZ = mc.thePlayer.posZ;
 			for(int i = 0; i < 4; i++)
 			{
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
 						startX, startY + 1.01, startZ, false));
-				Minecraft.getMinecraft().thePlayer.sendQueue
+				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
 						startX, startY, startZ, false));
 			}
-			Minecraft.getMinecraft().thePlayer.jump();
+			mc.thePlayer.jump();
 		}
-		WurstClient.INSTANCE.events.add(UpdateListener.class, this);
+		wurst.events.add(UpdateListener.class, this);
 	}
 	
 	@Override
 	public void onUpdate()
 	{
-		if(WurstClient.INSTANCE.mods.yesCheatMod.isActive())
+		if(wurst.mods.yesCheatMod.isActive())
 		{
-			if(!Minecraft.getMinecraft().thePlayer.onGround)
-				if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed
-					&& Minecraft.getMinecraft().thePlayer.posY < startY - 1)
-					Minecraft.getMinecraft().thePlayer.motionY = 0.2;
+			if(!mc.thePlayer.onGround)
+				if(mc.gameSettings.keyBindJump.pressed
+					&& mc.thePlayer.posY < startY - 1)
+					mc.thePlayer.motionY = 0.2;
 				else
-					Minecraft.getMinecraft().thePlayer.motionY = -0.02;
-		}else if(WurstClient.INSTANCE.mods.antiMacMod.isActive())
+					mc.thePlayer.motionY = -0.02;
+		}else if(wurst.mods.antiMacMod.isActive())
 		{
 			updateMS();
-			if(!Minecraft.getMinecraft().thePlayer.onGround)
-				if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed
-					&& hasTimePassedS(2))
+			if(!mc.thePlayer.onGround)
+				if(mc.gameSettings.keyBindJump.pressed && hasTimePassedS(2))
 				{
-					Minecraft.getMinecraft().thePlayer.setPosition(
-						Minecraft.getMinecraft().thePlayer.posX,
-						Minecraft.getMinecraft().thePlayer.posY + 8,
-						Minecraft.getMinecraft().thePlayer.posZ);
+					mc.thePlayer.setPosition(mc.thePlayer.posX,
+						mc.thePlayer.posY + 8, mc.thePlayer.posZ);
 					updateLastMS();
-				}else if(Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed)
-					Minecraft.getMinecraft().thePlayer.motionY = -0.4;
+				}else if(mc.gameSettings.keyBindSneak.pressed)
+					mc.thePlayer.motionY = -0.4;
 				else
-					Minecraft.getMinecraft().thePlayer.motionY = -0.02;
-			Minecraft.getMinecraft().thePlayer.jumpMovementFactor = 0.04F;
+					mc.thePlayer.motionY = -0.02;
+			mc.thePlayer.jumpMovementFactor = 0.04F;
 		}else
 		{
-			Minecraft.getMinecraft().thePlayer.capabilities.isFlying = false;
-			Minecraft.getMinecraft().thePlayer.motionX = 0;
-			Minecraft.getMinecraft().thePlayer.motionY = 0;
-			Minecraft.getMinecraft().thePlayer.motionZ = 0;
-			Minecraft.getMinecraft().thePlayer.jumpMovementFactor = speed;
-			if(Minecraft.getMinecraft().gameSettings.keyBindJump.pressed)
-				Minecraft.getMinecraft().thePlayer.motionY += speed;
-			if(Minecraft.getMinecraft().gameSettings.keyBindSneak.pressed)
-				Minecraft.getMinecraft().thePlayer.motionY -= speed;
+			mc.thePlayer.capabilities.isFlying = false;
+			mc.thePlayer.motionX = 0;
+			mc.thePlayer.motionY = 0;
+			mc.thePlayer.motionZ = 0;
+			mc.thePlayer.jumpMovementFactor = speed;
+			if(mc.gameSettings.keyBindJump.pressed)
+				mc.thePlayer.motionY += speed;
+			if(mc.gameSettings.keyBindSneak.pressed)
+				mc.thePlayer.motionY -= speed;
 		}
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		WurstClient.INSTANCE.events.remove(UpdateListener.class, this);
+		wurst.events.remove(UpdateListener.class, this);
 	}
 }

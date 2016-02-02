@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,7 +52,7 @@ public class WurstSliderUI extends AbstractComponentUI<Slider>
 		FontRenderer fontRenderer = theme.getFontRenderer();
 		
 		// text
-		fontRenderer.drawString(component.getText(), 0, 0,
+		fontRenderer.drawString(component.getTextWithModPrefix(), 0, 0,
 			RenderUtil.toRGBA(component.getForegroundColor()));
 		
 		// value
@@ -74,8 +73,8 @@ public class WurstSliderUI extends AbstractComponentUI<Slider>
 				break;
 			case DEGREES:
 				content =
-				String.format("%,d°",
-					Long.valueOf(Math.round(component.getValue())));
+					String.format("%,d°",
+						Long.valueOf(Math.round(component.getValue())));
 				break;
 			case PERCENTAGE:
 				int percent =
@@ -183,7 +182,7 @@ public class WurstSliderUI extends AbstractComponentUI<Slider>
 			if(!Mouse.isButtonDown(0))
 			{
 				component.setValueChanging(false);
-				WurstClient.INSTANCE.files.saveSliders();
+				WurstClient.INSTANCE.files.saveNavigatorData();
 				return;
 			}
 			Point mouse = RenderUtil.calculateMouseLocation();

@@ -1,6 +1,5 @@
 /*
- * Copyright © 2014 - 2015 Alexander01998 and contributors
- * All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +7,11 @@
  */
 package tk.wurst_client.gui.options.zoom;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+
+import org.lwjgl.input.Keyboard;
+
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.gui.options.GuiPressAKey;
 import tk.wurst_client.gui.options.GuiPressAKeyCallback;
