@@ -1,6 +1,6 @@
-From bf24b04dc8f098dc51d17f56ff9108db514a3563 Mon Sep 17 00:00:00 2001
+From c298079348a9570a91538c5651b7b49d92d8ceac Mon Sep 17 00:00:00 2001
 From: Alexander01998 <contact.wurstimperium@gmail.com>
-Date: Mon, 25 Jan 2016 11:05:54 +0100
+Date: Thu, 4 Feb 2016 07:35:54 +0100
 Subject: [PATCH] Wurst
 
 ---
@@ -163,7 +163,7 @@ Subject: [PATCH] Wurst
  src/net/minecraft/crash/CrashReport.java           |  19 +-
  src/net/minecraft/crash/CrashReportCategory.java   |   3 +
  src/net/minecraft/entity/DataWatcher.java          |  10 +
- src/net/minecraft/entity/Entity.java               |  43 ++-
+ src/net/minecraft/entity/Entity.java               |  51 ++-
  src/net/minecraft/entity/EntityLivingBase.java     |  22 +-
  src/net/minecraft/entity/EntityTracker.java        |   3 +
  src/net/minecraft/entity/boss/EntityDragon.java    |   2 +-
@@ -232,7 +232,7 @@ Subject: [PATCH] Wurst
  .../minecraft/world/gen/ChunkProviderServer.java   |   3 +
  src/net/minecraft/world/gen/layer/GenLayer.java    |   1 +
  .../world/gen/structure/MapGenStructure.java       |   2 +
- 228 files changed, 2610 insertions(+), 1164 deletions(-)
+ 228 files changed, 2615 insertions(+), 1167 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
 index eba4a99..aad12bb 100644
@@ -8277,7 +8277,7 @@ index 6b59121..cdf03c7 100644
  
      /**
 diff --git a/src/net/minecraft/entity/Entity.java b/src/net/minecraft/entity/Entity.java
-index 7397345..ec55d00 100644
+index 7397345..0e5ae74 100644
 --- a/src/net/minecraft/entity/Entity.java
 +++ b/src/net/minecraft/entity/Entity.java
 @@ -5,6 +5,7 @@ import java.util.List;
@@ -8367,18 +8367,26 @@ index 7397345..ec55d00 100644
  
              if (var19)
              {
-@@ -2083,6 +2110,10 @@ public abstract class Entity implements ICommandSender
+@@ -2083,9 +2110,15 @@ public abstract class Entity implements ICommandSender
       */
      public void setVelocity(double x, double y, double z)
-     {
+ 	{
+-        this.motionX = x;
+-        this.motionY = y;
+-        this.motionZ = z;
 +		// TODO: Client
-+		if(WurstClient.INSTANCE.mods.antiKnockbackMod.isActive())
-+			return;
-+    	
-         this.motionX = x;
-         this.motionY = y;
-         this.motionZ = z;
-@@ -2170,7 +2201,7 @@ public abstract class Entity implements ICommandSender
++		float strength = 1F;
++		AntiKnockbackMod antiKnockbackMod =
++			WurstClient.INSTANCE.mods.antiKnockbackMod;
++		if(antiKnockbackMod.isActive())
++			strength = 1F - antiKnockbackMod.strength;
++		this.motionX = x * strength;
++		this.motionY = y * strength;
++		this.motionZ = z * strength;
+ 	}
+ 
+     public void handleHealthUpdate(byte p_70103_1_) {}
+@@ -2170,7 +2203,7 @@ public abstract class Entity implements ICommandSender
       */
      public boolean isInvisibleToPlayer(EntityPlayer playerIn)
      {
