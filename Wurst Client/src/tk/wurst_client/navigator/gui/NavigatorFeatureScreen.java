@@ -568,7 +568,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 					value = Integer.toString((int)slider.getValue());
 					break;
 				case PERCENTAGE:
-					value = slider.getValue() * 100D + "%";
+					value = slider.getValue() * 1e6 * 100D * 1e6 / 1e12 + "%";
 					break;
 				case NONE:
 				default:
