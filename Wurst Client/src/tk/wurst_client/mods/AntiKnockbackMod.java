@@ -7,14 +7,28 @@
  */
 package tk.wurst_client.mods;
 
-import tk.wurst_client.mods.Mod.Category;
-import tk.wurst_client.mods.Mod.Info;
+import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
-@Info(category = Category.COMBAT,
+import tk.wurst_client.navigator.settings.SliderSetting;
+
+@Mod.Info(category = Mod.Category.COMBAT,
 	description = "Protects you from getting pushed by players, mobs and\n"
 		+ "fluids.",
 	name = "AntiKnockback")
 public class AntiKnockbackMod extends Mod
-{	
+{
+	public float strength = 1F;
 	
+	@Override
+	public void initSettings()
+	{
+		settings.add(new SliderSetting("Strength", strength, 0.01, 1, 0.01,
+			ValueDisplay.PERCENTAGE));
+	}
+	
+	@Override
+	public void updateSliders()
+	{
+		strength = (float)((SliderSetting)settings.get(0)).getValue();
+	}
 }
