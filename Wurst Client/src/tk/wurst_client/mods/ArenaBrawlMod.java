@@ -78,13 +78,14 @@ public class ArenaBrawlMod extends Mod implements ChatInputListener,
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Level", level, 20, 100, 10,
-			ValueDisplay.INTEGER));
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		level = (int)((SliderSetting)settings.get(0)).getValue();
+			ValueDisplay.INTEGER)
+		{
+			@Override
+			public void update()
+			{
+				level = (int)getValue();
+			}
+		});
 	}
 	
 	@Override

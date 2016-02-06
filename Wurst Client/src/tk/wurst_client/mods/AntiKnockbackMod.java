@@ -23,12 +23,13 @@ public class AntiKnockbackMod extends Mod
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Strength", strength, 0.01, 1, 0.01,
-			ValueDisplay.PERCENTAGE));
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		strength = (float)((SliderSetting)settings.get(0)).getValue();
+			ValueDisplay.PERCENTAGE)
+		{
+			@Override
+			public void update()
+			{
+				strength = (float)getValue();
+			}
+		});
 	}
 }

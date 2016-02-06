@@ -17,7 +17,7 @@ import tk.wurst_client.navigator.gui.NavigatorFeatureScreen;
 
 import com.google.gson.JsonObject;
 
-public class SliderSetting extends BasicSlider implements NavigatorSetting
+public abstract class SliderSetting extends BasicSlider implements NavigatorSetting
 {
 	public SliderSetting()
 	{
@@ -94,7 +94,11 @@ public class SliderSetting extends BasicSlider implements NavigatorSetting
 	public void setValue(double value)
 	{
 		super.setValue(value);
+		update();
 	}
+	
+	@Override
+	public abstract void update();
 	
 	public void increaseValue()
 	{

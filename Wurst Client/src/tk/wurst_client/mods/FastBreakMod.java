@@ -26,7 +26,14 @@ public class FastBreakMod extends Mod
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Speed", speed, 1, 5, 0.05,
-			ValueDisplay.DECIMAL));
+			ValueDisplay.DECIMAL)
+		{
+			@Override
+			public void update()
+			{
+				speed = (float)getValue();
+			}
+		});
 	}
 	
 	@Override
@@ -34,11 +41,5 @@ public class FastBreakMod extends Mod
 	{
 		return new NavigatorItem[]{wurst.mods.fastPlaceMod,
 			wurst.mods.autoMineMod, wurst.mods.nukerMod};
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		speed = (int)((SliderSetting)settings.get(0)).getValue();
 	}
 }

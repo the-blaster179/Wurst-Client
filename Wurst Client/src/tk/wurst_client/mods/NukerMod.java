@@ -69,7 +69,15 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Range", normalRange, 1, 6, 0.05,
-			ValueDisplay.DECIMAL));
+			ValueDisplay.DECIMAL)
+		{
+			@Override
+			public void update()
+			{
+				normalRange = (float)getValue();
+				yesCheatRange = Math.min(normalRange, 4.25F);
+			}
+		});
 		settings.add(new ModeSetting("Mode", modes, mode)
 		{
 			@Override
@@ -87,13 +95,6 @@ public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 			wurst.mods.speedNukerMod, wurst.mods.tunnellerMod,
 			wurst.mods.fastBreakMod, wurst.mods.autoMineMod,
 			wurst.mods.overlayMod};
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		normalRange = (float)((SliderSetting)settings.get(0)).getValue();
-		yesCheatRange = Math.min(normalRange, 4.25F);
 	}
 	
 	@Override
