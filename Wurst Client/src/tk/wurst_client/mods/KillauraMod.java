@@ -35,11 +35,36 @@ public class KillauraMod extends Mod implements UpdateListener
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Speed", normalSpeed, 2, 20, 0.1,
-			ValueDisplay.DECIMAL));
+			ValueDisplay.DECIMAL)
+		{
+			@Override
+			public void update()
+			{
+				normalSpeed = (float)getValue();
+				yesCheatSpeed = Math.min(normalSpeed, 12F);
+				updateSpeedAndRange();
+			}
+		});
 		settings.add(new SliderSetting("Range", normalRange, 1, 6, 0.05,
-			ValueDisplay.DECIMAL));
+			ValueDisplay.DECIMAL)
+		{
+			@Override
+			public void update()
+			{
+				normalRange = (float)getValue();
+				yesCheatRange = Math.min(normalRange, 4.25F);
+				updateSpeedAndRange();
+			}
+		});
 		settings.add(new SliderSetting("FOV", fov, 30, 360, 10,
-			ValueDisplay.DEGREES));
+			ValueDisplay.DEGREES)
+		{
+			@Override
+			public void update()
+			{
+				fov = (int)getValue();
+			}
+		});
 	}
 	
 	@Override
@@ -49,16 +74,6 @@ public class KillauraMod extends Mod implements UpdateListener
 			wurst.mods.killauraLegitMod, wurst.mods.multiAuraMod,
 			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod,
 			wurst.mods.criticalsMod};
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		normalSpeed = (float)((SliderSetting)settings.get(0)).getValue();
-		yesCheatSpeed = Math.min(normalSpeed, 12F);
-		normalRange = (float)((SliderSetting)settings.get(1)).getValue();
-		yesCheatRange = Math.min(normalRange, 4.25F);
-		fov = (int)((SliderSetting)settings.get(2)).getValue();
 	}
 	
 	@Override
@@ -79,15 +94,7 @@ public class KillauraMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		if(wurst.mods.yesCheatMod.isActive())
-		{
-			realSpeed = yesCheatSpeed;
-			realRange = yesCheatRange;
-		}else
-		{
-			realSpeed = normalSpeed;
-			realRange = normalRange;
-		}
+		updateSpeedAndRange();
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
 		if(hasTimePassedS(realSpeed) && en != null)
@@ -108,5 +115,18 @@ public class KillauraMod extends Mod implements UpdateListener
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
+	}
+	
+	private void updateSpeedAndRange()
+	{
+		if(wurst.mods.yesCheatMod.isActive())
+		{
+			realSpeed = yesCheatSpeed;
+			realRange = yesCheatRange;
+		}else
+		{
+			realSpeed = normalSpeed;
+			realRange = normalRange;
+		}
 	}
 }

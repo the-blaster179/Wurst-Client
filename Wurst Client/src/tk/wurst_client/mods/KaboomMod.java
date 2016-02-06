@@ -41,13 +41,14 @@ public class KaboomMod extends Mod implements UpdateListener
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Power", power, 32, 512, 32,
-			ValueDisplay.INTEGER));
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		power = (int)((SliderSetting)settings.get(0)).getValue();
+			ValueDisplay.INTEGER)
+		{
+			@Override
+			public void update()
+			{
+				power = (int)getValue();
+			}
+		});
 	}
 	
 	@Override

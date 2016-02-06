@@ -298,7 +298,4 @@ public class Mod implements NavigatorItem
 	
 	public void initSettings()
 	{}
-	
-	public void updateSliders()
-	{}
 }

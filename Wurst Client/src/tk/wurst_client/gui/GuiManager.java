@@ -50,7 +50,6 @@ import org.darkstorm.minecraft.gui.component.Button;
 import org.darkstorm.minecraft.gui.component.ComboBox;
 import org.darkstorm.minecraft.gui.component.Component;
 import org.darkstorm.minecraft.gui.component.Frame;
-import org.darkstorm.minecraft.gui.component.Slider;
 import org.darkstorm.minecraft.gui.component.basic.BasicButton;
 import org.darkstorm.minecraft.gui.component.basic.BasicComboBox;
 import org.darkstorm.minecraft.gui.component.basic.BasicFrame;
@@ -59,7 +58,6 @@ import org.darkstorm.minecraft.gui.layout.GridLayoutManager;
 import org.darkstorm.minecraft.gui.layout.GridLayoutManager.HorizontalGridConstraint;
 import org.darkstorm.minecraft.gui.listener.ButtonListener;
 import org.darkstorm.minecraft.gui.listener.ComboBoxListener;
-import org.darkstorm.minecraft.gui.listener.SliderListener;
 import org.darkstorm.minecraft.gui.theme.Theme;
 import org.darkstorm.minecraft.gui.theme.wurst.WurstTheme;
 
@@ -167,14 +165,6 @@ public final class GuiManager extends AbstractGuiManager
 				if(setting instanceof BasicSlider)
 				{
 					BasicSlider slider = (BasicSlider)setting;
-					slider.addSliderListener(new SliderListener()
-					{
-						@Override
-						public void onSliderValueChanged(Slider slider)
-						{
-							mod.updateSliders();
-						}
-					});
 					slider.setModNamePrefix(mod.getName());
 					settingsFrame.add(slider);
 				}

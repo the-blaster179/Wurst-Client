@@ -20,18 +20,19 @@ import tk.wurst_client.navigator.settings.SliderSetting;
 	name = "Timer")
 public class TimerMod extends Mod
 {
-	public float speed = 2.0F;// Minimum: 0.1F, maximum: 10.0F
+	public float speed = 2.0F;
 	
 	@Override
 	public void initSettings()
 	{
 		settings.add(new SliderSetting("Speed", speed, 0.1, 10, 0.1,
-			ValueDisplay.DECIMAL));
-	}
-	
-	@Override
-	public void updateSliders()
-	{
-		speed = (float)((SliderSetting)settings.get(0)).getValue();
+			ValueDisplay.DECIMAL)
+		{
+			@Override
+			public void update()
+			{
+				speed = (float)getValue();
+			}
+		});
 	}
 }
