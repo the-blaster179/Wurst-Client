@@ -86,6 +86,8 @@ public class KillauraMod extends Mod implements UpdateListener
 			wurst.mods.multiAuraMod.setEnabled(false);
 		if(wurst.mods.clickAuraMod.isEnabled())
 			wurst.mods.clickAuraMod.setEnabled(false);
+		if(wurst.mods.tpAuraMod.isEnabled())
+			wurst.mods.tpAuraMod.setEnabled(false);
 		if(wurst.mods.triggerBotMod.isEnabled())
 			wurst.mods.triggerBotMod.setEnabled(false);
 		wurst.events.add(UpdateListener.class, this);

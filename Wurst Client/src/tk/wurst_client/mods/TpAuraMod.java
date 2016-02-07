@@ -7,29 +7,29 @@
  */
 package tk.wurst_client.mods;
 
-import java.util.ArrayList;
+import java.util.Random;
 
 import net.minecraft.entity.EntityLivingBase;
 import tk.wurst_client.events.listeners.UpdateListener;
-import tk.wurst_client.mods.Mod.Category;
-import tk.wurst_client.mods.Mod.Info;
 import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.EntityUtils;
 
-@Info(category = Category.COMBAT,
-	description = "Faster Killaura that attacks multiple entities at once.",
-	name = "MultiAura",
-	noCheatCompatible = false)
-public class MultiAuraMod extends Mod implements UpdateListener
+@Mod.Info(category = Mod.Category.COMBAT,
+	description = "Automatically attacks the closest valid entity while teleporting around it.",
+	name = "TP-Aura",
+	noCheatCompatible = false,
+	tags = "TpAura,tp aura,EnderAura,ender aura")
+public class TpAuraMod extends Mod implements UpdateListener
 {
-	private float range = 6F;
+	private Random random = new Random();
 	
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
 		return new NavigatorItem[]{wurst.special.targetSpf,
 			wurst.mods.killauraMod, wurst.mods.killauraLegitMod,
-			wurst.mods.clickAuraMod, wurst.mods.triggerBotMod};
+			wurst.mods.multiAuraMod, wurst.mods.clickAuraMod,
+			wurst.mods.triggerBotMod};
 	}
 	
 	@Override
@@ -40,10 +40,10 @@ public class MultiAuraMod extends Mod implements UpdateListener
 			wurst.mods.killauraMod.setEnabled(false);
 		if(wurst.mods.killauraLegitMod.isEnabled())
 			wurst.mods.killauraLegitMod.setEnabled(false);
+		if(wurst.mods.multiAuraMod.isEnabled())
+			wurst.mods.multiAuraMod.setEnabled(false);
 		if(wurst.mods.clickAuraMod.isEnabled())
 			wurst.mods.clickAuraMod.setEnabled(false);
-		if(wurst.mods.tpAuraMod.isEnabled())
-			wurst.mods.tpAuraMod.setEnabled(false);
 		if(wurst.mods.triggerBotMod.isEnabled())
 			wurst.mods.triggerBotMod.setEnabled(false);
 		wurst.events.add(UpdateListener.class, this);
@@ -53,22 +53,24 @@ public class MultiAuraMod extends Mod implements UpdateListener
 	public void onUpdate()
 	{
 		updateMS();
-		if(EntityUtils.getClosestEntity(true, false) != null)
+		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
+		System.out.println(wurst.mods.killauraMod.realSpeed);
+		if(hasTimePassedS(wurst.mods.killauraMod.realSpeed) && en != null)
 		{
-			if(wurst.mods.autoSwordMod.isActive())
-				AutoSwordMod.setSlot();
-			CriticalsMod.doCritical();
-			wurst.mods.blockHitMod.doBlock();
-			ArrayList<EntityLivingBase> entities =
-				EntityUtils.getCloseEntities(true, range);
-			for(int i = 0; i < Math.min(entities.size(), 64); i++)
+			
+			if(mc.thePlayer.getDistanceToEntity(en) <= wurst.mods.killauraMod.realRange)
 			{
-				EntityLivingBase en = entities.get(i);
+				mc.thePlayer.setPosition(en.posX + random.nextInt(3) * 2 - 2,
+					en.posY, en.posZ + random.nextInt(3) * 2 - 2);
+				if(wurst.mods.autoSwordMod.isActive())
+					AutoSwordMod.setSlot();
+				CriticalsMod.doCritical();
+				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityPacket(en);
 				mc.thePlayer.swingItem();
 				mc.playerController.attackEntity(mc.thePlayer, en);
+				updateLastMS();
 			}
-			updateLastMS();
 		}
 	}
 	
