@@ -1,6 +1,6 @@
-From c298079348a9570a91538c5651b7b49d92d8ceac Mon Sep 17 00:00:00 2001
+From d7dce1f6c3ef6ec34d0ed776681fd239e290185a Mon Sep 17 00:00:00 2001
 From: Alexander01998 <contact.wurstimperium@gmail.com>
-Date: Thu, 4 Feb 2016 07:35:54 +0100
+Date: Mon, 15 Feb 2016 11:03:41 +0100
 Subject: [PATCH] Wurst
 
 ---
@@ -8396,7 +8396,7 @@ index 7397345..0e5ae74 100644
  
      public void setInvisible(boolean invisible)
 diff --git a/src/net/minecraft/entity/EntityLivingBase.java b/src/net/minecraft/entity/EntityLivingBase.java
-index c6f8843..19eaf0a 100644
+index c6f8843..55e4e1f 100644
 --- a/src/net/minecraft/entity/EntityLivingBase.java
 +++ b/src/net/minecraft/entity/EntityLivingBase.java
 @@ -1,12 +1,18 @@
@@ -8437,8 +8437,8 @@ index c6f8843..19eaf0a 100644
 +		HighJumpMod highJumpMod = WurstClient.INSTANCE.mods.highJumpMod;
 +		this.motionY =
 +			(double)this.func_175134_bD()
-+				* (this instanceof EntityPlayer && highJumpMod.isActive()
-+					? highJumpMod.jumpHeight : 1);
++				+ (this instanceof EntityPlayer && highJumpMod.isActive()
++					? highJumpMod.jumpHeight * 0.1F : 0F);
  
          if (this.isPotionActive(Potion.jump))
          {
