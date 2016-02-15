@@ -53,7 +53,10 @@ public class MultiAuraMod extends Mod implements UpdateListener
 	public void onUpdate()
 	{
 		updateMS();
-		if(EntityUtils.getClosestEntity(true, false) != null)
+		EntityLivingBase closestEntity =
+			EntityUtils.getClosestEntity(true, false);
+		if(closestEntity != null
+			&& mc.thePlayer.getDistanceToEntity(closestEntity) <= range)
 		{
 			if(wurst.mods.autoSwordMod.isActive())
 				AutoSwordMod.setSlot();
