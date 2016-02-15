@@ -54,7 +54,6 @@ public class TpAuraMod extends Mod implements UpdateListener
 	{
 		updateMS();
 		EntityLivingBase en = EntityUtils.getClosestEntity(true, true);
-		System.out.println(wurst.mods.killauraMod.realSpeed);
 		if(hasTimePassedS(wurst.mods.killauraMod.realSpeed) && en != null)
 		{
 			
