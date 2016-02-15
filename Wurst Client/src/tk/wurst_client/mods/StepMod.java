@@ -7,15 +7,34 @@
  */
 package tk.wurst_client.mods;
 
+import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
+
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.MOVEMENT,
 	description = "Allows you to step up full blocks.",
 	name = "Step")
 public class StepMod extends Mod implements UpdateListener
 {
+	public float height = 1F;
+	
+	@Override
+	public void initSettings()
+	{
+		settings.add(new SliderSetting("Height", height, 1, 100, 1,
+			ValueDisplay.INTEGER)
+		{
+			@Override
+			public void update()
+			{
+				height = (float)getValue();
+			}
+		});
+	}
+	
 	@Override
 	public void onEnable()
 	{
@@ -31,7 +50,7 @@ public class StepMod extends Mod implements UpdateListener
 			if(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)
 				mc.thePlayer.jump();
 		}else
-			mc.thePlayer.stepHeight = isEnabled() ? 1.0F : 0.5F;
+			mc.thePlayer.stepHeight = isEnabled() ? height : 0.5F;
 	}
 	
 	@Override
