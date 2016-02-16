@@ -16,7 +16,8 @@ import tk.wurst_client.mods.Mod.Info;
 	description = "Regenerates your health 100 times faster.\n"
 		+ "Can cause unwanted \"Flying is not enabled!\" kicks.",
 	name = "Regen",
-	noCheatCompatible = false)
+	noCheatCompatible = false,
+	tutorial = "Mods/Regen")
 public class RegenMod extends Mod implements UpdateListener
 {
 	@Override
