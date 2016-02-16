@@ -13,7 +13,7 @@ import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.COMBAT,
-	description = "Regenerates your health 100 times faster.\n"
+	description = "Regenerates your health 1000 times faster.\n"
 		+ "Can cause unwanted \"Flying is not enabled!\" kicks.",
 	name = "Regen",
 	noCheatCompatible = false,
