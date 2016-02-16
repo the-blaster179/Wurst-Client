@@ -10,7 +10,8 @@ package tk.wurst_client.mods;
 @Mod.Info(category = Mod.Category.BLOCKS,
 	description = "Allows you to interact with liquid blocks.",
 	name = "Liquids",
-	noCheatCompatible = false)
+	noCheatCompatible = false,
+	tutorial = "Mods/Liquids")
 public class LiquidsMod extends Mod
 {	
 	
