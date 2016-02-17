@@ -32,8 +32,11 @@ import tk.wurst_client.navigator.settings.SliderSetting;
 import tk.wurst_client.utils.BlockUtils;
 import tk.wurst_client.utils.RenderUtils;
 
-@Info(category = Category.BLOCKS, description = "Destroys blocks around you.\n"
-	+ "Use .nuker mode <mode> to change the mode.", name = "Nuker")
+@Info(category = Category.BLOCKS,
+	description = "Destroys blocks around you.\n"
+		+ "Use .nuker mode <mode> to change the mode.",
+	name = "Nuker",
+	tutorial = "Mods/Nuker")
 public class NukerMod extends Mod implements LeftClickListener, RenderListener,
 	UpdateListener
 {
