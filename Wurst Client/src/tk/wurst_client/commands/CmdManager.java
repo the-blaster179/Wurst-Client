@@ -12,6 +12,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.TreeMap;
 
+import net.minecraft.event.ClickEvent;
+import net.minecraft.event.ClickEvent.Action;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.commands.Cmd.SyntaxError;
 import tk.wurst_client.events.ChatOutputEvent;
@@ -130,8 +134,27 @@ public class CmdManager implements ChatOutputListener
 							+ "`");
 				}
 			else
-				WurstClient.INSTANCE.chat.error("\"." + commandName
-					+ "\" is not a valid command.");
+				switch(message)
+				{
+					case "...":
+					case ".legit":
+						ChatComponentText link =
+							new ChatComponentText("more info");
+						link.getChatStyle()
+							.setColor(EnumChatFormatting.AQUA)
+							.setChatClickEvent(
+								new ClickEvent(Action.OPEN_URL,
+									"https://www.wurst-client.tk/wiki/Commands/say/"));
+						
+						WurstClient.INSTANCE.chat
+							.component(new ChatComponentText("Try using .say (")
+								.appendSibling(link).appendText(")"));
+						break;
+					default:
+						WurstClient.INSTANCE.chat.error("\"." + commandName
+							+ "\" is not a valid command.");
+						break;
+				}
 		}
 	}
 	

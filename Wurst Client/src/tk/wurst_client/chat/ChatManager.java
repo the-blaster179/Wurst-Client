@@ -9,6 +9,7 @@ package tk.wurst_client.chat;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 
 public class ChatManager
 {
@@ -19,11 +20,17 @@ public class ChatManager
 		this.enabled = enabled;
 	}
 	
-	public void message(String message)
+	public void component(IChatComponent component)
 	{
 		if(enabled)
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(
-				new ChatComponentText("§c[§6Wurst§c]§f " + message));
+				new ChatComponentText("§c[§6Wurst§c]§f ")
+					.appendSibling(component));
+	}
+	
+	public void message(String message)
+	{
+		component(new ChatComponentText(message));
 	}
 	
 	public void info(String message)
