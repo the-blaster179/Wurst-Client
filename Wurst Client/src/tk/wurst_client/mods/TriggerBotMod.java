@@ -8,6 +8,7 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
@@ -73,7 +74,8 @@ public class TriggerBotMod extends Mod implements UpdateListener
 					CriticalsMod.doCritical();
 					wurst.mods.blockHitMod.doBlock();
 					mc.thePlayer.swingItem();
-					mc.playerController.attackEntity(mc.thePlayer, en);
+					mc.thePlayer.sendQueue.addToSendQueue(new C02PacketUseEntity(
+						en, C02PacketUseEntity.Action.ATTACK));
 					updateLastMS();
 				}
 			}

@@ -8,6 +8,7 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
@@ -108,7 +109,8 @@ public class KillauraMod extends Mod implements UpdateListener
 				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityPacket(en);
 				mc.thePlayer.swingItem();
-				mc.playerController.attackEntity(mc.thePlayer, en);
+				mc.thePlayer.sendQueue.addToSendQueue(new C02PacketUseEntity(
+					en, C02PacketUseEntity.Action.ATTACK));
 				updateLastMS();
 			}
 	}

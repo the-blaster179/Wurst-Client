@@ -8,6 +8,7 @@
 package tk.wurst_client.mods;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.utils.EntityUtils;
@@ -60,7 +61,8 @@ public class ClickAuraMod extends Mod implements UpdateListener
 				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityPacket(en);
 				mc.thePlayer.swingItem();
-				mc.playerController.attackEntity(mc.thePlayer, en);
+				mc.thePlayer.sendQueue.addToSendQueue(new C02PacketUseEntity(
+					en, C02PacketUseEntity.Action.ATTACK));
 				updateLastMS();
 			}
 	}
