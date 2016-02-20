@@ -137,13 +137,15 @@ public class GuiServerFinder extends GuiScreen
 									.valueOf(ipBox.getText().split("\\.")[i]);
 						ArrayList<ServerPinger> pingers =
 							new ArrayList<ServerPinger>();
-						serverFinder: for(int i = 3; i >= 0; i--)
+						int[] changes = {0, 1, -1, 2, -2, 3, -3};
+						serverFinder: for(int i = 0; i < changes.length; i++)
 							for(int i2 = 0; i2 <= 255; i2++)
 							{
 								if(terminated)
 									break serverFinder;
 								int[] ipParts2 = ipParts.clone();
-								ipParts2[i] = i2;
+								ipParts2[2] = ipParts[2]+changes[i];
+								ipParts2[3] = i2;
 								String ip =
 									ipParts2[0] + "." + ipParts2[1] + "."
 										+ ipParts2[2] + "." + ipParts2[3];
@@ -280,7 +282,7 @@ public class GuiServerFinder extends GuiScreen
 					"§4Max. threads must be a number!", width / 2,
 					height / 4 + 73, 10526880);
 			else if(running)
-				if(checked == 1024)
+				if(checked == 1792)
 					drawCenteredString(fontRendererObj, "§2Done!", width / 2,
 						height / 4 + 73, 10526880);
 				else
@@ -289,7 +291,7 @@ public class GuiServerFinder extends GuiScreen
 			else
 				drawCenteredString(fontRendererObj, "§4Unknown error! Bug?",
 					width / 2, height / 4 + 73, 10526880);
-		drawString(fontRendererObj, "Checked: " + checked + " / 1024",
+		drawString(fontRendererObj, "Checked: " + checked + " / 1792",
 			width / 2 - 100, height / 4 + 84, 10526880);
 		drawString(fontRendererObj, "Working: " + working, width / 2 - 100,
 			height / 4 + 94, 10526880);
