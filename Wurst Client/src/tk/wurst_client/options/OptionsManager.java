@@ -18,6 +18,7 @@ public class OptionsManager
 	public boolean cleanupOutdated = true;
 	public boolean cleanupRename = true;
 	public boolean cleanupUnknown = true;
+	public boolean cleanupGriefMe = false;
 	public boolean forceOPDontWait = false;
 	public boolean middleClickFriends = true;
 	public boolean spamFont = false;

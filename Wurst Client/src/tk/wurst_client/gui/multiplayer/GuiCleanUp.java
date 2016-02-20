@@ -26,24 +26,24 @@ public class GuiCleanUp extends GuiScreen
 {
 	private GuiMultiplayer prevMenu;
 	private boolean removeAll;
-	private String[] toolTips =
-		{
-			"",
-			"Start the Clean Up with the settings\n" + "you specified above.\n"
-				+ "It might look like the game is not\n"
-				+ "reacting for a couple of seconds.",
-			"Servers that clearly don't exist.",
-			"Servers that run a different Minecraft\n" + "version than you.",
-			"All servers that failed the last ping.\n"
-				+ "Make sure that the last ping is complete\n"
-				+ "before you do this. That means: Go back,\n"
-				+ "press the refresh button and wait until\n"
-				+ "all servers are done refreshing.",
-			"This will completely clear your server\n"
-				+ "list. §cUse with caution!§r",
-			"Renames your servers to \"Grief me #1\",\n"
-				+ "\"Grief me #2\", etc.",};
-	
+	private String[] toolTips = {"",
+		"Start the Clean Up with the settings\n" + "you specified above.\n"
+			+ "It might look like the game is not\n"
+			+ "reacting for a couple of seconds.",
+		"Servers that clearly don't exist.",
+		"Servers that run a different Minecraft\n" + "version than you.",
+		"All servers that failed the last ping.\n"
+			+ "Make sure that the last ping is complete\n"
+			+ "before you do this. That means: Go back,\n"
+			+ "press the refresh button and wait until\n"
+			+ "all servers are done refreshing.",
+		"All servers which name starts with \"Grief me\"\n"
+			+ "Useful if ServerFinder spammed up your server list.",
+		"This will completely clear your server\n"
+			+ "list. §cUse with caution!§r",
+		"Renames your servers to \"Grief me #1\",\n"
+			+ "\"Grief me #2\", etc.",};
+			
 	public GuiCleanUp(GuiMultiplayer prevMultiplayerMenu)
 	{
 		prevMenu = prevMultiplayerMenu;
@@ -54,8 +54,8 @@ public class GuiCleanUp extends GuiScreen
 	 */
 	@Override
 	public void updateScreen()
-	{	
-		
+	{
+	
 	}
 	
 	/**
@@ -67,9 +67,9 @@ public class GuiCleanUp extends GuiScreen
 	{
 		Keyboard.enableRepeatEvents(true);
 		buttonList.clear();
-		buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 144 + 12,
-			"Cancel"));
-		buttonList.add(new GuiButton(1, width / 2 - 100, height / 4 + 120 + 12,
+		buttonList.add(
+			new GuiButton(0, width / 2 - 100, height / 4 + 144 + 12, "Cancel"));
+		buttonList.add(new GuiButton(1, width / 2 - 100, height / 4 + 168 + 12,
 			"Clean Up"));
 		buttonList.add(new GuiButton(2, width / 2 - 100, height / 4 - 24 + 12,
 			"Unknown Hosts: "
@@ -81,8 +81,11 @@ public class GuiCleanUp extends GuiScreen
 			"Failed Ping: "
 				+ removeOrKeep(WurstClient.INSTANCE.options.cleanupFailed)));
 		buttonList.add(new GuiButton(5, width / 2 - 100, height / 4 + 48 + 12,
-			"§cRemove all Servers: " + yesOrNo(removeAll)));
+			"\"Grief Me\" Servers: "
+				+ removeOrKeep(WurstClient.INSTANCE.options.cleanupGriefMe)));
 		buttonList.add(new GuiButton(6, width / 2 - 100, height / 4 + 72 + 12,
+			"§cRemove all Servers: " + yesOrNo(removeAll)));
+		buttonList.add(new GuiButton(7, width / 2 - 100, height / 4 + 96 + 12,
 			"Rename all Servers: "
 				+ yesOrNo(WurstClient.INSTANCE.options.cleanupRename)));
 		WurstClient.INSTANCE.analytics.trackPageView("/multiplayer/clean-up",
@@ -127,18 +130,21 @@ public class GuiCleanUp extends GuiScreen
 					mc.displayGuiScreen(prevMenu);
 					return;
 				}
-				for(int i = prevMenu.savedServerList.countServers() - 1; i >= 0; i--)
+				for(int i =
+					prevMenu.savedServerList.countServers() - 1; i >= 0; i--)
 				{
 					ServerData server =
 						prevMenu.savedServerList.getServerData(i);
-					if(WurstClient.INSTANCE.options.cleanupUnknown
+					if((WurstClient.INSTANCE.options.cleanupUnknown
 						&& server.serverMOTD.equals(EnumChatFormatting.DARK_RED
-							+ "Can\'t resolve hostname")
-						|| WurstClient.INSTANCE.options.cleanupOutdated
-						&& server.version != 47
-						|| WurstClient.INSTANCE.options.cleanupFailed
-						&& server.pingToServer != -2L
-						&& server.pingToServer < 0L)
+							+ "Can\'t resolve hostname"))
+						|| (WurstClient.INSTANCE.options.cleanupOutdated
+							&& server.version != 47)
+						|| (WurstClient.INSTANCE.options.cleanupFailed
+							&& server.pingToServer != -2L
+							&& server.pingToServer < 0L)
+						|| (WurstClient.INSTANCE.options.cleanupGriefMe
+							&& server.serverName.startsWith("Grief me #")))
 					{
 						prevMenu.savedServerList.removeServerData(i);
 						prevMenu.savedServerList.saveServerList();
@@ -148,7 +154,8 @@ public class GuiCleanUp extends GuiScreen
 					}
 				}
 				if(WurstClient.INSTANCE.options.cleanupRename)
-					for(int i = 0; i < prevMenu.savedServerList.countServers(); i++)
+					for(int i = 0; i < prevMenu.savedServerList
+						.countServers(); i++)
 					{
 						ServerData server =
 							prevMenu.savedServerList.getServerData(i);
@@ -163,9 +170,8 @@ public class GuiCleanUp extends GuiScreen
 			{// Unknown host
 				WurstClient.INSTANCE.options.cleanupUnknown =
 					!WurstClient.INSTANCE.options.cleanupUnknown;
-				clickedButton.displayString =
-					"Unknown Hosts: "
-						+ removeOrKeep(WurstClient.INSTANCE.options.cleanupUnknown);
+				clickedButton.displayString = "Unknown Hosts: "
+					+ removeOrKeep(WurstClient.INSTANCE.options.cleanupUnknown);
 				WurstClient.INSTANCE.files.saveOptions();
 				WurstClient.INSTANCE.analytics.trackEvent("clean up",
 					"unknown host",
@@ -175,8 +181,8 @@ public class GuiCleanUp extends GuiScreen
 				WurstClient.INSTANCE.options.cleanupOutdated =
 					!WurstClient.INSTANCE.options.cleanupOutdated;
 				clickedButton.displayString =
-					"Outdated Servers: "
-						+ removeOrKeep(WurstClient.INSTANCE.options.cleanupOutdated);
+					"Outdated Servers: " + removeOrKeep(
+						WurstClient.INSTANCE.options.cleanupOutdated);
 				WurstClient.INSTANCE.files.saveOptions();
 				WurstClient.INSTANCE.analytics.trackEvent("clean up",
 					"outdated servers",
@@ -185,27 +191,34 @@ public class GuiCleanUp extends GuiScreen
 			{// Failed ping
 				WurstClient.INSTANCE.options.cleanupFailed =
 					!WurstClient.INSTANCE.options.cleanupFailed;
-				clickedButton.displayString =
-					"Failed Ping: "
-						+ removeOrKeep(WurstClient.INSTANCE.options.cleanupFailed);
+				clickedButton.displayString = "Failed Ping: "
+					+ removeOrKeep(WurstClient.INSTANCE.options.cleanupFailed);
 				WurstClient.INSTANCE.files.saveOptions();
 				WurstClient.INSTANCE.analytics.trackEvent("clean up",
 					"failed ping",
 					removeOrKeep(WurstClient.INSTANCE.options.cleanupFailed));
 			}else if(clickedButton.id == 5)
+			{// Grief me
+				WurstClient.INSTANCE.options.cleanupGriefMe =
+					!WurstClient.INSTANCE.options.cleanupGriefMe;
+				WurstClient.INSTANCE.files.saveOptions();
+				clickedButton.displayString = "\"Grief Me\" Servers: "
+					+ removeOrKeep(WurstClient.INSTANCE.options.cleanupGriefMe);
+				WurstClient.INSTANCE.analytics.trackEvent("clean up", "griefme",
+					removeOrKeep(WurstClient.INSTANCE.options.cleanupGriefMe));
+			}else if(clickedButton.id == 6)
 			{// Remove
 				removeAll = !removeAll;
 				clickedButton.displayString =
 					"§cRemove all Servers: " + yesOrNo(removeAll);
 				WurstClient.INSTANCE.analytics.trackEvent("clean up",
 					"remove all servers", yesOrNo(removeAll));
-			}else if(clickedButton.id == 6)
+			}else if(clickedButton.id == 7)
 			{// Rename
 				WurstClient.INSTANCE.options.cleanupRename =
 					!WurstClient.INSTANCE.options.cleanupRename;
-				clickedButton.displayString =
-					"Rename all Servers: "
-						+ yesOrNo(WurstClient.INSTANCE.options.cleanupRename);
+				clickedButton.displayString = "Rename all Servers: "
+					+ yesOrNo(WurstClient.INSTANCE.options.cleanupRename);
 				WurstClient.INSTANCE.files.saveOptions();
 				WurstClient.INSTANCE.analytics.trackEvent("clean up",
 					"rename servers",
@@ -230,8 +243,7 @@ public class GuiCleanUp extends GuiScreen
 	 * @throws IOException
 	 */
 	@Override
-	protected void mouseClicked(int par1, int par2, int par3)
-		throws IOException
+	protected void mouseClicked(int par1, int par2, int par3) throws IOException
 	{
 		super.mouseClicked(par1, par2, par3);
 	}
@@ -243,7 +255,8 @@ public class GuiCleanUp extends GuiScreen
 	public void drawScreen(int par1, int par2, float par3)
 	{
 		drawDefaultBackground();
-		drawCenteredString(fontRendererObj, "Clean Up", width / 2, 20, 16777215);
+		drawCenteredString(fontRendererObj, "Clean Up", width / 2, 20,
+			16777215);
 		drawCenteredString(fontRendererObj,
 			"Please select the servers you want to remove:", width / 2, 36,
 			10526880);
