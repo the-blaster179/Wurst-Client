@@ -64,7 +64,7 @@ public class TpAuraMod extends Mod implements UpdateListener
 					en.posY, en.posZ + random.nextInt(3) * 2 - 2);
 				if(wurst.mods.autoSwordMod.isActive())
 					AutoSwordMod.setSlot();
-				CriticalsMod.doCritical();
+				wurst.mods.criticalsMod.doCritical();
 				wurst.mods.blockHitMod.doBlock();
 				EntityUtils.faceEntityPacket(en);
 				mc.thePlayer.swingItem();
