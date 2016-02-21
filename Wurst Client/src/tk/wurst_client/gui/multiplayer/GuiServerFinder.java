@@ -195,7 +195,7 @@ public class GuiServerFinder extends GuiScreen
 											if(state == ServerFinderState.CANCELLED)
 												return;
 												
-											pingers = updatePingers(pingers);
+											updatePingers(pingers);
 										}
 									}
 								while(pingers.size() > 0)
@@ -203,7 +203,7 @@ public class GuiServerFinder extends GuiScreen
 									if(state == ServerFinderState.CANCELLED)
 										return;
 										
-									pingers = updatePingers(pingers);
+									updatePingers(pingers);
 								}
 								WurstClient.INSTANCE.analytics.trackEvent(
 									"server finder", "complete", "complete",
@@ -237,8 +237,7 @@ public class GuiServerFinder extends GuiScreen
 		return false;
 	}
 	
-	private ArrayList<ServerPinger> updatePingers(
-		ArrayList<ServerPinger> pingers)
+	private void updatePingers(ArrayList<ServerPinger> pingers)
 	{
 		for(int i = 0; i < pingers.size(); i++)
 			if(!pingers.get(i).isStillPinging())
@@ -263,7 +262,6 @@ public class GuiServerFinder extends GuiScreen
 				}
 				pingers.remove(i);
 			}
-		return pingers;
 	}
 	
 	/**
