@@ -228,6 +228,15 @@ public class GuiServerFinder extends GuiScreen
 				mc.displayGuiScreen(prevMenu);
 	}
 	
+	private boolean serverInList(String ip) {
+		for (int i = 0; i < prevMenu.savedServerList.countServers(); i++) {
+			if (prevMenu.savedServerList.getServerData(i).serverIP.equals(ip))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	private ArrayList<ServerPinger> updatePingers(
 		ArrayList<ServerPinger> pingers)
 	{
@@ -238,16 +247,19 @@ public class GuiServerFinder extends GuiScreen
 				if(pingers.get(i).isWorking())
 				{
 					GuiServerFinder.this.working++;
-					GuiServerFinder.this.prevMenu.savedServerList
-						.addServerData(new ServerData("Grief me #" + working,
-							pingers.get(i).server.serverIP));
-					GuiServerFinder.this.prevMenu.savedServerList
-						.saveServerList();
-					GuiServerFinder.this.prevMenu.serverListSelector
-						.setSelectedServer(-1);
-					GuiServerFinder.this.prevMenu.serverListSelector
-						.func_148195_a(
-							GuiServerFinder.this.prevMenu.savedServerList);
+					
+					if (!serverInList(pingers.get(i).server.serverIP)) {
+						GuiServerFinder.this.prevMenu.savedServerList
+							.addServerData(new ServerData("Grief me #" + working,
+								pingers.get(i).server.serverIP));
+						GuiServerFinder.this.prevMenu.savedServerList
+							.saveServerList();
+						GuiServerFinder.this.prevMenu.serverListSelector
+							.setSelectedServer(-1);
+						GuiServerFinder.this.prevMenu.serverListSelector
+							.func_148195_a(
+								GuiServerFinder.this.prevMenu.savedServerList);
+					}
 				}
 				pingers.remove(i);
 			}
