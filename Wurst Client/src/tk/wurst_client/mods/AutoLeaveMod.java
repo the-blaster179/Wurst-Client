@@ -9,13 +9,17 @@ package tk.wurst_client.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C03PacketPlayer;
+import net.minecraft.network.play.client.C02PacketUseEntity.Action;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.COMBAT,
 	description = "Automatically leaves the server when your health is low.\n"
-		+ "Type `.leave mode chars` to make it bypass CombatLogger.",
+		+ "Type `.leave mode chars`, `.leave mode tp` or `.leave mode selfhurt`\n"
+		+ "to make it bypass CombatLogger.",
 	name = "AutoLeave")
 public class AutoLeaveMod extends Mod implements UpdateListener
 {
@@ -30,6 +34,12 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 				break;
 			case 1:
 				name += "Chars";
+				break;
+			case 2:
+				name += "TP";
+				break;
+			case 3:
+				name += "SelfHurt";
 				break;
 			default:
 				break;
@@ -60,6 +70,15 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 				case 1:
 					mc.thePlayer.sendQueue
 						.addToSendQueue(new C01PacketChatMessage("§"));
+					break;
+				case 2:
+					mc.thePlayer.sendQueue
+						.addToSendQueue(new C03PacketPlayer
+							.C04PacketPlayerPosition(3.1e7d, 100, 3.1e7d, false));
+					break;
+				case 3:
+					mc.thePlayer.sendQueue
+						.addToSendQueue(new C02PacketUseEntity(mc.thePlayer, Action.ATTACK));
 					break;
 				default:
 					break;

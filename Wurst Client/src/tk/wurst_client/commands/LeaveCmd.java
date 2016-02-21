@@ -7,12 +7,15 @@
  */
 package tk.wurst_client.commands;
 
-import tk.wurst_client.events.ChatOutputEvent;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C02PacketUseEntity.Action;
+import net.minecraft.network.play.client.C03PacketPlayer;
+import tk.wurst_client.events.ChatOutputEvent;
 
 @Cmd.Info(help = "Leaves the current server or changes the mode of AutoLeave.",
 	name = "leave",
-	syntax = {"[chars|quit]", "mode chars|quit"})
+	syntax = {"[chars|tp|selfhurt|quit]", "mode chars|tp|selfhurt|quit"})
 public class LeaveCmd extends Cmd
 {
 	@Override
@@ -69,6 +72,14 @@ public class LeaveCmd extends Cmd
 				mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(
 					"§"));
 				break;
+			case 2:
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C03PacketPlayer
+						.C04PacketPlayerPosition(3.1e7d, 100, 3.1e7d, false));
+			case 3:
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C02PacketUseEntity(mc.thePlayer, Action.ATTACK));
+				break;
 			default:
 				break;
 		}
@@ -80,6 +91,10 @@ public class LeaveCmd extends Cmd
 			return 0;
 		else if(input.equalsIgnoreCase("chars"))
 			return 1;
+		else if(input.equalsIgnoreCase("tp"))
+			return 2;
+		else if(input.equalsIgnoreCase("selfhurt"))
+			return 3;
 		syntaxError("Invalid mode: " + input);
 		return 0;
 	}
