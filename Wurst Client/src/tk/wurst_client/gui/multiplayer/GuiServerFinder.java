@@ -215,6 +215,9 @@ public class GuiServerFinder extends GuiScreen
 								WurstClient.INSTANCE.analytics.trackEvent(
 									"server finder", "unknown host",
 									"unknown host", working);
+							}catch(Exception e) {
+								e.printStackTrace();
+								state = ServerFinderState.ERROR;
 							}
 						}
 					}.start();
