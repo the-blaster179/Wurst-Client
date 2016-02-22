@@ -55,6 +55,7 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 		if(!button.enabled)
 			return;
 		
+		WurstClient wurst = WurstClient.INSTANCE;
 		switch(button.id)
 		{
 			case 0:
@@ -64,10 +65,11 @@ public class NavigatorFeatureScreen extends NavigatorScreen
 			case 1:
 				MiscUtils.openLink("https://www.wurst-client.tk/wiki/"
 					+ item.getTutorialPage());
+				wurst.navigator.analytics.trackEvent("tutorial", "open",
+					item.getName());
 				break;
 		}
 		
-		WurstClient wurst = WurstClient.INSTANCE;
 		wurst.navigator.addPreference(item.getName());
 		wurst.files.saveNavigatorData();
 	}

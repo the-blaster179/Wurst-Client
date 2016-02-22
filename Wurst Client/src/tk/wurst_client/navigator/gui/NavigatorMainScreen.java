@@ -44,7 +44,9 @@ public class NavigatorMainScreen extends NavigatorScreen
 		searchBar.setMaxStringLength(128);
 		searchBar.setFocused(true);
 		
-		WurstClient.INSTANCE.navigator.copyNavigatorList(navigatorDisplayList);
+		Navigator navigator = WurstClient.INSTANCE.navigator;
+		navigator.copyNavigatorList(navigatorDisplayList);
+		navigator.analytics.trackPageView("/", "Navigator");
 	}
 	
 	@Override
@@ -73,11 +75,6 @@ public class NavigatorMainScreen extends NavigatorScreen
 			{
 				newText = newText.toLowerCase().trim();
 				navigator.getSearchResults(navigatorDisplayList, newText);
-				WurstClient.INSTANCE.navigator.analytics.trackEvent("search",
-					"query searched", newText);
-				if(navigatorDisplayList.isEmpty())
-					WurstClient.INSTANCE.navigator.analytics.trackEvent(
-						"search", "no results", newText);
 			}
 			setContentHeight(navigatorDisplayList.size() / 3 * 20);
 		}
@@ -117,6 +114,8 @@ public class NavigatorMainScreen extends NavigatorScreen
 				WurstClient wurst = WurstClient.INSTANCE;
 				wurst.navigator.addPreference(item.getName());
 				wurst.files.saveNavigatorData();
+				wurst.navigator.analytics.trackEvent("tutorial", "open",
+					item.getName());
 			}
 	}
 	
@@ -142,13 +141,18 @@ public class NavigatorMainScreen extends NavigatorScreen
 				clickTimer++;
 			else
 			{
-				mc.displayGuiScreen(new NavigatorFeatureScreen(
-					navigatorDisplayList.get(hoveredItem), this));
+				NavigatorItem item = navigatorDisplayList.get(hoveredItem);
+				mc.displayGuiScreen(new NavigatorFeatureScreen(item, this));
+				
 				String query = searchBar.getText();
-				if(!query.isEmpty())
-					WurstClient.INSTANCE.navigator.analytics.trackEvent(
-						"search", "result clicked", query.toLowerCase(),
-						hoveredItem);
+				if(query.isEmpty())
+					WurstClient.INSTANCE.navigator.analytics.trackPageView(
+						item.getType() + item.getName(), item.getName());
+				else
+					WurstClient.INSTANCE.navigator.analytics
+						.trackPageViewFromSearch(
+							item.getType() + item.getName(), item.getName(),
+							"/", query);
 			}
 		else if(!expanding && clickTimer > -1)
 			clickTimer--;
