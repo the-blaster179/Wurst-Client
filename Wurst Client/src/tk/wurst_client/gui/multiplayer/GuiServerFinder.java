@@ -94,6 +94,8 @@ public class GuiServerFinder extends GuiScreen
 		buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 96 + 12,
 			"Search"));
 		buttonList.add(new GuiButton(1, width / 2 - 100, height / 4 + 120 + 12,
+			"Tutorial"));
+		buttonList.add(new GuiButton(2, width / 2 - 100, height / 4 + 144 + 12,
 			"Back"));
 		ipBox =
 			new GuiTextField(0, fontRendererObj, width / 2 - 100,
@@ -211,8 +213,7 @@ public class GuiServerFinder extends GuiScreen
 									updatePingers(pingers);
 								}
 								WurstClient.INSTANCE.analytics.trackEvent(
-									"server finder", "complete", "",
-									working);
+									"server finder", "complete", "", working);
 								state = ServerFinderState.DONE;
 							}catch(UnknownHostException e)
 							{
@@ -232,6 +233,9 @@ public class GuiServerFinder extends GuiScreen
 						"start");
 				}
 			}else if(clickedButton.id == 1)
+				MiscUtils
+					.openLink("https://www.wurst-client.tk/wiki/Special_Features/Server_Finder/");
+			else if(clickedButton.id == 2)
 				mc.displayGuiScreen(prevMenu);
 	}
 	
