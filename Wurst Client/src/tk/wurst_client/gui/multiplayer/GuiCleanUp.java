@@ -39,8 +39,8 @@ public class GuiCleanUp extends GuiScreen
 				+ "before you do this. That means: Go back,\n"
 				+ "press the refresh button and wait until\n"
 				+ "all servers are done refreshing.",
-			"All servers which name starts with \"Grief me\"\n"
-				+ "Useful if ServerFinder spammed up your server list.",
+			"All servers where the name starts with \"Grief me\"\n"
+				+ "Useful for removing servers found by ServerFinder.",
 			"This will completely clear your server\n"
 				+ "list. §cUse with caution!§r",
 			"Renames your servers to \"Grief me #1\",\n"
@@ -83,7 +83,7 @@ public class GuiCleanUp extends GuiScreen
 			"Failed Ping: "
 				+ removeOrKeep(WurstClient.INSTANCE.options.cleanupFailed)));
 		buttonList.add(new GuiButton(5, width / 2 - 100, height / 4 + 48 + 12,
-			"\"Grief Me\" Servers: "
+			"\"Grief me\" Servers: "
 				+ removeOrKeep(WurstClient.INSTANCE.options.cleanupGriefMe)));
 		buttonList.add(new GuiButton(6, width / 2 - 100, height / 4 + 72 + 12,
 			"§cRemove all Servers: " + yesOrNo(removeAll)));
@@ -145,7 +145,7 @@ public class GuiCleanUp extends GuiScreen
 						&& server.pingToServer != -2L
 						&& server.pingToServer < 0L
 						|| WurstClient.INSTANCE.options.cleanupGriefMe
-						&& server.serverName.startsWith("Grief me #"))
+						&& server.serverName.startsWith("Grief me"))
 					{
 						prevMenu.savedServerList.removeServerData(i);
 						prevMenu.savedServerList.saveServerList();
