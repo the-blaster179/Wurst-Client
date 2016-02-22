@@ -121,8 +121,8 @@ public class GuiServerFinder extends GuiScreen
 	public void onGuiClosed()
 	{
 		state = ServerFinderState.CANCELLED;
-		WurstClient.INSTANCE.analytics.trackEvent("server finder", "cancelled",
-			"closed", working);
+		WurstClient.INSTANCE.analytics.trackEvent("server finder", "cancel",
+			"gui closed", working);
 		
 		if(MiscUtils.isInteger(maxThreadsBox.getText()))
 		{
@@ -143,7 +143,7 @@ public class GuiServerFinder extends GuiScreen
 				{
 					state = ServerFinderState.CANCELLED;
 					WurstClient.INSTANCE.analytics.trackEvent("server finder",
-						"cancelled", "cancelled", working);
+						"cancel", "cancel button", working);
 				}else
 				{
 					if(MiscUtils.isInteger(maxThreadsBox.getText()))
@@ -211,21 +211,20 @@ public class GuiServerFinder extends GuiScreen
 									updatePingers(pingers);
 								}
 								WurstClient.INSTANCE.analytics.trackEvent(
-									"server finder", "complete", "complete",
+									"server finder", "complete", "",
 									working);
 								state = ServerFinderState.DONE;
 							}catch(UnknownHostException e)
 							{
 								state = ServerFinderState.UNKNOWN_HOST;
 								WurstClient.INSTANCE.analytics.trackEvent(
-									"server finder", "unknown host",
-									"unknown host");
+									"server finder", "unknown host");
 							}catch(Exception e)
 							{
 								e.printStackTrace();
 								state = ServerFinderState.ERROR;
 								WurstClient.INSTANCE.analytics.trackEvent(
-									"server finder", "error", "error");
+									"server finder", "error");
 							}
 						}
 					}.start();

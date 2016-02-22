@@ -208,7 +208,7 @@ public class GuiCleanUp extends GuiScreen
 					"\"Grief Me\" Servers: "
 						+ removeOrKeep(WurstClient.INSTANCE.options.cleanupGriefMe);
 				WurstClient.INSTANCE.analytics.trackEvent("clean up",
-					"griefme",
+					"grief me",
 					removeOrKeep(WurstClient.INSTANCE.options.cleanupGriefMe));
 			}else if(clickedButton.id == 6)
 			{// Remove
