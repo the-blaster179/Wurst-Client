@@ -18,6 +18,7 @@ public class OptionsManager
 	public boolean cleanupOutdated = true;
 	public boolean cleanupRename = true;
 	public boolean cleanupUnknown = true;
+	public boolean cleanupGriefMe = false;
 	public boolean forceOPDontWait = false;
 	public boolean middleClickFriends = true;
 	public boolean spamFont = false;
@@ -29,7 +30,7 @@ public class OptionsManager
 	public int forceOPDelay = 1000;
 	public int ghostHandID = 54;
 	public int searchID = 116;
-	public int serverFinderThreads = 64;
+	public int serverFinderThreads = 128;
 	public int spamDelay = 1000;
 	public int throwAmount = 16;
 	
