@@ -12,23 +12,24 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.multiplayer.ServerData;
+
+import org.lwjgl.input.Keyboard;
+
 import tk.wurst_client.WurstClient;
 import tk.wurst_client.servers.ServerPinger;
 import tk.wurst_client.utils.MiscUtils;
 
 public class GuiServerFinder extends GuiScreen
 {
-	private static final String[] stateStrings =
-		{"", "§2Searching...", "§2Resolving...", "§4Unknown Host!",
-			"§4Cancelled!", "§2Done!", "§4An error occurred!"};
-			
+	private static final String[] stateStrings = {"", "§2Searching...",
+		"§2Resolving...", "§4Unknown Host!", "§4Cancelled!", "§2Done!",
+		"§4An error occurred!"};
+	
 	enum ServerFinderState
 	{
 		NOT_RUNNING,
@@ -44,6 +45,7 @@ public class GuiServerFinder extends GuiScreen
 			return this == SEARCHING || this == RESOLVING;
 		}
 		
+		@Override
 		public String toString()
 		{
 			return stateStrings[ordinal()];
@@ -89,25 +91,27 @@ public class GuiServerFinder extends GuiScreen
 	{
 		Keyboard.enableRepeatEvents(true);
 		buttonList.clear();
-		buttonList.add(
-			new GuiButton(0, width / 2 - 100, height / 4 + 96 + 12, "Search"));
-		buttonList.add(
-			new GuiButton(1, width / 2 - 100, height / 4 + 120 + 12, "Back"));
-		ipBox = new GuiTextField(0, fontRendererObj, width / 2 - 100,
-			height / 4 + 34, 200, 20);
+		buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 96 + 12,
+			"Search"));
+		buttonList.add(new GuiButton(1, width / 2 - 100, height / 4 + 120 + 12,
+			"Back"));
+		ipBox =
+			new GuiTextField(0, fontRendererObj, width / 2 - 100,
+				height / 4 + 34, 200, 20);
 		ipBox.setMaxStringLength(200);
 		ipBox.setFocused(true);
-		maxThreadsBox = new GuiTextField(1, fontRendererObj, width / 2 - 32,
-			height / 4 + 58, 26, 12);
+		maxThreadsBox =
+			new GuiTextField(1, fontRendererObj, width / 2 - 32,
+				height / 4 + 58, 26, 12);
 		maxThreadsBox.setMaxStringLength(3);
 		maxThreadsBox.setFocused(false);
-		maxThreadsBox.setText(
-			Integer.toString(WurstClient.INSTANCE.options.serverFinderThreads));
-			
+		maxThreadsBox.setText(Integer
+			.toString(WurstClient.INSTANCE.options.serverFinderThreads));
+		
 		state = ServerFinderState.NOT_RUNNING;
 		
-		WurstClient.INSTANCE.analytics
-			.trackPageView("/multiplayer/server-finder", "Server Finder");
+		WurstClient.INSTANCE.analytics.trackPageView(
+			"/multiplayer/server-finder", "Server Finder");
 	}
 	
 	/**
@@ -119,7 +123,7 @@ public class GuiServerFinder extends GuiScreen
 		state = ServerFinderState.CANCELLED;
 		WurstClient.INSTANCE.analytics.trackEvent("server finder", "cancelled",
 			"closed", working);
-			
+		
 		if(MiscUtils.isInteger(maxThreadsBox.getText()))
 		{
 			WurstClient.INSTANCE.options.serverFinderThreads =
@@ -137,7 +141,7 @@ public class GuiServerFinder extends GuiScreen
 			{// Search / Cancel
 				if(state.isRunning())
 				{
-					state = state.CANCELLED;
+					state = ServerFinderState.CANCELLED;
 					WurstClient.INSTANCE.analytics.trackEvent("server finder",
 						"cancelled", "cancelled", working);
 				}else
@@ -160,41 +164,42 @@ public class GuiServerFinder extends GuiScreen
 						{
 							try
 							{
-								InetAddress addr = InetAddress.getByName(
-									ipBox.getText().split(":")[0].trim());
-									
+								InetAddress addr =
+									InetAddress.getByName(ipBox.getText()
+										.split(":")[0].trim());
+								
 								int[] ipParts = new int[4];
 								for(int i = 0; i < 4; i++)
 									ipParts[i] = addr.getAddress()[i] & 0xff;
-									
+								
 								state = ServerFinderState.SEARCHING;
 								ArrayList<ServerPinger> pingers =
 									new ArrayList<ServerPinger>();
 								int[] changes = {0, 1, -1, 2, -2, 3, -3};
-								for(int i = 0; i < changes.length; i++)
+								for(int change : changes)
 									for(int i2 = 0; i2 <= 255; i2++)
 									{
 										if(state == ServerFinderState.CANCELLED)
 											return;
-											
+										
 										int[] ipParts2 = ipParts.clone();
 										ipParts2[2] =
-											(ipParts[2] + changes[i]) & 0xff;
+											ipParts[2] + change & 0xff;
 										ipParts2[3] = i2;
-										String ip = ipParts2[0] + "."
-											+ ipParts2[1] + "." + ipParts2[2]
-											+ "." + ipParts2[3];
-											
+										String ip =
+											ipParts2[0] + "." + ipParts2[1]
+												+ "." + ipParts2[2] + "."
+												+ ipParts2[3];
+										
 										ServerPinger pinger =
 											new ServerPinger();
 										pinger.ping(ip);
 										pingers.add(pinger);
-										while(pingers
-											.size() >= WurstClient.INSTANCE.options.serverFinderThreads)
+										while(pingers.size() >= WurstClient.INSTANCE.options.serverFinderThreads)
 										{
 											if(state == ServerFinderState.CANCELLED)
 												return;
-												
+											
 											updatePingers(pingers);
 										}
 									}
@@ -202,7 +207,7 @@ public class GuiServerFinder extends GuiScreen
 								{
 									if(state == ServerFinderState.CANCELLED)
 										return;
-										
+									
 									updatePingers(pingers);
 								}
 								WurstClient.INSTANCE.analytics.trackEvent(
@@ -215,12 +220,12 @@ public class GuiServerFinder extends GuiScreen
 								WurstClient.INSTANCE.analytics.trackEvent(
 									"server finder", "unknown host",
 									"unknown host");
-							}catch(Exception e) {
+							}catch(Exception e)
+							{
 								e.printStackTrace();
 								state = ServerFinderState.ERROR;
 								WurstClient.INSTANCE.analytics.trackEvent(
-									"server finder", "error",
-									"error");
+									"server finder", "error", "error");
 							}
 						}
 					}.start();
@@ -231,11 +236,11 @@ public class GuiServerFinder extends GuiScreen
 				mc.displayGuiScreen(prevMenu);
 	}
 	
-	private boolean serverInList(String ip) {
-		for (int i = 0; i < prevMenu.savedServerList.countServers(); i++) {
-			if (prevMenu.savedServerList.getServerData(i).serverIP.equals(ip))
+	private boolean serverInList(String ip)
+	{
+		for(int i = 0; i < prevMenu.savedServerList.countServers(); i++)
+			if(prevMenu.savedServerList.getServerData(i).serverIP.equals(ip))
 				return true;
-		}
 		
 		return false;
 	}
@@ -250,17 +255,17 @@ public class GuiServerFinder extends GuiScreen
 				{
 					GuiServerFinder.this.working++;
 					
-					if (!serverInList(pingers.get(i).server.serverIP)) {
+					if(!serverInList(pingers.get(i).server.serverIP))
+					{
 						GuiServerFinder.this.prevMenu.savedServerList
-							.addServerData(new ServerData("Grief me #" + working,
-								pingers.get(i).server.serverIP));
+							.addServerData(new ServerData("Grief me #"
+								+ working, pingers.get(i).server.serverIP));
 						GuiServerFinder.this.prevMenu.savedServerList
 							.saveServerList();
 						GuiServerFinder.this.prevMenu.serverListSelector
 							.setSelectedServer(-1);
 						GuiServerFinder.this.prevMenu.serverListSelector
-							.func_148195_a(
-								GuiServerFinder.this.prevMenu.savedServerList);
+							.func_148195_a(GuiServerFinder.this.prevMenu.savedServerList);
 					}
 				}
 				pingers.remove(i);
@@ -287,7 +292,8 @@ public class GuiServerFinder extends GuiScreen
 	 * @throws IOException
 	 */
 	@Override
-	protected void mouseClicked(int par1, int par2, int par3) throws IOException
+	protected void mouseClicked(int par1, int par2, int par3)
+		throws IOException
 	{
 		super.mouseClicked(par1, par2, par3);
 		ipBox.mouseClicked(par1, par2, par3);
@@ -307,8 +313,7 @@ public class GuiServerFinder extends GuiScreen
 			"This will search for servers with similar IPs", width / 2, 40,
 			10526880);
 		drawCenteredString(fontRendererObj,
-			"to the IP you type into the field below.", width / 2, 50,
-			10526880);
+			"to the IP you type into the field below.", width / 2, 50, 10526880);
 		drawCenteredString(fontRendererObj,
 			"The servers it finds will be added to your server list.",
 			width / 2, 60, 10526880);
@@ -321,7 +326,7 @@ public class GuiServerFinder extends GuiScreen
 		
 		drawCenteredString(fontRendererObj, state.toString(), width / 2,
 			height / 4 + 73, 10526880);
-			
+		
 		drawString(fontRendererObj, "Checked: " + checked + " / 1792",
 			width / 2 - 100, height / 4 + 84, 10526880);
 		drawString(fontRendererObj, "Working: " + working, width / 2 - 100,
