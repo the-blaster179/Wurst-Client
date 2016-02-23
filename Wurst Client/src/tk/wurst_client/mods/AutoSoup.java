@@ -47,7 +47,7 @@ public class AutoSoupMod extends Mod implements UpdateListener{
 	@Override
 	public NavigatorItem[] getSeeAlso()
 	{
-		return new NavigatorItem[]{wurst.mods.autopotMod};
+		return new NavigatorItem[]{wurst.mods.autosplashpotMod};
 	}
 	@Override
 	public void onUpdate() {
