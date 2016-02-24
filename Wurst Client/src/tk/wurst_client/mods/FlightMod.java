@@ -7,22 +7,45 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.network.play.client.C03PacketPlayer;
-
 import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 
+import net.minecraft.network.play.client.C03PacketPlayer;
+import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition;
+import net.minecraft.util.AxisAlignedBB;
+import tk.wurst_client.events.PacketOutputEvent;
+import tk.wurst_client.events.listeners.PacketOutputListener;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.CheckboxSetting;
 import tk.wurst_client.navigator.settings.SliderSetting;
 
-@Info(category = Category.MOVEMENT, description = "Allows you to you fly.\n"
-	+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
-	+ "Bypasses MAC if AntiMAC is enabled.", name = "Flight")
-public class FlightMod extends Mod implements UpdateListener
+@Info(category = Category.MOVEMENT,
+	description = "Allows you to you fly.\n"
+		+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
+		+ "Bypasses MAC if AntiMAC is enabled.",
+	name = "Flight")
+public class FlightMod extends Mod
+	implements UpdateListener, PacketOutputListener
 {
 	public float speed = 1F;
+	
+	public double flyHeight;
 	private double startY;
+	
+	public static final CheckboxSetting bypassKick = new CheckboxSetting(
+		"Bypass Vanilla Fly Kick (causes NoFall + faster Regeneration)", true);
+		
+	@Override
+	public String getRenderName()
+	{
+		if(wurst.mods.yesCheatMod.isActive() || wurst.mods.antiMacMod.isActive()
+			|| !bypassKick.isChecked())
+			return getName();
+			
+		return getName()
+			+ (flyHeight <= 300 ? "[Kick: Safe]" : "[Kick: Unsafe]");
+	}
 	
 	@Override
 	public void initSettings()
@@ -36,6 +59,64 @@ public class FlightMod extends Mod implements UpdateListener
 				speed = (float)getValue();
 			}
 		});
+		
+		settings.add(bypassKick);
+	}
+	
+	public void updateFlyHeight()
+	{
+		double h = 1;
+		for(flyHeight = 0; flyHeight < mc.thePlayer.posY; flyHeight += h)
+		{
+			AxisAlignedBB box = mc.thePlayer.getEntityBoundingBox()
+				.expand(0.0625, 0.0625, 0.0625).offset(0, -flyHeight, 0);
+				
+			if(mc.theWorld.checkBlockCollision(box))
+			{
+				if(h < 0.0625)
+					break;
+					
+				flyHeight -= h;
+				h /= 2;
+			}
+		}
+	}
+	
+	public void gotoGround()
+	{
+		if(flyHeight > 300)
+			return;
+			
+		double minY = mc.thePlayer.posY - flyHeight;
+		
+		if(minY <= 0)
+			return;
+			
+		wurst.mods.blinkMod.setEnabled(true);
+		
+		for(double y = mc.thePlayer.posY; y > minY;)
+		{
+			y -= 8;
+			if(y < minY)
+				y = minY;
+			
+			C04PacketPlayerPosition packet = new C04PacketPlayerPosition(
+				mc.thePlayer.posX, y, mc.thePlayer.posZ, true);
+			mc.thePlayer.sendQueue.addToSendQueue(packet);
+		}
+		
+		for(double y = minY; y < mc.thePlayer.posY;)
+		{
+			y += 8;
+			if(y > mc.thePlayer.posY)
+				y = mc.thePlayer.posY;
+			
+			C04PacketPlayerPosition packet = new C04PacketPlayerPosition(
+				mc.thePlayer.posX, y, mc.thePlayer.posZ, true);
+			mc.thePlayer.sendQueue.addToSendQueue(packet);
+		}
+		
+		wurst.mods.blinkMod.cancel();
 	}
 	
 	@Override
@@ -43,7 +124,7 @@ public class FlightMod extends Mod implements UpdateListener
 	{
 		if(wurst.mods.jetpackMod.isEnabled())
 			wurst.mods.jetpackMod.setEnabled(false);
-		
+			
 		if(wurst.mods.yesCheatMod.isActive()
 			|| wurst.mods.antiMacMod.isActive())
 		{
@@ -52,16 +133,17 @@ public class FlightMod extends Mod implements UpdateListener
 			double startZ = mc.thePlayer.posZ;
 			for(int i = 0; i < 4; i++)
 			{
-				mc.thePlayer.sendQueue
-					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
-						startX, startY + 1.01, startZ, false));
-				mc.thePlayer.sendQueue
-					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
-						startX, startY, startZ, false));
+				mc.thePlayer.sendQueue.addToSendQueue(
+					new C03PacketPlayer.C04PacketPlayerPosition(startX,
+						startY + 1.01, startZ, false));
+				mc.thePlayer.sendQueue.addToSendQueue(
+					new C03PacketPlayer.C04PacketPlayerPosition(startX, startY,
+						startZ, false));
 			}
 			mc.thePlayer.jump();
 		}
 		wurst.events.add(UpdateListener.class, this);
+		wurst.events.add(PacketOutputListener.class, this);
 	}
 	
 	@Override
@@ -91,15 +173,44 @@ public class FlightMod extends Mod implements UpdateListener
 			mc.thePlayer.jumpMovementFactor = 0.04F;
 		}else
 		{
+			updateMS();
+			
 			mc.thePlayer.capabilities.isFlying = false;
 			mc.thePlayer.motionX = 0;
 			mc.thePlayer.motionY = 0;
 			mc.thePlayer.motionZ = 0;
 			mc.thePlayer.jumpMovementFactor = speed;
+			
 			if(mc.gameSettings.keyBindJump.pressed)
 				mc.thePlayer.motionY += speed;
 			if(mc.gameSettings.keyBindSneak.pressed)
 				mc.thePlayer.motionY -= speed;
+				
+			if(bypassKick.isChecked())
+			{
+				updateFlyHeight();
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C03PacketPlayer(true));
+					
+				if((flyHeight <= 290 && hasTimePassedM(500))
+					|| (flyHeight > 290 && hasTimePassedM(100)))
+				{
+					gotoGround();
+					updateLastMS();
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void onSendingPacket(PacketOutputEvent event)
+	{
+		// Fixes the fall damage with high flight speeds downwards
+		if(!wurst.mods.yesCheatMod.isActive()
+			&& !wurst.mods.antiMacMod.isActive() && bypassKick.isChecked()
+			&& flyHeight <= 300 && event.getPacket() instanceof C03PacketPlayer)
+		{
+			((C03PacketPlayer)event.getPacket()).field_149474_g = true;
 		}
 	}
 	
@@ -107,5 +218,6 @@ public class FlightMod extends Mod implements UpdateListener
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
+		wurst.events.remove(PacketOutputListener.class, this);
 	}
 }
