@@ -7,6 +7,7 @@
  */
 package tk.wurst_client.mods;
 
+import net.minecraft.network.play.client.C03PacketPlayer;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -27,10 +28,42 @@ public class JetpackMod extends Mod implements UpdateListener
 	}
 	
 	@Override
+	public void initSettings()
+	{
+		settings.add(FlightMod.bypassKick);
+	}
+	
+	@Override
+	public String getRenderName()
+	{
+		if(!FlightMod.bypassKick.isChecked())
+			return getName();
+			
+		return getName() + (wurst.mods.flightMod.flyHeight <= 300
+			? "[Kick: Safe]" : "[Kick: Unsafe]");
+	}
+	
+	@Override
 	public void onUpdate()
 	{
+		updateMS();
+		
 		if(mc.gameSettings.keyBindJump.pressed)
 			mc.thePlayer.jump();
+			
+		if(FlightMod.bypassKick.isChecked())
+		{
+			wurst.mods.flightMod.updateFlyHeight();
+			mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
+			
+			if((wurst.mods.flightMod.flyHeight <= 290 && hasTimePassedM(500))
+				|| (wurst.mods.flightMod.flyHeight > 290
+					&& hasTimePassedM(100)))
+			{
+				wurst.mods.flightMod.gotoGround();
+				updateLastMS();
+			}
+		}
 	}
 	
 	@Override
