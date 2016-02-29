@@ -89,8 +89,6 @@ public class FlightMod extends Mod implements UpdateListener
 		if(minY <= 0)
 			return;
 		
-		wurst.mods.blinkMod.setEnabled(true);
-		
 		for(double y = mc.thePlayer.posY; y > minY;)
 		{
 			y -= 8;
@@ -114,8 +112,6 @@ public class FlightMod extends Mod implements UpdateListener
 					mc.thePlayer.posZ, true);
 			mc.thePlayer.sendQueue.addToSendQueue(packet);
 		}
-		
-		wurst.mods.blinkMod.cancel();
 	}
 	
 	@Override
