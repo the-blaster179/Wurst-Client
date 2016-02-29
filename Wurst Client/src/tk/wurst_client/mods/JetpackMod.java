@@ -60,7 +60,7 @@ public class JetpackMod extends Mod implements UpdateListener
 			if(wurst.mods.flightMod.flyHeight <= 290 && hasTimePassedM(500)
 				|| wurst.mods.flightMod.flyHeight > 290 && hasTimePassedM(100))
 			{
-				wurst.mods.flightMod.gotoGround();
+				wurst.mods.flightMod.goToGround();
 				updateLastMS();
 			}
 		}

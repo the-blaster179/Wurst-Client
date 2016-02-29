@@ -80,7 +80,7 @@ public class FlightMod extends Mod implements UpdateListener
 		}
 	}
 	
-	public void gotoGround()
+	public void goToGround()
 	{
 		if(flyHeight > 300)
 			return;
@@ -190,7 +190,7 @@ public class FlightMod extends Mod implements UpdateListener
 				if(flyHeight <= 290 && hasTimePassedM(500) || flyHeight > 290
 					&& hasTimePassedM(100))
 				{
-					gotoGround();
+					goToGround();
 					updateLastMS();
 				}
 			}
