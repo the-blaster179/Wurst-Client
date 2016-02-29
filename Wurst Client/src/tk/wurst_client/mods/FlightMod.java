@@ -41,7 +41,7 @@ public class FlightMod extends Mod implements UpdateListener
 			return getName();
 		
 		return getName()
-			+ (flyHeight <= 300 ? "[Kick: Safe]" : "[Kick: Unsafe]");
+			+ "[Kick: " + (flyHeight <= 300 ? "Safe" : "Unsafe") + "]";
 	}
 	
 	@Override
@@ -63,13 +63,13 @@ public class FlightMod extends Mod implements UpdateListener
 	public void updateFlyHeight()
 	{
 		double h = 1;
+		AxisAlignedBB box =
+			mc.thePlayer.getEntityBoundingBox().expand(0.0625, 0.0625, 0.0625);
 		for(flyHeight = 0; flyHeight < mc.thePlayer.posY; flyHeight += h)
 		{
-			AxisAlignedBB box =
-				mc.thePlayer.getEntityBoundingBox()
-					.expand(0.0625, 0.0625, 0.0625).offset(0, -flyHeight, 0);
+			AxisAlignedBB nextBox = box.offset(0, -flyHeight, 0);
 			
-			if(mc.theWorld.checkBlockCollision(box))
+			if(mc.theWorld.checkBlockCollision(nextBox))
 			{
 				if(h < 0.0625)
 					break;

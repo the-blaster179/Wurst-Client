@@ -36,12 +36,10 @@ public class JetpackMod extends Mod implements UpdateListener
 	@Override
 	public String getRenderName()
 	{
-		if(!wurst.mods.flightMod.flightKickBypass.isChecked())
-			return getName();
-		
 		return getName()
-			+ (wurst.mods.flightMod.flyHeight <= 300 ? "[Kick: Safe]"
-				: "[Kick: Unsafe]");
+			+ (wurst.mods.flightMod.flightKickBypass.isChecked() ? "[Kick: "
+				+ (wurst.mods.flightMod.flyHeight <= 300 ? "Safe" : "Unsafe")
+				+ "]" : "");
 	}
 	
 	@Override
