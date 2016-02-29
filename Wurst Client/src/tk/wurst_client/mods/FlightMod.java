@@ -19,13 +19,10 @@ import tk.wurst_client.mods.Mod.Info;
 import tk.wurst_client.navigator.settings.CheckboxSetting;
 import tk.wurst_client.navigator.settings.SliderSetting;
 
-@Info(category = Category.MOVEMENT,
-	description = "Allows you to you fly.\n"
-		+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
-		+ "Bypasses MAC if AntiMAC is enabled.",
-	name = "Flight")
-public class FlightMod extends Mod
-	implements UpdateListener
+@Info(category = Category.MOVEMENT, description = "Allows you to you fly.\n"
+	+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
+	+ "Bypasses MAC if AntiMAC is enabled.", name = "Flight")
+public class FlightMod extends Mod implements UpdateListener
 {
 	public float speed = 1F;
 	
@@ -34,14 +31,14 @@ public class FlightMod extends Mod
 	
 	public static final CheckboxSetting bypassKick = new CheckboxSetting(
 		"Bypass Vanilla Fly Kick (causes NoFall + faster Regeneration)", true);
-		
+	
 	@Override
 	public String getRenderName()
 	{
-		if(wurst.mods.yesCheatMod.isActive() || wurst.mods.antiMacMod.isActive()
-			|| !bypassKick.isChecked())
+		if(wurst.mods.yesCheatMod.isActive()
+			|| wurst.mods.antiMacMod.isActive() || !bypassKick.isChecked())
 			return getName();
-			
+		
 		return getName()
 			+ (flyHeight <= 300 ? "[Kick: Safe]" : "[Kick: Unsafe]");
 	}
@@ -67,14 +64,15 @@ public class FlightMod extends Mod
 		double h = 1;
 		for(flyHeight = 0; flyHeight < mc.thePlayer.posY; flyHeight += h)
 		{
-			AxisAlignedBB box = mc.thePlayer.getEntityBoundingBox()
-				.expand(0.0625, 0.0625, 0.0625).offset(0, -flyHeight, 0);
-				
+			AxisAlignedBB box =
+				mc.thePlayer.getEntityBoundingBox()
+					.expand(0.0625, 0.0625, 0.0625).offset(0, -flyHeight, 0);
+			
 			if(mc.theWorld.checkBlockCollision(box))
 			{
 				if(h < 0.0625)
 					break;
-					
+				
 				flyHeight -= h;
 				h /= 2;
 			}
@@ -85,12 +83,12 @@ public class FlightMod extends Mod
 	{
 		if(flyHeight > 300)
 			return;
-			
+		
 		double minY = mc.thePlayer.posY - flyHeight;
 		
 		if(minY <= 0)
 			return;
-			
+		
 		wurst.mods.blinkMod.setEnabled(true);
 		
 		for(double y = mc.thePlayer.posY; y > minY;)
@@ -99,8 +97,9 @@ public class FlightMod extends Mod
 			if(y < minY)
 				y = minY;
 			
-			C04PacketPlayerPosition packet = new C04PacketPlayerPosition(
-				mc.thePlayer.posX, y, mc.thePlayer.posZ, true);
+			C04PacketPlayerPosition packet =
+				new C04PacketPlayerPosition(mc.thePlayer.posX, y,
+					mc.thePlayer.posZ, true);
 			mc.thePlayer.sendQueue.addToSendQueue(packet);
 		}
 		
@@ -110,8 +109,9 @@ public class FlightMod extends Mod
 			if(y > mc.thePlayer.posY)
 				y = mc.thePlayer.posY;
 			
-			C04PacketPlayerPosition packet = new C04PacketPlayerPosition(
-				mc.thePlayer.posX, y, mc.thePlayer.posZ, true);
+			C04PacketPlayerPosition packet =
+				new C04PacketPlayerPosition(mc.thePlayer.posX, y,
+					mc.thePlayer.posZ, true);
 			mc.thePlayer.sendQueue.addToSendQueue(packet);
 		}
 		
@@ -123,7 +123,7 @@ public class FlightMod extends Mod
 	{
 		if(wurst.mods.jetpackMod.isEnabled())
 			wurst.mods.jetpackMod.setEnabled(false);
-			
+		
 		if(wurst.mods.yesCheatMod.isActive()
 			|| wurst.mods.antiMacMod.isActive())
 		{
@@ -132,12 +132,12 @@ public class FlightMod extends Mod
 			double startZ = mc.thePlayer.posZ;
 			for(int i = 0; i < 4; i++)
 			{
-				mc.thePlayer.sendQueue.addToSendQueue(
-					new C03PacketPlayer.C04PacketPlayerPosition(startX,
-						startY + 1.01, startZ, false));
-				mc.thePlayer.sendQueue.addToSendQueue(
-					new C03PacketPlayer.C04PacketPlayerPosition(startX, startY,
-						startZ, false));
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
+						startX, startY + 1.01, startZ, false));
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
+						startX, startY, startZ, false));
 			}
 			mc.thePlayer.jump();
 		}
@@ -183,15 +183,15 @@ public class FlightMod extends Mod
 				mc.thePlayer.motionY += speed;
 			if(mc.gameSettings.keyBindSneak.pressed)
 				mc.thePlayer.motionY -= speed;
-				
+			
 			if(bypassKick.isChecked())
 			{
 				updateFlyHeight();
 				mc.thePlayer.sendQueue
 					.addToSendQueue(new C03PacketPlayer(true));
-					
-				if((flyHeight <= 290 && hasTimePassedM(500))
-					|| (flyHeight > 290 && hasTimePassedM(100)))
+				
+				if(flyHeight <= 290 && hasTimePassedM(500) || flyHeight > 290
+					&& hasTimePassedM(100))
 				{
 					gotoGround();
 					updateLastMS();

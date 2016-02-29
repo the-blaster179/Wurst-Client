@@ -38,9 +38,10 @@ public class JetpackMod extends Mod implements UpdateListener
 	{
 		if(!FlightMod.bypassKick.isChecked())
 			return getName();
-			
-		return getName() + (wurst.mods.flightMod.flyHeight <= 300
-			? "[Kick: Safe]" : "[Kick: Unsafe]");
+		
+		return getName()
+			+ (wurst.mods.flightMod.flyHeight <= 300 ? "[Kick: Safe]"
+				: "[Kick: Unsafe]");
 	}
 	
 	@Override
@@ -50,15 +51,14 @@ public class JetpackMod extends Mod implements UpdateListener
 		
 		if(mc.gameSettings.keyBindJump.pressed)
 			mc.thePlayer.jump();
-			
+		
 		if(FlightMod.bypassKick.isChecked())
 		{
 			wurst.mods.flightMod.updateFlyHeight();
 			mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
 			
-			if((wurst.mods.flightMod.flyHeight <= 290 && hasTimePassedM(500))
-				|| (wurst.mods.flightMod.flyHeight > 290
-					&& hasTimePassedM(100)))
+			if(wurst.mods.flightMod.flyHeight <= 290 && hasTimePassedM(500)
+				|| wurst.mods.flightMod.flyHeight > 290 && hasTimePassedM(100))
 			{
 				wurst.mods.flightMod.gotoGround();
 				updateLastMS();
