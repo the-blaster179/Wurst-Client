@@ -31,8 +31,6 @@ public final class EventManager
 				fireRender();
 			else if(type == PacketInputEvent.class)
 				firePacketInput((PacketInputEvent)event);
-			else if(type == PacketOutputEvent.class)
-				firePacketOutput((PacketOutputEvent)event);
 			else if(type == UpdateEvent.class)
 				fireUpdate();
 			else if(type == ChatInputEvent.class)
@@ -107,14 +105,6 @@ public final class EventManager
 		for(int i = listeners.length - 2; i >= 0; i -= 2)
 			if(listeners[i] == PacketInputListener.class)
 				((PacketInputListener)listeners[i + 1]).onReceivedPacket(event);
-	}
-	
-	private void firePacketOutput(PacketOutputEvent event)
-	{
-		Object[] listeners = listenerList.getListenerList();
-		for(int i = listeners.length - 2; i >= 0; i -= 2)
-			if(listeners[i] == PacketOutputListener.class)
-				((PacketOutputListener)listeners[i + 1]).onSendingPacket(event);
 	}
 	
 	private void fireRender()

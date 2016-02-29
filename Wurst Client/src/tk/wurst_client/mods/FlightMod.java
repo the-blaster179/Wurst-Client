@@ -7,13 +7,12 @@
  */
 package tk.wurst_client.mods;
 
-import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
-
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition;
 import net.minecraft.util.AxisAlignedBB;
-import tk.wurst_client.events.PacketOutputEvent;
-import tk.wurst_client.events.listeners.PacketOutputListener;
+
+import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
+
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
@@ -26,7 +25,7 @@ import tk.wurst_client.navigator.settings.SliderSetting;
 		+ "Bypasses MAC if AntiMAC is enabled.",
 	name = "Flight")
 public class FlightMod extends Mod
-	implements UpdateListener, PacketOutputListener
+	implements UpdateListener
 {
 	public float speed = 1F;
 	
@@ -143,7 +142,6 @@ public class FlightMod extends Mod
 			mc.thePlayer.jump();
 		}
 		wurst.events.add(UpdateListener.class, this);
-		wurst.events.add(PacketOutputListener.class, this);
 	}
 	
 	@Override
@@ -203,21 +201,8 @@ public class FlightMod extends Mod
 	}
 	
 	@Override
-	public void onSendingPacket(PacketOutputEvent event)
-	{
-		// Fixes the fall damage with high flight speeds downwards
-		if(!wurst.mods.yesCheatMod.isActive()
-			&& !wurst.mods.antiMacMod.isActive() && bypassKick.isChecked()
-			&& flyHeight <= 300 && event.getPacket() instanceof C03PacketPlayer)
-		{
-			((C03PacketPlayer)event.getPacket()).field_149474_g = true;
-		}
-	}
-	
-	@Override
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
-		wurst.events.remove(PacketOutputListener.class, this);
 	}
 }
