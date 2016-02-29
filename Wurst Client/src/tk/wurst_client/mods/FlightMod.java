@@ -29,14 +29,15 @@ public class FlightMod extends Mod implements UpdateListener
 	public double flyHeight;
 	private double startY;
 	
-	public static final CheckboxSetting bypassKick = new CheckboxSetting(
-		"Bypass Vanilla Fly Kick (causes NoFall + faster Regeneration)", true);
+	public final CheckboxSetting flightKickBypass = new CheckboxSetting(
+		"\"Flying is not enabled\" Bypass", false);
 	
 	@Override
 	public String getRenderName()
 	{
 		if(wurst.mods.yesCheatMod.isActive()
-			|| wurst.mods.antiMacMod.isActive() || !bypassKick.isChecked())
+			|| wurst.mods.antiMacMod.isActive()
+			|| !flightKickBypass.isChecked())
 			return getName();
 		
 		return getName()
@@ -56,7 +57,7 @@ public class FlightMod extends Mod implements UpdateListener
 			}
 		});
 		
-		settings.add(bypassKick);
+		settings.add(flightKickBypass);
 	}
 	
 	public void updateFlyHeight()
@@ -180,7 +181,7 @@ public class FlightMod extends Mod implements UpdateListener
 			if(mc.gameSettings.keyBindSneak.pressed)
 				mc.thePlayer.motionY -= speed;
 			
-			if(bypassKick.isChecked())
+			if(flightKickBypass.isChecked())
 			{
 				updateFlyHeight();
 				mc.thePlayer.sendQueue

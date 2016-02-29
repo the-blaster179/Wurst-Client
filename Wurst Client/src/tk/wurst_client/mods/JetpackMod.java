@@ -30,13 +30,13 @@ public class JetpackMod extends Mod implements UpdateListener
 	@Override
 	public void initSettings()
 	{
-		settings.add(FlightMod.bypassKick);
+		settings.add(wurst.mods.flightMod.flightKickBypass);
 	}
 	
 	@Override
 	public String getRenderName()
 	{
-		if(!FlightMod.bypassKick.isChecked())
+		if(!wurst.mods.flightMod.flightKickBypass.isChecked())
 			return getName();
 		
 		return getName()
@@ -52,7 +52,7 @@ public class JetpackMod extends Mod implements UpdateListener
 		if(mc.gameSettings.keyBindJump.pressed)
 			mc.thePlayer.jump();
 		
-		if(FlightMod.bypassKick.isChecked())
+		if(wurst.mods.flightMod.flightKickBypass.isChecked())
 		{
 			wurst.mods.flightMod.updateFlyHeight();
 			mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
