@@ -11,6 +11,7 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.CheckboxSetting;
 
 @Info(category = Category.MOVEMENT,
 	description = "Allows you to jump in mid-air.\n"
@@ -19,6 +20,9 @@ import tk.wurst_client.mods.Mod.Info;
 	noCheatCompatible = false)
 public class JetpackMod extends Mod implements UpdateListener
 {
+	public final CheckboxSetting flightKickBypass = new CheckboxSetting(
+		"\"Flying is not enabled\" Bypass", false);
+	
 	@Override
 	public void onEnable()
 	{
@@ -30,14 +34,14 @@ public class JetpackMod extends Mod implements UpdateListener
 	@Override
 	public void initSettings()
 	{
-		settings.add(wurst.mods.flightMod.flightKickBypass);
+		settings.add(flightKickBypass);
 	}
 	
 	@Override
 	public String getRenderName()
 	{
 		return getName()
-			+ (wurst.mods.flightMod.flightKickBypass.isChecked() ? "[Kick: "
+			+ (flightKickBypass.isChecked() ? "[Kick: "
 				+ (wurst.mods.flightMod.flyHeight <= 300 ? "Safe" : "Unsafe")
 				+ "]" : "");
 	}
@@ -50,7 +54,7 @@ public class JetpackMod extends Mod implements UpdateListener
 		if(mc.gameSettings.keyBindJump.pressed)
 			mc.thePlayer.jump();
 		
-		if(wurst.mods.flightMod.flightKickBypass.isChecked())
+		if(flightKickBypass.isChecked())
 		{
 			wurst.mods.flightMod.updateFlyHeight();
 			mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
