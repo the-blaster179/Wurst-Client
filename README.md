@@ -1,13 +1,12 @@
-# Wurst Client![](https://ga-beacon.appspot.com/UA-52838431-1/GitHub/README.md?pixel)
-![Wurst Client logo](https://cloud.githubusercontent.com/assets/10100202/6868084/c764a252-d488-11e4-94cf-1daa5e398c35.png)
+# Wurst Client
 
-[![downloads](https://drive.google.com/uc?id=0B2YeSS9tm5zLMF9NWjNZYnNqSTA)](https://www.wurst-client.tk/downloads/)
-[![latest release](https://img.shields.io/github/release/Wurst-Imperium/Wurst-Client.svg?label=latest%20release)](https://github.com/Wurst-Imperium/Wurst-Client/releases/latest)  
-[![mods](https://img.shields.io/badge/mods-95+-brightgreen.svg)](https://www.wurst-client.tk/features/)
-[![commands](https://img.shields.io/badge/commands-35+-brightgreen.svg)](https://www.wurst-client.tk/features/)
-[![hot, fresh & sexy](https://img.shields.io/badge/hot,%20fresh%20&%20sexy-100%-ff69e3.svg)](http://wizardhax.com/wurst)  
-[![](https://img.shields.io/github/license/Wurst-Imperium/Wurst-Client.svg)](https://github.com/Wurst-Imperium/Wurst-Client/blob/master/LICENSE)
-[![analytics](https://img.shields.io/badge/analytics-GA-blue.svg)](https://github.com/igrigorik/ga-beacon)
+![downloads counter](https://drive.google.com/uc?id=0B2YeSS9tm5zLMF9NWjNZYnNqSTA)  
+![current version](https://img.shields.io/github/release/Wurst-Imperium/Wurst-Client.svg?label=current%20version)  
+![Minecraft versions](https://img.shields.io/badge/Minecraft_versions-1.8_--_1.8.9-blue.svg)
+
+[![download wurst](https://cloud.githubusercontent.com/assets/10100202/13418728/5689c0a2-df78-11e5-8864-7c97bd261c48.png)](https://www.wurst-client.tk/download/)
+
+![Minecraft Wurst Client](https://cloud.githubusercontent.com/assets/10100202/13201361/2d5ae2f8-d86e-11e5-86fa-bb4d6f78af7e.png)
 
 ## About :information_source:
 The Wurst Client is a Hack Client for Minecraft, packed full of the latest and most exciting mods, commands and other features. All of the mods and commands are instantly deployable at any moment, through buttons, keybinds and even automatic scripts. *You rule the game!*
