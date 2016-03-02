@@ -16,12 +16,17 @@ import org.darkstorm.minecraft.gui.component.BoundedRangeComponent.ValueDisplay;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.CheckboxSetting;
 import tk.wurst_client.navigator.settings.SliderSetting;
 
-@Info(category = Category.MOVEMENT, description = "Allows you to you fly.\n"
-	+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
-	+ "Bypasses MAC if AntiMAC is enabled.", name = "Flight")
+@Info(category = Category.MOVEMENT,
+	description = "Allows you to you fly.\n"
+		+ "Bypasses NoCheat+ if YesCheat+ is enabled.\n"
+		+ "Bypasses MAC if AntiMAC is enabled.",
+	name = "Flight",
+	tutorial = "Mods/Flight",
+	tags = "FlyHack,fly hack,flying")
 public class FlightMod extends Mod implements UpdateListener
 {
 	public float speed = 1F;
@@ -40,8 +45,8 @@ public class FlightMod extends Mod implements UpdateListener
 			|| !flightKickBypass.isChecked())
 			return getName();
 		
-		return getName()
-			+ "[Kick: " + (flyHeight <= 300 ? "Safe" : "Unsafe") + "]";
+		return getName() + "[Kick: " + (flyHeight <= 300 ? "Safe" : "Unsafe")
+			+ "]";
 	}
 	
 	@Override
@@ -113,6 +118,13 @@ public class FlightMod extends Mod implements UpdateListener
 					mc.thePlayer.posZ, true);
 			mc.thePlayer.sendQueue.addToSendQueue(packet);
 		}
+	}
+	
+	@Override
+	public NavigatorItem[] getSeeAlso()
+	{
+		return new NavigatorItem[]{wurst.mods.jetpackMod, wurst.mods.glideMod,
+			wurst.mods.noFallMod, wurst.mods.yesCheatMod, wurst.mods.antiMacMod};
 	}
 	
 	@Override
