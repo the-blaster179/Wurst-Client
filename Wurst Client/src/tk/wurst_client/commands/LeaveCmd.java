@@ -74,11 +74,11 @@ public class LeaveCmd extends Cmd
 				break;
 			case 2:
 				mc.thePlayer.sendQueue
-					.addToSendQueue(new C03PacketPlayer
-						.C04PacketPlayerPosition(3.1e7d, 100, 3.1e7d, false));
+					.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
+						3.1e7d, 100, 3.1e7d, false));
 			case 3:
-				mc.thePlayer.sendQueue
-					.addToSendQueue(new C02PacketUseEntity(mc.thePlayer, Action.ATTACK));
+				mc.thePlayer.sendQueue.addToSendQueue(new C02PacketUseEntity(
+					mc.thePlayer, Action.ATTACK));
 				break;
 			default:
 				break;
