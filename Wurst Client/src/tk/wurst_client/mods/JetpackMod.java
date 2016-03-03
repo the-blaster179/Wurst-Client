@@ -21,7 +21,7 @@ import tk.wurst_client.navigator.settings.CheckboxSetting;
 public class JetpackMod extends Mod implements UpdateListener
 {
 	public final CheckboxSetting flightKickBypass = new CheckboxSetting(
-		"\"Flying is not enabled\" Bypass", false);
+		"Flight-Kick-Bypass", false);
 	
 	@Override
 	public void onEnable()

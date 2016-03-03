@@ -35,7 +35,7 @@ public class FlightMod extends Mod implements UpdateListener
 	private double startY;
 	
 	public final CheckboxSetting flightKickBypass = new CheckboxSetting(
-		"\"Flying is not enabled\" Bypass", false);
+		"Flight-Kick-Bypass", false);
 	
 	@Override
 	public String getRenderName()
