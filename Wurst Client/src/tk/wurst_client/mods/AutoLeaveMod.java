@@ -18,8 +18,7 @@ import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.COMBAT,
 	description = "Automatically leaves the server when your health is low.\n"
-		+ "Type `.leave mode chars`, `.leave mode tp` or `.leave mode selfhurt`\n"
-		+ "to make it bypass CombatLogger.",
+		+ "The Chars, TP and SelfHurt modes can bypass CombatLog and similar plugins.",
 	name = "AutoLeave")
 public class AutoLeaveMod extends Mod implements UpdateListener
 {
@@ -73,12 +72,13 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 					break;
 				case 2:
 					mc.thePlayer.sendQueue
-						.addToSendQueue(new C03PacketPlayer
-							.C04PacketPlayerPosition(3.1e7d, 100, 3.1e7d, false));
+						.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(
+							3.1e7d, 100, 3.1e7d, false));
 					break;
 				case 3:
 					mc.thePlayer.sendQueue
-						.addToSendQueue(new C02PacketUseEntity(mc.thePlayer, Action.ATTACK));
+						.addToSendQueue(new C02PacketUseEntity(mc.thePlayer,
+							Action.ATTACK));
 					break;
 				default:
 					break;
