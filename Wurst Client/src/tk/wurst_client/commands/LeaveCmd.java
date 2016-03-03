@@ -29,7 +29,7 @@ public class LeaveCmd extends Cmd
 		switch(args.length)
 		{
 			case 0:
-				disconnectWithMode(wurst.options.autoLeaveMode);
+				disconnectWithMode(wurst.mods.autoLeaveMod.getMode());
 				break;
 			case 1:
 				if(args[0].equalsIgnoreCase("taco"))
@@ -39,7 +39,7 @@ public class LeaveCmd extends Cmd
 					disconnectWithMode(parseMode(args[0]));
 				break;
 			case 2:
-				wurst.options.autoLeaveMode = parseMode(args[1]);
+				wurst.mods.autoLeaveMod.setMode(parseMode(args[1]));
 				wurst.files.saveOptions();
 				wurst.chat
 					.message("AutoLeave mode set to \"" + args[1] + "\".");
@@ -87,14 +87,13 @@ public class LeaveCmd extends Cmd
 	
 	private int parseMode(String input) throws SyntaxError
 	{
-		if(input.equalsIgnoreCase("quit"))
-			return 0;
-		else if(input.equalsIgnoreCase("chars"))
-			return 1;
-		else if(input.equalsIgnoreCase("tp"))
-			return 2;
-		else if(input.equalsIgnoreCase("selfhurt"))
-			return 3;
+		// search mode by name
+		String[] modeNames = wurst.mods.autoLeaveMod.getModes();
+		for(int i = 0; i < modeNames.length; i++)
+			if(input.equals(modeNames[i].toLowerCase()))
+				return i;
+		
+		// syntax error if mode does not exist
 		syntaxError("Invalid mode: " + input);
 		return 0;
 	}

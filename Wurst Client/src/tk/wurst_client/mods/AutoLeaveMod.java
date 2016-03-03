@@ -15,6 +15,7 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 import tk.wurst_client.events.listeners.UpdateListener;
 import tk.wurst_client.mods.Mod.Category;
 import tk.wurst_client.mods.Mod.Info;
+import tk.wurst_client.navigator.settings.ModeSetting;
 
 @Info(category = Category.COMBAT,
 	description = "Automatically leaves the server when your health is low.\n"
@@ -22,29 +23,27 @@ import tk.wurst_client.mods.Mod.Info;
 	name = "AutoLeave")
 public class AutoLeaveMod extends Mod implements UpdateListener
 {
+	private int mode = 0;
+	private String[] modes = new String[]{"Quit", "Chars", "TP", "SelfHurt"};
+	
 	@Override
 	public String getRenderName()
 	{
-		String name = getName() + "[";
-		switch(wurst.options.autoLeaveMode)
-		{
-			case 0:
-				name += "Quit";
-				break;
-			case 1:
-				name += "Chars";
-				break;
-			case 2:
-				name += "TP";
-				break;
-			case 3:
-				name += "SelfHurt";
-				break;
-			default:
-				break;
-		}
-		name += "]";
+		String name = getName() + "[" + modes[mode] + "]";
 		return name;
+	}
+	
+	@Override
+	public void initSettings()
+	{
+		settings.add(new ModeSetting("Mode", modes, mode)
+		{
+			@Override
+			public void update()
+			{
+				mode = getSelected();
+			}
+		});
 	}
 	
 	@Override
@@ -61,7 +60,7 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 			&& (!mc.isIntegratedServerRunning() || Minecraft.getMinecraft().thePlayer.sendQueue
 				.getPlayerInfo().size() > 1))
 		{
-			switch(wurst.options.autoLeaveMode)
+			switch(mode)
 			{
 				case 0:
 					mc.theWorld.sendQuittingDisconnectingPacket();
@@ -91,5 +90,20 @@ public class AutoLeaveMod extends Mod implements UpdateListener
 	public void onDisable()
 	{
 		wurst.events.remove(UpdateListener.class, this);
+	}
+	
+	public int getMode()
+	{
+		return mode;
+	}
+	
+	public void setMode(int mode)
+	{
+		((ModeSetting)settings.get(1)).setSelected(mode);
+	}
+	
+	public String[] getModes()
+	{
+		return modes;
 	}
 }
