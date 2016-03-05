@@ -7,9 +7,12 @@
  */
 package tk.wurst_client.mods;
 
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemSoup;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
@@ -24,24 +27,23 @@ import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.COMBAT,
-	description = "Automatically eats soups when necessary.",
+	description = "Automatically eats soup if your health is below the set value.",
 	name = "AutoSoup",
 	tags = "auto soup")
 public class AutoSoupMod extends Mod implements UpdateListener
 {
-	public float normalHealth = 20F;
+	public float health = 20F;
 	
 	@Override
 	public void initSettings()
 	{
-		settings.add(new SliderSetting("Health", normalHealth, 1, 10, 0.5,
-			ValueDisplay.DECIMAL)
+		settings.add(new SliderSetting("Health", health, 2, 20, 1,
+			ValueDisplay.INTEGER)
 		{
 			@Override
 			public void update()
 			{
-				normalHealth = (float)getValue() * 2;
-				
+				health = (float)getValue();
 			}
 		});
 		
@@ -62,105 +64,65 @@ public class AutoSoupMod extends Mod implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
-		updateMS();
-		if(soups() == 0)
+		// check if no container is open
+		if(mc.currentScreen instanceof GuiContainer)
 			return;
 		
-		if(mc.thePlayer.getHealth() <= normalHealth && hasTimePassedM(500l))
-			if(hasHotbarSoups())
-			{
-				eatSoup();
-				updateLastMS();
-			}else
-				getFromUpInv();
-	}
-	
-	private boolean hasHotbarSoups()
-	{
-		for(int index = 36; index < 45; index++)
-		{
-			ItemStack stack =
-				mc.thePlayer.inventoryContainer.getSlot(index).getStack();
-			if(stack != null && isStack(stack))
-				return true;
-		}
-		return false;
-	}
-	
-	private boolean isStack(ItemStack stack)
-	{
-		if(stack == null)
-			return false;
-		return stack.getItem() instanceof ItemSoup;
-	}
-	
-	private void getFromUpInv()
-	{
-		if(mc.currentScreen instanceof GuiChest)
+		EntityPlayerSP player = mc.thePlayer;
+		
+		// check if health is low
+		if(player.getHealth() >= health)
 			return;
-		bowlstack();
-		for(int index = 9; index < 36; index++)
-		{
-			ItemStack stack =
-				mc.thePlayer.inventoryContainer.getSlot(index).getStack();
-			if(stack != null && isStack(stack))
-			{
-				mc.playerController.windowClick(0, index, 0, 1, mc.thePlayer);
-				break;
-			}
-		}
-	}
-	
-	private void bowlstack()
-	{
-		if(mc.currentScreen instanceof GuiChest)
+		
+		// find soup
+		int soupInInventory = findSoup(9, 36);
+		int soupInHotbar = findSoup(36, 45);
+		
+		// check if any soup was found
+		if(soupInInventory == -1 && soupInHotbar == -1)
 			return;
-		for(int index = 9; index < 45; index++)
+		
+		Container inventoryContainer = player.inventoryContainer;
+		PlayerControllerMP playerController = mc.playerController;
+		
+		// sort empty bowls
+		for(int i = 9; i < 45; i++)
 		{
-			ItemStack stack =
-				mc.thePlayer.inventoryContainer.getSlot(index).getStack();
+			ItemStack stack = inventoryContainer.getSlot(i).getStack();
 			if(stack != null && stack.getItem() == Items.bowl)
 			{
-				mc.playerController.windowClick(0, index, 0, 0, mc.thePlayer);
-				mc.playerController.windowClick(0, 18, 0, 0, mc.thePlayer);
+				playerController.windowClick(0, i, 0, 0, player);
+				playerController.windowClick(0, 18, 0, 0, player);
 			}
-		}
-	}
-	
-	private void eatSoup()
-	{
-		for(int index = 36; index < 45; index++)
-		{
-			ItemStack stack =
-				mc.thePlayer.inventoryContainer.getSlot(index).getStack();
-			if(stack != null && isStack(stack))
-			{
-				bowlstack();
-				int oldslot = mc.thePlayer.inventory.currentItem;
-				mc.thePlayer.sendQueue
-					.addToSendQueue(new C09PacketHeldItemChange(index - 36));
-				mc.playerController.updateController();
-				mc.thePlayer.sendQueue
-					.addToSendQueue(new C08PacketPlayerBlockPlacement(
-						new BlockPos(-1, -1, -1), -1, stack, 0.0F, 0.0F, 0.0F));
-				mc.thePlayer.sendQueue
-					.addToSendQueue(new C09PacketHeldItemChange(oldslot));
-				break;
-			}
-		}
-	}
-	
-	private int soups()
-	{
-		int counter = 0;
-		for(int index = 9; index < 45; index++)
-		{
-			ItemStack stack =
-				mc.thePlayer.inventoryContainer.getSlot(index).getStack();
-			if(stack != null && isStack(stack))
-				counter += stack.stackSize;
 		}
 		
-		return counter;
+		if(soupInHotbar != -1)
+		{
+			// eat soup in hotbar
+			int oldSlot = player.inventory.currentItem;
+			NetHandlerPlayClient sendQueue = player.sendQueue;
+			
+			sendQueue.addToSendQueue(new C09PacketHeldItemChange(
+				soupInHotbar - 36));
+			playerController.updateController();
+			sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(
+				new BlockPos(-1, -1, -1), -1, inventoryContainer.getSlot(
+					soupInHotbar).getStack(), 0.0F, 0.0F, 0.0F));
+			sendQueue.addToSendQueue(new C09PacketHeldItemChange(oldSlot));
+		}else
+			// move soup in inventory to hotbar
+			playerController.windowClick(0, soupInInventory, 0, 1, player);
+	}
+	
+	private int findSoup(int startSlot, int endSlot)
+	{
+		for(int i = startSlot; i < endSlot; i++)
+		{
+			ItemStack stack =
+				mc.thePlayer.inventoryContainer.getSlot(i).getStack();
+			if(stack != null && stack.getItem() == Items.mushroom_stew)
+				return i;
+		}
+		return -1;
 	}
 }
