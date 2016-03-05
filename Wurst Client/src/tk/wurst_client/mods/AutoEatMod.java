@@ -1,5 +1,5 @@
 /*
- * Copyright Â© 2014 - 2016 | Wurst-Imperium | All rights reserved.
+ * Copyright © 2014 - 2016 | Wurst-Imperium | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ import tk.wurst_client.mods.Mod.Info;
 
 @Info(category = Category.MISC,
 	description = "Automatically eats food when necessary.",
-	name = "AutoEat", tags = "AutoEat,auto eat")
+	name = "AutoEat", tags = "AutoSoup,auto eat,auto soup")
 public class AutoEatMod extends Mod implements UpdateListener
 {
 	private int oldSlot;
