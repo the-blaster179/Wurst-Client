@@ -58,7 +58,7 @@ public class AutoSoupMod extends Mod implements UpdateListener
 	{
 		wurst.events.add(UpdateListener.class, this);
 	}
-
+	
 	@Override
 	public void onUpdate()
 	{
@@ -137,12 +137,14 @@ public class AutoSoupMod extends Mod implements UpdateListener
 			{
 				bowlstack();
 				int oldslot = mc.thePlayer.inventory.currentItem;
-				NetworkUtils
-					.sendPacket(new C09PacketHeldItemChange(index - 36));
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C09PacketHeldItemChange(index - 36));
 				mc.playerController.updateController();
-				NetworkUtils.sendPacket(new C08PacketPlayerBlockPlacement(
-					new BlockPos(-1, -1, -1), -1, stack, 0.0F, 0.0F, 0.0F));
-				NetworkUtils.sendPacket(new C09PacketHeldItemChange(oldslot));
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C08PacketPlayerBlockPlacement(
+						new BlockPos(-1, -1, -1), -1, stack, 0.0F, 0.0F, 0.0F));
+				mc.thePlayer.sendQueue
+					.addToSendQueue(new C09PacketHeldItemChange(oldslot));
 				break;
 			}
 		}
