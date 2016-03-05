@@ -24,9 +24,9 @@ import tk.wurst_client.navigator.NavigatorItem;
 import tk.wurst_client.navigator.settings.SliderSetting;
 
 @Info(category = Category.COMBAT,
-	description = "Automatically eat soups.",
+	description = "Automatically eats soups when necessary.",
 	name = "AutoSoup",
-	tags = "AutoSoup,auto soup")
+	tags = "auto soup")
 public class AutoSoupMod extends Mod implements UpdateListener
 {
 	public float normalHealth = 20F;
