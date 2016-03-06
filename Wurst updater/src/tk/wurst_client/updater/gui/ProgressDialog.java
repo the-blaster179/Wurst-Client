@@ -1,5 +1,5 @@
 /*
- * Copyright © 2014 - 2015 | Alexander01998 | All rights reserved.
+ * Copyright Â© 2014 - 2015 | Alexander01998 | All rights reserved.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -66,7 +66,7 @@ public class ProgressDialog extends JDialog
 		getContentPane().add(lblImage);
 		{
 			lblProgress =
-				new JLabel("<html>\r\n<center>\r\n<h1>Updating...</h1>");
+				new JLabel("<html>\r\n<center>\r\n<h1>Downloading Update...</h1>");
 			lblProgress.setAlignmentX(Component.CENTER_ALIGNMENT);
 			lblProgress.setFont(new Font("Verdana", Font.PLAIN, 16));
 			getContentPane().add(lblProgress);
